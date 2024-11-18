@@ -3,6 +3,7 @@ import styles from "./styles/login.module.scss";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/authContext";
 import axios from "redaxios";
+import { FaGoogle, FaFacebookF, FaTwitter } from "react-icons/fa";
 // import LoaderStyles from "../../UserProfile/styles/page.module.scss";
 
 export default function LoginPage() {
@@ -12,6 +13,18 @@ export default function LoginPage() {
     email: false,
     password: false,
   });
+
+  const handleGoogleLogin = () => {
+    window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;
+  };
+
+  const handleFacebookLogin = () => {
+    window.location.href = `${import.meta.env.VITE_API_URL}/auth/facebook`;
+  };
+
+  const handleTwitterLogin = () => {
+    window.location.href = `${import.meta.env.VITE_API_URL}/auth/twitter`;
+  };
 
   const navigate = useNavigate();
 
@@ -102,7 +115,7 @@ export default function LoginPage() {
             className={styles.main_content_container}
           >
             <div>
-              <p className={styles.welcome_back}>Welcome back</p>
+              <h2 className={styles.h2}>Home Building Ecosystem</h2>
               <h4 className={styles.h4}>Login Now</h4>
             </div>
             <div className={styles.input_container_wrapper}>
@@ -144,6 +157,30 @@ export default function LoginPage() {
               <div className={styles.line}></div>
               <div className={styles.or_text}>or</div>
               <div className={styles.line}></div>
+            </div>
+
+            <div className={styles.social_login_container}>
+              <button
+                className={styles.socialButton}
+                onClick={handleGoogleLogin}
+              >
+                <FaGoogle className={styles.socialIcon} />
+                Login with Google
+              </button>
+              <button
+                className={styles.socialButton}
+                onClick={handleFacebookLogin}
+              >
+                <FaFacebookF className={styles.socialIcon} />
+                Login with Facebook
+              </button>
+              <button
+                className={styles.socialButton}
+                onClick={handleTwitterLogin}
+              >
+                <FaTwitter className={styles.socialIcon} />
+                Login with Twitter
+              </button>
             </div>
 
             <div className={styles.register_link_container}>

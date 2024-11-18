@@ -1,0 +1,236 @@
+@use "../../../globalStyles/_base.scss" as base;
+
+.signUp_wrapper {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: row;
+  background-color: #f5f5f5;
+
+  .parent_cont_left {
+    width: 50vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: base.$background;
+
+    .main_content_container {
+      width: 450px;
+      height: 90vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+
+      .h3 {
+        font: base.$h3;
+        color: base.$black;
+        margin: 0;
+      }
+
+      .stepContainer {
+        margin-bottom: 50px;
+      }
+
+      .h4 {
+        margin: 0;
+        // align-self: flex-start;
+
+        font-size: 16px;
+        // font: base.$h4;
+        color: base.$black;
+      }
+
+      .input_container {
+        display: flex;
+        flex-direction: column;
+        // height: 100%;
+        justify-content: center;
+        align-items: center;
+        gap: 15px;
+        width: 100%;
+        // height: 30%;
+        box-sizing: border-box;
+
+        .userType_container {
+          // padding: 15px;
+          border-radius: 8px;
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: flex-start;
+          gap: 15px;
+          // height: 100%;
+
+          label {
+            font-size: 16px;
+
+            // font-family: base.$p_reg;
+            margin: 0;
+            color: #333333;
+          }
+
+          label {
+            display: block;
+            // margin: 10px 0;
+            color: #333333;
+          }
+
+          .freelancerInput[type="radio"],
+          .clientInput[type="radio"] {
+            margin-right: 10px;
+          }
+
+          /* Style for when a radio button is checked */
+          input[type="radio"]:checked {
+            /* Add styles for checked state if necessary */
+          }
+        }
+
+        .input {
+          width: 450px;
+          height: 60px;
+          background-color: white;
+          border: none;
+          border-radius: 4px;
+          outline: none;
+          font: base.$p_large;
+          padding: 15px 20px;
+          box-sizing: border-box;
+        }
+      }
+
+      .button_primary {
+        width: 450px;
+        height: 60px;
+        background-color: base.$primary;
+        border: none;
+        border-radius: 4px;
+        color: base.$background;
+        font: base.$h5;
+        cursor: pointer;
+      }
+
+      .or_container {
+        align-self: center;
+        display: flex;
+        align-items: center;
+        text-align: center;
+        color: #6c757d;
+        width: 80%;
+
+        .line {
+          flex: 1;
+          height: 1px;
+          background-color: #6c757d;
+        }
+
+        .or_text {
+          padding: 0 30px;
+        }
+      }
+
+      .button_secondary {
+        width: 450px;
+        height: 60px;
+        background-color: base.$white;
+        border: 1px solid base.$black;
+        border-radius: 4px;
+        padding: 0;
+        color: base.$black;
+        font: base.$p_large;
+        cursor: pointer;
+      }
+
+      .welcome_text {
+        font: base.$p_small;
+        color: base.$black;
+      }
+    }
+  }
+
+  .parent_cont_right {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 50vw;
+    height: 100vh;
+    background-image: url("../../../../assets/40-resized-min.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+
+    .h1 {
+      font: base.$h1;
+      font-style: italic;
+      color: base.$background;
+    }
+    .p {
+      font: base.$p_large;
+      color: base.$background;
+    }
+    .signIn_link_container {
+      // align-self: center;
+      margin-top: 20px;
+      .signIn_link {
+        font: base.$p_large;
+        // color: base.$black;
+        color: #ffffff;
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+// .userType_container {
+//   display: flex;
+//   justify-content: space-between;
+//   margin-bottom: 1rem;
+// }
+
+.userType_buttons_container {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.userType_button {
+  width: 100%;
+  border-radius: 5px;
+  height: 50px;
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  cursor: pointer;
+  margin-bottom: 10px;
+  transition: all 0.3s ease;
+
+  &.selected {
+    background-color: base.$primary;
+    color: #fff;
+    border-color: base.$primary;
+  }
+}
+
+.navigation_container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.nav_button {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background-color: #f0f0f0;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #e0e0e0;
+  }
+}

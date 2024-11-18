@@ -3,6 +3,7 @@ import "./App.css";
 import Home from "./pages/home/home";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LoginPage from "./pages/login/login";
+import RegisterPage from "./pages/register/register";
 import { AuthProvider } from "./contexts/authContext";
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
           </Routes>
         </AuthProvider>
       </BrowserRouter>
