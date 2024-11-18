@@ -97,6 +97,10 @@
         cursor: pointer;
         text-align: center;
         padding: 0;
+        transition: background-color 0.3s ease;
+        &:hover {
+          background-color: darken(base.$primary, 10%);
+        }
       }
 
       .or_container {
@@ -184,4 +188,13 @@
   width: 450px;
 
   text-align: center;
+}
+
+.logo_link {
+  text-decoration: none;
+  color: base.$primary;
+
+  &:hover {
+    color: darken(base.$primary, 10%);
+  }
 }

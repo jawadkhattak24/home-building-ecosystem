@@ -3,6 +3,7 @@ import axios from "redaxios";
 import styles from "./styles/register.module.scss";
 import { Link } from "react-router-dom";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import { FaGoogle, FaFacebookF, FaTwitter } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/authContext";
 
@@ -19,7 +20,20 @@ export default function RegistrationForm() {
     confirmPassword: "",
     verificationCode: "",
   });
+
   const [errors, setErrors] = useState({});
+
+  const handleGoogleLogin = () => {
+    window.location.href = `${import.meta.env.VITE_API_URL}/api/user/google`;
+  };
+
+  const handleFacebookLogin = () => {
+    window.location.href = `${import.meta.env.VITE_API_URL}/api/user/facebook`;
+  };
+
+  const handleTwitterLogin = () => {
+    window.location.href = `${import.meta.env.VITE_API_URL}/api/user/twitter`;
+  };
 
   const handleChange = (e) => {
     setUserData({ ...userData, [e.target.name]: e.target.value });
@@ -184,7 +198,7 @@ export default function RegistrationForm() {
   };
 
   const handleNextStep = () => {
-    if (step < 3) {
+    if (step < 2) {
       setStep(step + 1);
     }
   };
@@ -192,36 +206,6 @@ export default function RegistrationForm() {
   const renderStep = () => {
     switch (step) {
       case 1:
-        return (
-          <div className={styles.userType_container}>
-            <p>Register as a:</p>
-            <div className={styles.userType_buttons_container}>
-              <button
-                type="button"
-                className={`${styles.userType_button} ${
-                  userData.userType === "employer" ? styles.selected : ""
-                }`}
-                onClick={() => handleUserTypeSelect("employer")}
-              >
-                Employer
-              </button>
-              <button
-                type="button"
-                className={`${styles.userType_button} ${
-                  userData.userType === "freelancer" ? styles.selected : ""
-                }`}
-                onClick={() => handleUserTypeSelect("freelancer")}
-              >
-                Freelancer
-              </button>
-            </div>
-            {errors.userType && (
-              <p className={styles.error}>{errors.userType}</p>
-            )}
-          </div>
-        );
-
-      case 2:
         return (
           <>
             {/* <GoogleOAuthProvider
@@ -236,12 +220,6 @@ export default function RegistrationForm() {
                 cookiePolicy={"single_host_origin"}
               />
             </GoogleOAuthProvider> */}
-
-            <div className={styles.or_container}>
-              <div className={styles.line}></div>
-              <div className={styles.or_text}>or</div>
-              <div className={styles.line}></div>
-            </div>
 
             <input
               className={styles.input}
@@ -299,7 +277,7 @@ export default function RegistrationForm() {
           </>
         );
 
-      case 3:
+      case 2:
         return (
           <>
             <p>Please enter the verification code sent to your email:</p>
@@ -322,24 +300,42 @@ export default function RegistrationForm() {
     <React.Fragment>
       <div className={styles.signUp_wrapper}>
         <div className={styles.parent_cont_right}>
-          <div>
-            <h1 className={styles.h1}>GigChain</h1>
-            <p className={styles.p}>Feel the Freedom & Control</p>
-            <div className={styles.signIn_link_container}>
-              <Link to="/login" className={styles.signIn_link}>
-                Already a GigChain user? Sign In
-              </Link>
-            </div>
+          <Link to="/" className={styles.logo_link}>
+            <h2 className={styles.h2}>Home Building Ecosystem</h2>
+          </Link>
+          <div className={styles.social_login_container}>
+            <button className={styles.socialButton} onClick={handleGoogleLogin}>
+              <FaGoogle className={styles.socialIcon} />
+              Login with Google
+            </button>
+            <button
+              className={styles.socialButton}
+              onClick={handleFacebookLogin}
+            >
+              <FaFacebookF className={styles.socialIcon} />
+              Login with Facebook
+            </button>
+            <button
+              className={styles.socialButton}
+              onClick={handleTwitterLogin}
+            >
+              <FaTwitter className={styles.socialIcon} />
+              Login with Twitter
+            </button>
           </div>
+
+          <Link to="/login" className={styles.signIn_link}>
+            Already have an account? Sign In
+          </Link>
         </div>
 
         <div className={styles.parent_cont_left}>
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              if (step === 3) {
+              if (step === 2) {
                 handleVerifyCode(e);
-              } else if (step === 2) {
+              } else if (step === 1) {
                 handleSubmit();
               } else {
                 handleNextStep();
@@ -348,7 +344,7 @@ export default function RegistrationForm() {
             className={styles.main_content_container}
           >
             <div className={styles.stepContainer}>
-              <h2 className={styles.h4}>Register - Step {step} of 3</h2>
+              <h2>Register</h2>
             </div>
             <div className={styles.input_container}>{renderStep()}</div>
             <div className={styles.navigation_container}>
@@ -363,17 +359,12 @@ export default function RegistrationForm() {
               )}
               {step === 1 && (
                 <button type="submit" className={styles.nav_button}>
-                  Next <ArrowRight size={20} />
+                  Complete Sign Up <ArrowRight size={20} />
                 </button>
               )}
               {step === 2 && (
                 <button type="submit" className={styles.nav_button}>
                   Verify Email <ArrowRight size={20} />
-                </button>
-              )}
-              {step === 3 && (
-                <button type="submit" className={styles.button_primary}>
-                  Complete Registration
                 </button>
               )}
             </div>

@@ -1,0 +1,133 @@
+// components/Header/Header.module.scss
+.header {
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 1rem 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  color: #333;
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-decoration: none;
+
+  &:hover {
+    color: #ff5722;
+  }
+}
+
+.nav {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+.navLink {
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+
+  &:hover {
+    color: #ff5722;
+  }
+}
+
+.loginBtn,
+.registerBtn {
+  padding: 0.5rem 1.5rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.loginBtn {
+  color: #333;
+
+  &:hover {
+    background-color: #f0f0ff;
+  }
+}
+
+.registerBtn {
+  background-color: #ff5722;
+  color: white;
+
+  &:hover {
+    background-color: darken(#ff5722, 10%);
+  }
+}
+
+.header {
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 1rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+
+  &:hover .dropdownContent {
+    display: block;
+  }
+}
+
+.dropbtn {
+  background: none;
+  border: none;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-weight: 500;
+  color: #333;
+
+  &:hover {
+    color: #ff5722;
+  }
+}
+
+.dropdownContent {
+  display: none;
+  position: absolute;
+  background-color: #fff;
+  min-width: 200px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  padding: 0.5rem 0;
+
+  a {
+    color: #333;
+    padding: 0.75rem 1rem;
+    text-decoration: none;
+    display: block;
+
+    &:hover {
+      background-color: #f8f9ff;
+      color: #ff5722;
+    }
+  }
+}
+
+.proBtn {
+  background-color: #4caf50;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  text-decoration: none;
+
+  &:hover {
+    background-color: darken(#4caf50, 10%);
+  }
+}

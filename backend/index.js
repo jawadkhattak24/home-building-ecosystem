@@ -12,6 +12,8 @@ const userRoutes = require("./routes/user");
 const env = process.env.NODE_ENV || "development";
 dotenv.config({ path: `.env.${env}` });
 
+console.log("mongodb url :", process.env.MONGODB_URI);
+
 app.use(cors());
 app.use(express.json());
 const server = http.createServer(app);
@@ -24,9 +26,6 @@ mongoose
   .catch((err) => {
     console.log(err);
   });
-
-
-
 
 app.use(
   session({
@@ -48,6 +47,5 @@ app.use("/api/user", userRoutes);
 server.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);
 });
-
 
 module.exports = app;

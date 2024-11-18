@@ -1,0 +1,70 @@
+@use "../../../globalStyles/base.scss" as base;
+
+.footer {
+  border-top: 3px solid base.$primary;
+  background-color: #f8f9ff;
+  //   padding: 4rem 0 1rem;
+  margin-top: auto;
+}
+
+.container {
+//   max-width: 1200px;
+  margin: 0 auto;
+//   padding: 0 1rem;
+}
+
+.content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+  padding: 20px;
+}
+
+.section {
+  h3 {
+    color: #333;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  h4 {
+    color: #333;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+  }
+
+  p {
+    color: #666;
+    line-height: 1.6;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+
+    li {
+      margin-bottom: 0.5rem;
+
+      a {
+        color: #666;
+        text-decoration: none;
+
+        &:hover {
+          color: #ff5722;
+        }
+      }
+    }
+  }
+}
+
+.bottom {
+  border-top: 1px solid #eee;
+  padding-top: 1rem;
+  text-align: center;
+
+  p {
+    color: #666;
+    font-size: 0.9rem;
+  }
+}

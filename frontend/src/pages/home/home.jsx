@@ -1,15 +1,15 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import styles from './styles/home.module.scss';
-// import Header from './components/Header';
-// import Footer from './components/Footer';
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import styles from "./styles/home.module.scss";
+import Navigation from "../../components/navigation/navigation";
+import Footer from "../../components/footer/footer";
 
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
-  
+
   const carouselImages = [
-    '/images/avi-werde.jpg',
-    '/images/stephan-bechert.jpg'
+    "/images/avi-werde.jpg",
+    "/images/stephan-bechert.jpg",
   ];
 
   const nextSlide = () => {
@@ -18,19 +18,23 @@ export default function Home() {
 
   return (
     <>
-      {/* <Header /> */}
+      <Navigation />
 
       <div className={styles.container}>
         <section id="services" className={styles.section}>
           <h2>Our Services</h2>
-          
+
           <div className={styles.row}>
             <div className={styles.col}>
               <img src="/images/daniel-mccullough.jpg" alt="" />
             </div>
             <div className={styles.col}>
               <h3>Planning</h3>
-              <p>Planning phase of the Home Building Ecosystem project includes defining a clear project structure and setting up the groundwork for development...</p>
+              <p>
+                Planning phase of the Home Building Ecosystem project includes
+                defining a clear project structure and setting up the groundwork
+                for development...
+              </p>
             </div>
           </div>
 
@@ -40,7 +44,10 @@ export default function Home() {
             </div>
             <div className={styles.col}>
               <h3>Customizing</h3>
-              <p>The Home Building Ecosystem is a digital platform designed to simplify the home construction process...</p>
+              <p>
+                The Home Building Ecosystem is a digital platform designed to
+                simplify the home construction process...
+              </p>
             </div>
           </div>
 
@@ -50,7 +57,10 @@ export default function Home() {
             </div>
             <div className={styles.col}>
               <h3>Building</h3>
-              <p>The Home Building Ecosystem is developed as a responsive and modular platform...</p>
+              <p>
+                The Home Building Ecosystem is developed as a responsive and
+                modular platform...
+              </p>
             </div>
           </div>
 
@@ -62,7 +72,11 @@ export default function Home() {
         <section className={styles.section}>
           <h2>Past Projects</h2>
           <div className={styles.carousel}>
-            <img src={carouselImages[currentSlide]} alt="" onClick={nextSlide} />
+            <img
+              src={carouselImages[currentSlide]}
+              alt=""
+              onClick={nextSlide}
+            />
           </div>
           <div className={styles.centerButton}>
             <button className={styles.button}>Learn More</button>
@@ -74,7 +88,10 @@ export default function Home() {
           <div className={styles.row}>
             <div className={styles.col}>
               <img src="/images/cytonn-photography.jpg" alt="" />
-              <h3>Home Building Ecosystem announces new partnership with Building Co.</h3>
+              <h3>
+                Home Building Ecosystem announces new partnership with Building
+                Co.
+              </h3>
             </div>
             <div className={styles.col}>
               <img src="/images/scott-graham.jpg" alt="" />
@@ -95,7 +112,9 @@ export default function Home() {
           <div className={styles.row}>
             <div className={styles.col}>
               <img src="/images/lucian-novosel.jpg" alt="" />
-              <h3>What to know about your personal projects and renovation finance</h3>
+              <h3>
+                What to know about your personal projects and renovation finance
+              </h3>
             </div>
             <div className={styles.col}>
               <img src="/images/avinash-kumar.jpg" alt="" />
@@ -114,7 +133,7 @@ export default function Home() {
         </section>
       </div>
 
-      {/* <Footer /> */}
+      <Footer />
     </>
   );
 }

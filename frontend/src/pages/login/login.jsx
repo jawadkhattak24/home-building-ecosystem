@@ -15,15 +15,15 @@ export default function LoginPage() {
   });
 
   const handleGoogleLogin = () => {
-    window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;
+    window.location.href = `${import.meta.env.VITE_API_URL}/api/user/google`;
   };
 
   const handleFacebookLogin = () => {
-    window.location.href = `${import.meta.env.VITE_API_URL}/auth/facebook`;
+    window.location.href = `${import.meta.env.VITE_API_URL}/api/user/facebook`;
   };
 
   const handleTwitterLogin = () => {
-    window.location.href = `${import.meta.env.VITE_API_URL}/auth/twitter`;
+    window.location.href = `${import.meta.env.VITE_API_URL}/api/user/twitter`;
   };
 
   const navigate = useNavigate();
@@ -115,7 +115,9 @@ export default function LoginPage() {
             className={styles.main_content_container}
           >
             <div>
-              <h2 className={styles.h2}>Home Building Ecosystem</h2>
+              <Link to="/" className={styles.logo_link}>
+                <h2 className={styles.h2}>Home Building Ecosystem</h2>
+              </Link>
               <h4 className={styles.h4}>Login Now</h4>
             </div>
             <div className={styles.input_container_wrapper}>

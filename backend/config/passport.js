@@ -42,3 +42,5 @@ passport.use(new GoogleStrategy({
 ));
 
 // Similar setup for Facebook and Twitter strategies
+
+passport.use()
