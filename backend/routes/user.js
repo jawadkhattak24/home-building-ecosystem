@@ -1,93 +1,118 @@
 const express = require("express");
 const router = express.Router();
-const passport = require("passport");
 const User = require("../models/User");
-const GoogleStrategy = require("passport-google-oauth20").Strategy;
-const FacebookStrategy = require("passport-facebook").Strategy;
-const TwitterStrategy = require("passport-twitter").Strategy;
 const dotenv = require("dotenv");
+const axios = require("axios");
+const { sendVerificationEmail } = require("../utils/emailService");
 
 const env = process.env.NODE_ENV || "development";
 dotenv.config({ path: `.env.${env}` });
 
-passport.serializeUser((user, done) => {
-  done(null, user.id);
-});
 
-passport.deserializeUser(async (id, done) => {
+router.post("/register", async (req, res) => {
+  const defaultAvatar =
+    "https://servicesthumbnailbucket.s3.ap-south-1.amazonaws.com/profile_avatar.jpg";
+  const defaultCover =
+    "https://servicesthumbnailbucket.s3.ap-south-1.amazonaws.com/defaultCover.png";
+
   try {
-    const user = await User.findById(id);
-    done(null, user);
+    const { name, username, email, password } = req.body;
+    const ip = req.ip;
+    console.log("IP in register route:", ip);
+    console.log("IP in register route:", req.socket.remoteAddress);
+
+    // const locationResponse = await axios.get(`https://ipapi.co/${ip}/json/`);
+    // const locationData = locationResponse.data;
+
+    let user = await User.findOne({ email });
+    if (user) {
+      return res.status(400).json({ msg: "User already exists" });
+    }
+
+    user = new User({
+      name,
+      username,
+      email,
+      password,
+      profilePictureUrl: defaultAvatar,
+      coverPictureUrl: defaultCover,
+
+      verificationCode: undefined,
+      verificationCodeExpires: undefined,
+      isVerified: false,
+    });
+
+    await user.save();
+
+    return res.status(200).json({
+      msg: "User registered successfully, please verify your email",
+    });
   } catch (err) {
-    done(err);
+    console.error(err);
+    res
+      .status(500)
+      .json({ message: "Server error", error: err.message || err.toString() });
   }
 });
 
-console.log("GOOGLE_CLIENT_ID", process.env.GOOGLE_CLIENT_ID);
+router.post("/send-verification", async (req, res) => {
+  try {
+    const { email } = req.body;
+    const verificationCode = Math.floor(
+      100000 + Math.random() * 900000
+    ).toString();
+    const verificationCodeExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
 
-passport.use(
-  new GoogleStrategy(
-    {
-      clientID: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "/auth/google/callback",
-    },
-    async (accessToken, refreshToken, profile, done) => {
-      try {
-        // Check if user exists
-        let user = await User.findOne({ googleId: profile.id });
-        if (!user) {
-          // Create new user
-          user = await User.create({
-            googleId: profile.id,
-            name: profile.displayName,
-            email: profile.emails[0].value,
-          });
-        }
-        return done(null, user);
-      } catch (err) {
-        return done(err);
-      }
+    let user = await User.findOne({ email });
+    if (user) {
+      user.verificationCode = verificationCode;
+      user.verificationCodeExpires = verificationCodeExpires;
+    } else {
+      console.log("Problem in finding user, we'll handle this later");
     }
-  )
-);
 
-router.get(
-  "/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
-);
+    await sendVerificationEmail(email, verificationCode);
 
-router.get(
-  "/google/callback",
-  passport.authenticate("google", {
-    failureRedirect: "/login",
-    successRedirect: "/dashboard",
-  })
-);
+    res.json({ message: "Verification code sent to your email" });
+  } catch (err) {
+    console.error(
+      "Error sending verification code (Error occured in backend)",
+      err
+    );
 
-router.get("/facebook", passport.authenticate("facebook"));
+    res.status(500).json({
+      message: "Error sending verification code (Error occured in backend)",
+      error: err.message || err.toString(),
+    });
+  }
+});
 
-router.get(
-  "/facebook/callback",
-  passport.authenticate("facebook", {
-    failureRedirect: "/login",
-    successRedirect: "/dashboard",
-  })
-);
+router.get("/verify-code", async (req, res) => {
+  try {
+    const { email, verificationCode } = req.body;
+    const user = await User.findOne({ email });
+    console.log("User in verify-code endpoint:", user);
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+    if (user.verificationCode !== verificationCode) {
+      return res.status(400).json({ msg: "Invalid verification code" });
+    }
+    if (user.verificationCodeExpires < Date.now()) {
+      return res.status(400).json({ msg: "Verification code expired" });
+    }
 
-router.get("/twitter", passport.authenticate("twitter"));
+    console.log("User data for payload:", JSON.stringify(user, null, 2));
 
-router.get(
-  "/twitter/callback",
-  passport.authenticate("twitter", {
-    failureRedirect: "/login",
-    successRedirect: "/dashboard",
-  })
-);
-
-router.get("/logout", (req, res) => {
-  req.logout();
-  res.redirect("/");
+    res.data = {
+      success: true,
+      message: "Verification code verified successfully",
+    };
+    res.status(200).json(res.data);
+  } catch (err) {
+    console.error("Error verifying verification code", err);
+    res.status(500).json({ msg: "Internal server error" });
+  }
 });
 
 module.exports = router;

@@ -1,0 +1,74 @@
+@use "../../../globalStyles/_base.scss" as base;
+
+.service_card {
+  display: flex;
+  flex-direction: column;
+  background-color: base.$white;
+  width: 400px;
+  border-radius: 5px;
+  height: 280px;
+  // border: 1px solid base.$border-color;
+
+  &:hover {
+    transform: scale(1.009);
+    transition: all 0.3s ease-in;
+  }
+
+  .thumbnailImage {
+    border-radius: 5px 5px 0 0;
+    object-fit: cover;
+  }
+
+  .cardDetails {
+    width: 400px;
+    height: 130px;
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    padding: 15px 15px;
+    gap: 20px;
+    background-color: base.$white;
+    border: 1px solid base.$border-color;
+    border-radius: 0 0 5px 5px;
+
+    .serviceTitle {
+      font-size: 18px;
+      font-family: "Inter", sans-serif;
+      font-weight: 600;
+      color: #000000;
+      margin: 0;
+      grid-column-start: 1;
+      grid-column-end: 3;
+    }
+    .serviceDescription {
+      font: base.$p_reg;
+      color: base.$black;
+      margin: 0;
+      display: -webkit-box;
+      line-clamp: 2;
+      -webkit-line-clamp: 2; /* Number of lines you want to display */
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: pre-wrap; /* Preserves spaces and line breaks */
+    }
+
+    .serviceDescription {
+      grid-column: 1 / 3;
+      grid-row: 2 / 2;
+    }
+
+    .providerDetails {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      .providerImage {
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+      }
+    }
+  }
+}

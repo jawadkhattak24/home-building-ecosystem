@@ -15,15 +15,11 @@ export default function LoginPage() {
   });
 
   const handleGoogleLogin = () => {
-    window.location.href = `${import.meta.env.VITE_API_URL}/api/user/google`;
+    window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;
   };
 
   const handleFacebookLogin = () => {
     window.location.href = `${import.meta.env.VITE_API_URL}/api/user/facebook`;
-  };
-
-  const handleTwitterLogin = () => {
-    window.location.href = `${import.meta.env.VITE_API_URL}/api/user/twitter`;
   };
 
   const navigate = useNavigate();
@@ -175,13 +171,6 @@ export default function LoginPage() {
               >
                 <FaFacebookF className={styles.socialIcon} />
                 Login with Facebook
-              </button>
-              <button
-                className={styles.socialButton}
-                onClick={handleTwitterLogin}
-              >
-                <FaTwitter className={styles.socialIcon} />
-                Login with Twitter
               </button>
             </div>
 

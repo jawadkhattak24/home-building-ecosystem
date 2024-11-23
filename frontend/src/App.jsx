@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "./App.css";
 import Home from "./pages/home/home";
+import HomeNew from "./pages/homeNew/home";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LoginPage from "./pages/login/login";
 import RegisterPage from "./pages/register/register";
@@ -13,6 +14,7 @@ function App() {
         <AuthProvider>
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/homeNew" element={<HomeNew />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
           </Routes>

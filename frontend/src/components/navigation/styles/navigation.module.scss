@@ -1,4 +1,5 @@
-// components/Header/Header.module.scss
+@use "../../../globalStyles/base" as base;
+
 .header {
   background-color: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -63,7 +64,7 @@
   color: white;
 
   &:hover {
-    background-color: darken(#ff5722, 10%);
+    background-color: base.$primary-dark;
   }
 }
 
@@ -120,14 +121,4 @@
   }
 }
 
-.proBtn {
-  background-color: #4caf50;
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  text-decoration: none;
 
-  &:hover {
-    background-color: darken(#4caf50, 10%);
-  }
-}

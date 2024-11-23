@@ -1,0 +1,28 @@
+@use "../../../globalStyles/_base.scss" as base;
+
+.slick-prev:before,
+.slick-next:before {
+  color: red;
+}
+
+.featuredServices_main_container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 30px;
+  padding-top: 30px;
+  padding-left: 50px;
+  padding-right: 50px;
+  padding-bottom: 30px;
+  background-color: base.$background;
+
+  .service_card_wrapper {
+    margin-right: 16px;
+  }
+
+  .services_container {
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+  }
+}

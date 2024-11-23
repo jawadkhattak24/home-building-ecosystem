@@ -265,8 +265,6 @@
 }
 
 .signIn_link {
-  // font: base.$p_large;
-  // color: base.$black;
   text-decoration: none;
   margin-top: 20px;
 }
@@ -274,10 +272,42 @@
 .logo_link {
   text-decoration: none;
   color: base.$primary;
-font-size: 25px;
+  font-size: 25px;
   margin-bottom: 50px;
 
   &:hover {
     color: darken(base.$primary, 10%);
+  }
+}
+
+.error {
+  color: #e74c3c;
+  font-size: 0.9rem;
+  margin-top: 5px;
+  margin-left: 5px;
+}
+
+.passwordWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  .input {
+    width: 100%;
+    padding-right: 40px;
+  }
+
+  .eyeButton {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #888;
+    font-size: 1.2rem;
+
+    &:hover {
+      color: #555;
+    }
   }
 }

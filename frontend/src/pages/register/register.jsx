@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import axios from "redaxios";
 import styles from "./styles/register.module.scss";
 import { Link } from "react-router-dom";
-import { ArrowLeft, ArrowRight } from "lucide-react";
-import { FaGoogle, FaFacebookF, FaTwitter } from "react-icons/fa";
+import { ArrowLeft, ArrowRight, Eye, EyeOff } from "lucide-react";
+import { FaGoogle, FaFacebookF } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/authContext";
 
@@ -11,10 +11,12 @@ export default function RegistrationForm() {
   const [step, setStep] = useState(1);
   const navigate = useNavigate();
   const { login } = useAuth();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const [userData, setUserData] = useState({
-    firstName: "",
-    lastName: "",
-    userType: "",
+    name: "",
+    username: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -23,44 +25,40 @@ export default function RegistrationForm() {
 
   const [errors, setErrors] = useState({});
 
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
+
+  const toggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword((prev) => !prev);
+  };
+
   const handleGoogleLogin = () => {
-    window.location.href = `${import.meta.env.VITE_API_URL}/api/user/google`;
+    window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;
   };
 
   const handleFacebookLogin = () => {
     window.location.href = `${import.meta.env.VITE_API_URL}/api/user/facebook`;
   };
 
-  const handleTwitterLogin = () => {
-    window.location.href = `${import.meta.env.VITE_API_URL}/api/user/twitter`;
-  };
-
   const handleChange = (e) => {
+    const { name, value } = e.target;
     setUserData({ ...userData, [e.target.name]: e.target.value });
-    setErrors({ ...errors, [e.target.name]: "" });
+
+    if (name == "username" && !/^[a-zA-Z0-9_-]+$/.test(value)) {
+      setErrors({
+        ...errors,
+        username:
+          "Username can only contain letters, numbers, underscores, and hyphens",
+      });
+    } else {
+      setErrors({ ...errors, [name]: "" });
+    }
   };
 
   const handleUserTypeSelect = (type) => {
     setUserData({ ...userData, userType: type });
     setErrors({ ...errors, userType: "" });
-  };
-
-  const handleGoogleSuccess = async (response) => {
-    try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/users/register-google`,
-        { tokenId: response.credential, userType: userData.userType }
-      );
-      console.log("Response from Google registration:", res.data);
-      alert("Registration with Google successful, redirecting to home page");
-      const { token, user } = res.data;
-      login({ token, user });
-      // localStorage.setItem("token", token);
-      navigate("/");
-    } catch (error) {
-      console.error("Error registering with Google", error);
-      alert("Error registering with Google");
-    }
   };
 
   const handleVerifyCode = async (e) => {
@@ -155,13 +153,39 @@ export default function RegistrationForm() {
 
   const validateForm = () => {
     const newErrors = {};
-    if (!userData.firstName) newErrors.firstName = "First name is required";
-    if (!userData.lastName) newErrors.lastName = "Last name is required";
-    if (!userData.email) newErrors.email = "Email is required";
-    if (!userData.password) newErrors.password = "Password is required";
+
+    if (!userData.name.trim()) {
+      newErrors.name = "Name is required";
+    }
+
+    const usernameRegex = /^[a-zA-Z0-9_-]+$/;
+    if (!userData.username.trim()) {
+      newErrors.username = "Username is required";
+    } else if (!usernameRegex.test(userData.username)) {
+      newErrors.username =
+        "Username can only contain letters, numbers, underscores, and hyphens";
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!userData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!emailRegex.test(userData.email)) {
+      newErrors.email = "Enter a valid email address";
+    }
+
+    const passwordRegex =
+      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!userData.password) {
+      newErrors.password = "Password is required";
+    } else if (!passwordRegex.test(userData.password)) {
+      newErrors.password =
+        "Password must be at least 8 characters long, include one number, one special character, and one letter";
+    }
+
     if (userData.password !== userData.confirmPassword) {
       newErrors.confirmPassword = "Passwords do not match";
     }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -171,18 +195,20 @@ export default function RegistrationForm() {
       return;
     }
 
+    console.log("Sending data to server:", userData);
+
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/users/register`,
+        `${import.meta.env.VITE_API_URL}/api/user/register`,
         userData
       );
-      console.log(res.data);
+      console.log("Registration response:", res.data);
 
       const codeRes = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/users/send-verification`,
+        `${import.meta.env.VITE_API_URL}/api/user/send-verification`,
         { email: userData.email }
       );
-      console.log(codeRes.data);
+      console.log("Verification code response:", codeRes.data);
       alert("Verification code sent to your email");
       handleNextStep();
     } catch (error) {
@@ -208,40 +234,25 @@ export default function RegistrationForm() {
       case 1:
         return (
           <>
-            {/* <GoogleOAuthProvider
-              clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}
-            >
-              <GoogleLogin
-                buttonText="Register with Google"
-                onSuccess={handleGoogleSuccess}
-                onFailure={(error) =>
-                  console.error("Google Sign-In Error", error)
-                }
-                cookiePolicy={"single_host_origin"}
-              />
-            </GoogleOAuthProvider> */}
-
             <input
               className={styles.input}
               type="text"
-              placeholder="First Name"
-              name="firstName"
-              value={userData.firstName}
+              placeholder="Name"
+              name="name"
+              value={userData.name}
               onChange={handleChange}
             />
-            {errors.firstName && (
-              <p className={styles.error}>{errors.firstName}</p>
-            )}
+            {errors.name && <p className={styles.error}>{errors.name}</p>}
             <input
               className={styles.input}
               type="text"
-              placeholder="Last Name"
-              name="lastName"
-              value={userData.lastName}
+              placeholder="Username"
+              name="username"
+              value={userData.username}
               onChange={handleChange}
             />
-            {errors.lastName && (
-              <p className={styles.error}>{errors.lastName}</p>
+            {errors.username && (
+              <p className={styles.error}>{errors.username}</p>
             )}
             <input
               className={styles.input}
@@ -252,25 +263,44 @@ export default function RegistrationForm() {
               onChange={handleChange}
             />
             {errors.email && <p className={styles.error}>{errors.email}</p>}
-            <input
-              className={styles.input}
-              type="password"
-              placeholder="Password"
-              name="password"
-              value={userData.password}
-              onChange={handleChange}
-            />
+            <div className={styles.passwordWrapper}>
+              <input
+                className={styles.input}
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
+                name="password"
+                value={userData.password}
+                onChange={handleChange}
+              />
+              <button
+                type="button"
+                className={styles.eyeButton}
+                onClick={togglePasswordVisibility}
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
             {errors.password && (
               <p className={styles.error}>{errors.password}</p>
             )}
-            <input
-              className={styles.input}
-              type="password"
-              placeholder="Confirm Password"
-              name="confirmPassword"
-              value={userData.confirmPassword}
-              onChange={handleChange}
-            />
+
+            <div className={styles.passwordWrapper}>
+              <input
+                className={styles.input}
+                type={showConfirmPassword ? "text" : "password"}
+                placeholder="Confirm Password"
+                name="confirmPassword"
+                value={userData.confirmPassword}
+                onChange={handleChange}
+              />
+              <button
+                type="button"
+                className={styles.eyeButton}
+                onClick={toggleConfirmPasswordVisibility}
+              >
+                {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
             {errors.confirmPassword && (
               <p className={styles.error}>{errors.confirmPassword}</p>
             )}
@@ -315,13 +345,6 @@ export default function RegistrationForm() {
               <FaFacebookF className={styles.socialIcon} />
               Login with Facebook
             </button>
-            <button
-              className={styles.socialButton}
-              onClick={handleTwitterLogin}
-            >
-              <FaTwitter className={styles.socialIcon} />
-              Login with Twitter
-            </button>
           </div>
 
           <Link to="/login" className={styles.signIn_link}>
@@ -359,12 +382,12 @@ export default function RegistrationForm() {
               )}
               {step === 1 && (
                 <button type="submit" className={styles.nav_button}>
-                  Complete Sign Up <ArrowRight size={20} />
+                  Verify Email <ArrowRight size={20} />
                 </button>
               )}
               {step === 2 && (
                 <button type="submit" className={styles.nav_button}>
-                  Verify Email <ArrowRight size={20} />
+                  Complete Sign Up <ArrowRight size={20} />
                 </button>
               )}
             </div>

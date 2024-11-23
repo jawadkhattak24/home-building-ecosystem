@@ -1,7 +1,7 @@
-// config/passport.js
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const FacebookStrategy = require('passport-facebook').Strategy;
-const TwitterStrategy = require('passport-twitter').Strategy;
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const FacebookStrategy = require("passport-facebook").Strategy;
+const User = require("../models/User");
+const passport = require("passport");
 
 passport.serializeUser((user, done) => {
   done(null, user.id);
@@ -16,31 +16,40 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
-// Google Strategy
-passport.use(new GoogleStrategy({
-    clientID: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: "/auth/google/callback"
-  },
-  async (accessToken, refreshToken, profile, done) => {
-    try {
-      // Check if user exists
-      let user = await User.findOne({ googleId: profile.id });
-      if (!user) {
-        // Create new user
-        user = await User.create({
-          googleId: profile.id,
-          name: profile.displayName,
-          email: profile.emails[0].value
-        });
+console.log("process.env.GOOGLE_CLIENT_ID", process.env.GOOGLE_CLIENT_ID);
+
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: "/auth/google/callback",
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        let user = await User.findOne({ googleId: profile.id });
+        if (user) {
+          return done(null, user);
+        }
+
+        const username = profile.emails[0].value.split("@")[0];
+
+        if (!user) {
+          user = await User.create({
+            googleId: profile.id,
+            name: profile.displayName,
+            username: username,
+            email: profile.emails[0].value,
+            isVerified: true,
+            profilePictureUrl: profile.photos[0].value,
+          });
+        }
+        return done(null, user);
+      } catch (err) {
+        return done(err);
       }
-      return done(null, user);
-    } catch (err) {
-      return done(err);
     }
-  }
-));
+  )
+);
 
-// Similar setup for Facebook and Twitter strategies
-
-passport.use()
+module.exports = passport;

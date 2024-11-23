@@ -1,0 +1,50 @@
+@use "../../../globalStyles/_base.scss" as base;
+
+.service_card {
+  display: flex;
+  flex-direction: column;
+  // background-color: base.$primary;
+  width: 400px;
+  // border-radius: 10px;
+  height: 320px;
+  // border:1px solid base.$background_light;
+  // margin-right: 20px;
+
+  .thumbnailImage {
+    border-radius: 5px 5px 0 0;
+  }
+
+  .cardDetails {
+    width: 400px;
+    height: 130px;
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    padding: 20px 20px;
+    background-color: base.$background_light;
+    border-radius: 0 0 5px 5px;
+
+    h3 {
+      font: base.$p_reg;
+      font-weight: bold;
+      color: base.$black;
+      margin: 0;
+    }
+    .serviceDescription {
+      font: base.$p_reg;
+      color: base.$black;
+      margin: 0;
+      display: -webkit-box;
+      -webkit-line-clamp: 2; /* Number of lines you want to display */
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: pre-wrap; /* Preserves spaces and line breaks */
+    }
+
+    .serviceDescription {
+      grid-column: 1 / 3;
+      grid-row: 2 / 2;
+    }
+  }
+}

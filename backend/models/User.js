@@ -1,19 +1,17 @@
 const mongoose = require("mongoose");
 
 const UserSchema = new mongoose.Schema({
-  googleId: {
+  name: {
     type: String,
-  },
-  facebookId: {
-    type: String,
-  },
-  twitterId: {
-    type: String,
+    required: true,
   },
   username: {
     type: String,
-    required: true,
+    required: function () {
+      return !this.googleId && !this.facebookId;
+    },
     unique: true,
+    sparse: true,
   },
   email: {
     type: String,
@@ -22,11 +20,35 @@ const UserSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: true,
+    required: function () {
+      return !this.googleId && !this.facebookId;
+    },
   },
-  profilePicture: {
+  profilePictureUrl: {
     type: String,
     default: "",
+  },
+  coverPictureUrl: {
+    type: String,
+    default: "",
+  },
+
+  verificationCode: String,
+  verificationCodeExpires: Date,
+  isVerified: {
+    type: Boolean,
+    default: false,
+  },
+
+  googleId: {
+    type: String,
+    unique: true,
+    sparse: true,
+  },
+  facebookId: {
+    type: String,
+    unique: true,
+    sparse: true,
   },
 });
 
