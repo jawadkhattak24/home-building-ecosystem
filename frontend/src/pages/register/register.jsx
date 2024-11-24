@@ -106,7 +106,6 @@ export default function RegistrationForm() {
   };
 
   const handleSignIn = async () => {
-    // Validate input fields
     if (!userData.email) {
       alert("Email is required to sign in.");
       return;
@@ -129,8 +128,7 @@ export default function RegistrationForm() {
       if (res.data && res.data.token && res.data.user) {
         const { token, user } = res.data;
         login({ token, user });
-        // localStorage.setItem("token", token);
-        // localStorage.setItem("user", JSON.stringify(user));
+      
         navigate("/");
       } else {
         alert(res.data.message || "Sign in failed. Please try again.");
@@ -209,7 +207,7 @@ export default function RegistrationForm() {
         { email: userData.email }
       );
       console.log("Verification code response:", codeRes.data);
-      alert("Verification code sent to your email");
+      // alert("Verification code sent to your email");
       handleNextStep();
     } catch (error) {
       console.error("Registration error:", error.response.data);

@@ -8,12 +8,32 @@ router.get(
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
+// router.get(
+//   "/google/callback",
+//   passport.authenticate("google", {
+//     failureRedirect: "/login",
+//   }),
+//   (req, res) => {
+//     const { token } = req.user;
+//     res.redirect(`${process.env.FRONTEND_URL}/homeNew?token=${token}`);
+//   }
+// );
+
 router.get(
   "/google/callback",
-  passport.authenticate("google", {
-    failureRedirect: "/login",
-    successRedirect: `${process.env.FRONTEND_URL}/homeNew`,
-  })
+  passport.authenticate("google", { session: false }),
+  (req, res) => {
+    const { token } = req.user;
+
+    res.cookie("authToken", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+
+    res.redirect(`${process.env.FRONTEND_URL}/homeNew`);
+  }
 );
 
 router.get("/facebook", passport.authenticate("facebook"));

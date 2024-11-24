@@ -2,6 +2,7 @@ const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const FacebookStrategy = require("passport-facebook").Strategy;
 const User = require("../models/User");
 const passport = require("passport");
+const jwt = require("jsonwebtoken");
 
 passport.serializeUser((user, done) => {
   done(null, user.id);
@@ -44,7 +45,11 @@ passport.use(
             profilePictureUrl: profile.photos[0].value,
           });
         }
-        return done(null, user);
+
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+          expiresIn: "1d",
+        });
+        return done(null, { user, token });
       } catch (err) {
         return done(err);
       }

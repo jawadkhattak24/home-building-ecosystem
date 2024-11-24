@@ -4,10 +4,59 @@ const User = require("../models/User");
 const dotenv = require("dotenv");
 const axios = require("axios");
 const { sendVerificationEmail } = require("../utils/emailService");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const env = process.env.NODE_ENV || "development";
 dotenv.config({ path: `.env.${env}` });
 
+router.post("/login", async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    console.log("Received signin request for username:", username);
+
+    let user = await User.findOne({ username });
+
+    if (!user) {
+      console.log("User not found for username:", username);
+      return res.status(400).json({ msg: "Incorrect username" });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      console.log("Password does not match");
+      return res.status(400).json({ msg: "Incorrect password" });
+    }
+
+    const payload = {
+      user: {
+        id: user._id,
+      },
+    };
+
+    jwt.sign(
+      payload,
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" },
+      (err, token) => {
+        if (err) throw err;
+
+        res.cookie("authToken", token, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "strict",
+          maxAge: 24 * 60 * 60 * 1000,
+        });
+
+        res.json({ user: { id: user._id, username: user.username } });
+      }
+    );
+  } catch (err) {
+    console.error("Server error in signin route:", err);
+    res.status(500).json({ msg: "Server error" });
+  }
+});
 
 router.post("/register", async (req, res) => {
   const defaultAvatar =
@@ -113,6 +162,11 @@ router.get("/verify-code", async (req, res) => {
     console.error("Error verifying verification code", err);
     res.status(500).json({ msg: "Internal server error" });
   }
+});
+
+router.post("/logout", (req, res) => {
+  res.clearCookie("authToken");
+  res.json({ msg: "Logged out successfully" });
 });
 
 module.exports = router;

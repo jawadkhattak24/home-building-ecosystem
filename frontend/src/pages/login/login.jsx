@@ -36,52 +36,19 @@ export default function LoginPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    console.log("Logging in with:", userData);
 
     try {
-      console.log(
-        "Sending request to:",
-        `${import.meta.env.VITE_API_URL}/api/users/signin`
-      );
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/users/signin`,
-        userData
-      );
-      console.log("Response received:", res.data);
-      const { token, user } = res.data;
-      login({ token, user });
-      localStorage.setItem("token", token);
-
-      const userId = user._id || user.id;
-
-      const conversationCheckRes = await axios.get(
-        `${
-          import.meta.env.VITE_API_URL
-        }/api/conversations/check-conversation/${userId}`,
+        `${import.meta.env.VITE_API_URL}/api/user/login`,
+        userData,
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          withCredentials: true,
         }
       );
+      const { user } = res.data;
 
-      console.log("Conversation check response:", conversationCheckRes.data);
-      const hasConversations = conversationCheckRes.data.exists;
-
-      if (user.userType === "freelancer") {
-        console.log("User type: freelancer");
-        if (hasConversations) {
-          navigate("/inbox");
-        } else {
-          navigate("/services");
-        }
-      } else if (user.userType === "employer") {
-        if (hasConversations) {
-          navigate("/inbox");
-        } else {
-          navigate("/services_directory");
-        }
-      }
+      login({ user });
+      navigate("/homeNew");
     } catch (err) {
       console.error("Error:", err);
       if (err.response?.data?.msg === "Incorrect email") {
@@ -100,9 +67,9 @@ export default function LoginPage() {
     <React.Fragment>
       <div className={styles.signIn_wrapper}>
         {isLoading && (
-          <div className={LoaderStyles.loadingWrapper}>
-            <div className={LoaderStyles.loader}></div>
-            <p className={LoaderStyles.loadingText}>Logging in...</p>
+          <div className={styles.loadingWrapper}>
+            <div className={styles.loader}></div>
+            <p className={styles.loadingText}>Logging in...</p>
           </div>
         )}
         <div className={styles.parent_cont}>
