@@ -51,7 +51,7 @@
         display: flex;
         flex-direction: column;
         justify-content: center;
-        align-items: center;
+        align-items: flex-start;
         gap: 15px;
 
         .input {
@@ -208,6 +208,7 @@
   width: 100vw;
   background-color: #f9f9f9;
   position: absolute;
+  z-index: 1000;
 }
 
 .loader {
@@ -232,4 +233,35 @@
   margin-top: 10px;
   font-size: 18px;
   color: #555;
+}
+
+.passwordWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  .input {
+    width: 100%;
+    padding-right: 40px;
+  }
+
+  .eyeButton {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #888;
+    font-size: 1.2rem;
+
+    &:hover {
+      color: #555;
+    }
+  }
+}
+
+.errorText {
+  color: red;
+  font-size: 14px;
+  text-align: left;
 }

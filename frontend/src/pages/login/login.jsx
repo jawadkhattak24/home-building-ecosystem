@@ -1,26 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./styles/login.module.scss";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/authContext";
 import axios from "redaxios";
-import { FaGoogle, FaFacebookF, FaTwitter } from "react-icons/fa";
-// import LoaderStyles from "../../UserProfile/styles/page.module.scss";
+import { FaGoogle, FaFacebookF } from "react-icons/fa";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function LoginPage() {
   const { login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
   const [errorStatus, setErrorStatus] = useState({
     email: false,
     password: false,
   });
-
-  const handleGoogleLogin = () => {
-    window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;
-  };
-
-  const handleFacebookLogin = () => {
-    window.location.href = `${import.meta.env.VITE_API_URL}/api/user/facebook`;
-  };
 
   const navigate = useNavigate();
 
@@ -33,9 +27,26 @@ export default function LoginPage() {
     setUserData({ ...userData, [e.target.name]: e.target.value });
   };
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleGoogleLogin = () => {
+    window.location.href = `${
+      import.meta.env.VITE_API_URL
+    }/auth/google/callback`;
+  };
+
+  const handleFacebookLogin = () => {
+    window.location.href = `${
+      import.meta.env.VITE_API_URL
+    }/auth/facebook/callback`;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setErrorStatus({ email: false, password: false });
 
     try {
       const res = await axios.post(
@@ -45,21 +56,36 @@ export default function LoginPage() {
           withCredentials: true,
         }
       );
-      const { user } = res.data;
 
-      login({ user });
+      const { user, token } = await res.data;
+
+      // if (res.status === 200) {
+      login({ user, token });
       navigate("/homeNew");
+      // }
     } catch (err) {
-      console.error("Error:", err);
-      if (err.response?.data?.msg === "Incorrect email") {
-        setErrorStatus({ email: true, password: false });
-      } else if (err.response?.data?.msg === "Incorrect password") {
-        setErrorStatus({ email: false, password: true });
-      } else {
-        alert("Error signing in");
-      }
+      handleError(err);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleError = (err) => {
+    if (!err) {
+      console.error("Network error. Please try again later.");
+      return;
+    }
+
+    const { status, data } = err;
+
+    if (status === 400) {
+      if (data.msg === "Incorrect email") {
+        setErrorStatus({ email: true, password: false });
+      } else if (data.msg === "Incorrect password") {
+        setErrorStatus({ email: false, password: true });
+      }
+    } else {
+      console.error("Error during login:", err);
     }
   };
 
@@ -87,22 +113,41 @@ export default function LoginPage() {
               <div className={styles.input_container}>
                 <input
                   className={` ${styles.input} ${
-                    errorStatus.username ? styles.input_error : ""
+                    errorStatus.email ? styles.input_error : ""
                   }`}
                   type="text"
-                  placeholder="Username"
-                  name="username"
+                  placeholder="email"
+                  name="email"
                   onChange={handleChange}
                 />
-                <input
-                  className={` ${styles.input} ${
-                    errorStatus.password ? styles.input_error : ""
-                  }`}
-                  type="password"
-                  placeholder="Password"
-                  name="password"
-                  onChange={handleChange}
-                />
+                {errorStatus.email && (
+                  <p className={styles.errorText}>
+                    email is incorrect. Please try again.
+                  </p>
+                )}
+                <div className={styles.passwordWrapper}>
+                  <input
+                    className={` ${styles.input} ${
+                      errorStatus.password ? styles.input_error : ""
+                    }`}
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Password"
+                    name="password"
+                    onChange={handleChange}
+                  />
+                  <button
+                    type="button"
+                    className={styles.eyeButton}
+                    onClick={togglePasswordVisibility}
+                  >
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                </div>
+                {errorStatus.password && (
+                  <p className={styles.errorText}>
+                    Password is incorrect. Please try again.
+                  </p>
+                )}
               </div>
 
               <div className={styles.misc_fields}>
@@ -146,12 +191,6 @@ export default function LoginPage() {
             </div>
           </form>
         </div>
-        {/* <div className={styles.parent_cont_right}>
-          <div>
-            <h1 className={styles.h1}>GigChain</h1>
-            <p className={styles.p}>Feel the Freedom & Control</p>
-          </div>
-        </div> */}
       </div>
     </React.Fragment>
   );

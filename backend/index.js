@@ -6,6 +6,7 @@ const cors = require("cors");
 const passport = require("passport");
 const session = require("express-session");
 const dotenv = require("dotenv");
+const cookieParser = require("cookie-parser");
 
 const env = process.env.NODE_ENV || "development";
 dotenv.config({ path: `.env.${env}` });
@@ -17,6 +18,8 @@ const authRoutes = require("./routes/auth");
 require("./config/passport");
 
 console.log("mongodb url :", process.env.MONGODB_URI);
+
+app.use(cookieParser());
 
 app.use(
   session({

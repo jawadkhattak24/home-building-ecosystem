@@ -6,20 +6,135 @@ const axios = require("axios");
 const { sendVerificationEmail } = require("../utils/emailService");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const EmailVerification = require("../models/EmailVerification");
+const Professional = require("../models/Professional");
+const Supplier = require("../models/Supplier");
 
 const env = process.env.NODE_ENV || "development";
 dotenv.config({ path: `.env.${env}` });
 
-router.post("/login", async (req, res) => {
+router.get("/check-username", async (req, res) => {
   try {
-    const { username, password } = req.body;
-    console.log("Received signin request for username:", username);
+    const { username } = req.query;
+    if (!username) {
+      return res.status(400).json({ msg: "Username is required" });
+    }
 
-    let user = await User.findOne({ username });
+    const user = await User.findOne({ username });
+    if (user) {
+      return res
+        .status(200)
+        .json({ available: false, msg: "Username is already taken" });
+    }
+
+    return res
+      .status(200)
+      .json({ available: true, msg: "Username is available" });
+  } catch (err) {
+    console.error("Error checking username availability:", err);
+    res.status(500).json({ msg: "Internal server error" });
+  }
+});
+
+router.get("/test", async (req, res) => {
+  res.json({ msg: "Test route working" });
+});
+
+router.get("/check-email", async (req, res) => {
+  try {
+    const { email } = req.query;
+    if (!email) {
+      return res.status(400).json({ msg: "Email is required" });
+    }
+
+    const user = await User.findOne({ email });
+    if (user) {
+      return res
+        .status(200)
+        .json({ available: false, msg: "Email is already registered" });
+    }
+
+    return res.status(200).json({ available: true, msg: "Email is available" });
+  } catch (err) {
+    console.error("Error checking email availability:", err);
+    res.status(500).json({ msg: "Internal server error" });
+  }
+});
+
+const verifyTokenFromCookie = (req, res, next) => {
+  const token = req.cookies.authToken;
+  if (!token) {
+    return res.status(401).json({ msg: "No token, authorization denied" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded.user;
+    next();
+  } catch (err) {
+    console.error("JWT verification error:", err);
+    return res.status(401).json({ msg: "Invalid token" });
+  }
+};
+
+router.get("/me", async (req, res) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ success: false, message: "Unauthorized" });
+  }
+
+  const token = authHeader.split(" ")[1];
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log("Decoded token:", decoded);
+
+    let user;
+    if (decoded.id !== undefined) {
+      user = await User.findById(decoded.id).select("-password");
+    } else if (decoded.googleId !== undefined) {
+      user = await User.findOne({ googleId: decoded.googleId }).select(
+        "-password"
+      );
+    }
 
     if (!user) {
-      console.log("User not found for username:", username);
-      return res.status(400).json({ msg: "Incorrect username" });
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        profilePictureUrl: user.profilePictureUrl,
+      },
+    });
+  } catch (err) {
+    if (err.name === "TokenExpiredError") {
+      return res.status(401).json({ success: false, message: "Token expired" });
+    } else if (err.name === "JsonWebTokenError") {
+      return res.status(401).json({ success: false, message: "Invalid token" });
+    }
+
+    console.error(err);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+router.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    console.log("Received signin request for email:", email);
+
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      console.log("User not found for email:", email);
+      return res.status(400).json({ msg: "Incorrect email" });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
@@ -30,9 +145,10 @@ router.post("/login", async (req, res) => {
     }
 
     const payload = {
-      user: {
-        id: user._id,
-      },
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      profilePictureUrl: user.profilePictureUrl,
     };
 
     jwt.sign(
@@ -40,16 +156,12 @@ router.post("/login", async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "1d" },
       (err, token) => {
-        if (err) throw err;
+        if (err) {
+          console.error("Error signing JWT token:", err);
+          throw err;
+        }
 
-        res.cookie("authToken", token, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "strict",
-          maxAge: 24 * 60 * 60 * 1000,
-        });
-
-        res.json({ user: { id: user._id, username: user.username } });
+        res.json({ user: payload, token });
       }
     );
   } catch (err) {
@@ -65,13 +177,10 @@ router.post("/register", async (req, res) => {
     "https://servicesthumbnailbucket.s3.ap-south-1.amazonaws.com/defaultCover.png";
 
   try {
-    const { name, username, email, password } = req.body;
-    const ip = req.ip;
-    console.log("IP in register route:", ip);
-    console.log("IP in register route:", req.socket.remoteAddress);
-
-    // const locationResponse = await axios.get(`https://ipapi.co/${ip}/json/`);
-    // const locationData = locationResponse.data;
+    const { userType, name, email, password } = req.body;
+    // const ip = req.ip;
+    // console.log("IP in register route:", ip);
+    // console.log("IP in register route:", req.socket.remoteAddress);
 
     let user = await User.findOne({ email });
     if (user) {
@@ -79,28 +188,47 @@ router.post("/register", async (req, res) => {
     }
 
     user = new User({
+      userType,
       name,
-      username,
       email,
       password,
       profilePictureUrl: defaultAvatar,
       coverPictureUrl: defaultCover,
-
-      verificationCode: undefined,
-      verificationCodeExpires: undefined,
-      isVerified: false,
+      isVerified: true,
     });
 
     await user.save();
 
-    return res.status(200).json({
-      msg: "User registered successfully, please verify your email",
-    });
+    if (userType === "homeowner") {
+      const payload = {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        profilePictureUrl: user.profilePictureUrl,
+      };
+
+      jwt.sign(
+        payload,
+        process.env.JWT_SECRET,
+        { expiresIn: "1d" },
+        (err, token) => {
+          if (err) {
+            console.error("Error signing JWT token:", err);
+            throw err;
+          }
+
+          res.status(200).json({ user: payload, token });
+        }
+      );
+    } else {
+      res.status(200).json({ msg: "User registered successfully" });
+    }
   } catch (err) {
     console.error(err);
-    res
-      .status(500)
-      .json({ message: "Server error", error: err.message || err.toString() });
+    res.status(500).json({
+      message: "Server error (Error occured in backend)",
+      error: err.message || err.toString(),
+    });
   }
 });
 
@@ -110,19 +238,28 @@ router.post("/send-verification", async (req, res) => {
     const verificationCode = Math.floor(
       100000 + Math.random() * 900000
     ).toString();
-    const verificationCodeExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
 
-    let user = await User.findOne({ email });
-    if (user) {
-      user.verificationCode = verificationCode;
-      user.verificationCodeExpires = verificationCodeExpires;
+    // Verification code ki expiry 10 minutes rakhi hai
+    const verificationCodeExpires = Date.now() + 10 * 60 * 1000;
+
+    let user = await EmailVerification.findOne({ email });
+
+    if (!user) {
+      user = new EmailVerification({
+        email,
+        verificationCode: 96925,
+        verificationCodeExpires,
+      });
+      await user.save();
     } else {
-      console.log("Problem in finding user, we'll handle this later");
+      user.verificationCode = 96925;
+      user.verificationCodeExpires = verificationCodeExpires;
+      await user.save();
     }
 
-    await sendVerificationEmail(email, verificationCode);
+    // await sendVerificationEmail(email, verificationCode);
 
-    res.json({ message: "Verification code sent to your email" });
+    res.status(200).json({ message: "Verification code sent to your email" });
   } catch (err) {
     console.error(
       "Error sending verification code (Error occured in backend)",
@@ -136,14 +273,22 @@ router.post("/send-verification", async (req, res) => {
   }
 });
 
-router.get("/verify-code", async (req, res) => {
+router.post("/verify-code", async (req, res) => {
   try {
     const { email, verificationCode } = req.body;
-    const user = await User.findOne({ email });
+    console.log("Email in verify-code endpoint:", email);
+    let user = await EmailVerification.findOne({ email });
+
     console.log("User in verify-code endpoint:", user);
     if (!user) {
       return res.status(404).json({ msg: "User not found" });
     }
+
+    console.log("Verification code in verify-code endpoint:", verificationCode);
+    console.log(
+      "User verification code in verify-code endpoint:",
+      user.verificationCode
+    );
     if (user.verificationCode !== verificationCode) {
       return res.status(400).json({ msg: "Invalid verification code" });
     }
@@ -160,6 +305,104 @@ router.get("/verify-code", async (req, res) => {
     res.status(200).json(res.data);
   } catch (err) {
     console.error("Error verifying verification code", err);
+    res.status(500).json({
+      message: "Error verifying verification code",
+      error: err.message || err.toString(),
+    });
+  }
+});
+
+router.post("/professional/profile", async (req, res) => {
+  console.log("Received professional profile data:", req.body);
+
+  try {
+    const {
+      email,
+      serviceType,
+      yearsExperience,
+      bio,
+      certifications,
+      portfolioLink,
+    } = req.body;
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    const professional = new Professional({
+      userId: user._id,
+      serviceType,
+      yearsExperience,
+      bio,
+      certifications,
+      portfolioLink,
+    });
+
+    await professional.save();
+
+    const payload = {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      profilePictureUrl: user.profilePictureUrl,
+    };
+
+    jwt.sign(
+      payload,
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" },
+      (err, token) => {
+        if (err) throw err;
+        res.status(200).json({ user: payload, token });
+      }
+    );
+  } catch (err) {
+    console.error("Error creating professional profile:", err);
+    res.status(500).json({ msg: "Internal server error" });
+  }
+});
+
+router.post("/supplier/profile", async (req, res) => {
+  console.log("Received supplier profile data:", req.body);
+
+  try {
+    const { email, businessName, contactInfo, additionalDetails } = req.body;
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    const supplier = new Supplier({
+      userId: user._id,
+      businessName,
+      contactInfo,
+      additionalDetails,
+    });
+
+    await supplier.save();
+
+    const payload = {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      profilePictureUrl: user.profilePictureUrl,
+    };
+
+    jwt.sign(
+      payload,
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" },
+      (err, token) => {
+        if (err) throw err;
+        res.status(200).json({ user: payload, token });
+      }
+    );
+  } catch (err) {
+    console.error("Error creating supplier profile:", err);
     res.status(500).json({ msg: "Internal server error" });
   }
 });

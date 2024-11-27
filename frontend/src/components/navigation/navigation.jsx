@@ -1,7 +1,35 @@
 import { Link } from "react-router-dom";
 import styles from "./styles/navigation.module.scss";
+import { useAuth } from "../../contexts/authContext";
+import { useState, useRef, useEffect } from "react";
 
 const Navigation = () => {
+  const { currentUser, logout } = useAuth();
+  const [showAvatarMenu, setShowAvatarMenu] = useState(false);
+  const avatarMenuRef = useRef(null);
+
+  const toggleAvatarMenu = () => {
+    setShowAvatarMenu(!showAvatarMenu);
+  };
+
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (
+        avatarMenuRef.current &&
+        !avatarMenuRef.current.contains(event.target)
+      ) {
+        setShowAvatarMenu(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, []);
+
+  const handleLogout = () => {
+    logout();
+  };
+
   return (
     <header className={styles.header}>
       <div className={styles.container}>
@@ -31,12 +59,44 @@ const Navigation = () => {
           {/* <Link to="/join-as-professional" className={styles.proBtn}>
             Join as Professional
           </Link> */}
-          <Link to="/login" className={styles.loginBtn}>
-            Login
-          </Link>
-          <Link to="/register" className={styles.registerBtn}>
-            Register
-          </Link>
+          {!currentUser && (
+            <>
+              <Link to="/login" className={styles.loginBtn}>
+                Login
+              </Link>
+              <Link to="/register" className={styles.registerBtn}>
+                Register
+              </Link>
+            </>
+          )}
+
+          {currentUser && (
+            <div className={styles.avatar_container} ref={avatarMenuRef}>
+              <button
+                className={styles.avatar_button}
+                onClick={toggleAvatarMenu}
+              >
+                <img
+                  src={currentUser.profilePictureUrl}
+                  alt={currentUser.username}
+                  className={styles.avatar_image}
+                />
+              </button>
+              {showAvatarMenu && (
+                <div className={styles.avatar_menu}>
+                  <Link to="/profile" className={styles.avatar_menu_item}>
+                    <i className="fas fa-user"></i> Profile
+                  </Link>
+                  <button
+                    className={styles.avatar_menu_item}
+                    onClick={handleLogout}
+                  >
+                    <i className="fas fa-sign-out-alt"></i> Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </nav>
       </div>
     </header>

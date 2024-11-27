@@ -17,14 +17,13 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
-console.log("process.env.GOOGLE_CLIENT_ID", process.env.GOOGLE_CLIENT_ID);
-
 passport.use(
   new GoogleStrategy(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: "/auth/google/callback",
+      scope: ["profile", "email"],
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
@@ -46,12 +45,48 @@ passport.use(
           });
         }
 
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-          expiresIn: "1d",
-        });
-        return done(null, { user, token });
+        return done(null, user);
       } catch (err) {
         return done(err);
+      }
+    }
+  )
+);
+
+passport.use(
+  new FacebookStrategy(
+    {
+      clientID: process.env.FACEBOOK_APP_ID,
+      clientSecret: process.env.FACEBOOK_APP_SECRET,
+      callbackURL: "/auth/facebook/callback",
+      profileFields: ["id", "displayName", "photos", "email"],
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        let user = await User.findOne({ facebookId: profile.id });
+
+        if (user) {
+          return done(null, user);
+        }
+
+        const username = profile.emails
+          ? profile.emails[0].value.split("@")[0]
+          : profile.displayName.replace(/\s/g, "").toLowerCase();
+
+        user = await User.create({
+          facebookId: profile.id,
+          name: profile.displayName,
+          username: username,
+          email: profile.emails
+            ? profile.emails[0].value
+            : `${profile.id}@facebook.com`,
+          isVerified: true,
+          profilePictureUrl: profile.photos ? profile.photos[0].value : null,
+        });
+
+        return done(null, user);
+      } catch (err) {
+        return done(err, null);
       }
     }
   )

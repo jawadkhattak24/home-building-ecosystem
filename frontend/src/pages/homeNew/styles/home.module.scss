@@ -9,15 +9,24 @@
   padding: 100px 50px;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   gap: 50px;
   // background-color: base.$white;
-  background: linear-gradient(120deg, #0b047c, #2b0046, #0b047c);
+  background: linear-gradient(
+    120deg,
+    base.$primary,
+    #8b0500,
+    base.$primary-dark
+  );
   border-bottom: 1px solid base.$background_light;
 
   .headings_container {
     display: flex;
     flex-direction: column;
     gap: 20px;
+    justify-content: center;
+    align-items: center;
 
     h5 {
       font: base.$h5;
@@ -27,6 +36,7 @@
     h1 {
       font: base.$h1xx;
       color: base.$white;
+      text-align: center;
     }
   }
 

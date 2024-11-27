@@ -4,8 +4,6 @@ import styles from "./styles/home.module.scss";
 import FeaturedServicesSection from "../../components/featured-services-section/featured-services-section";
 import ServiceCard from "../../components/search-result-card/search-result-card";
 import { useAuth } from "../../contexts/authContext";
-import Navigation from "../../components/navigation/navigation";
-import Footer from "../../components/footer/footer";
 
 function HomePage() {
   const { currentUser } = useAuth();
@@ -27,7 +25,6 @@ function HomePage() {
           import.meta.env.VITE_API_URL
         }/api/service/search?query=${searchQuery}`
       );
-      // console.log(response.data[0]);
       setSearchResults(response.data);
       setOldSearchQuery(searchQuery);
     } catch (error) {
@@ -43,14 +40,11 @@ function HomePage() {
 
   return (
     <React.Fragment>
-      <Navigation />
       <div className={styles.home_wrapper}>
         <div className={styles.hero_container}>
           <div className={styles.headings_container}>
-            <h5>Welcome, Khan</h5>
-            <h1>
-              Find the best suppliers and contractors to build your dream home
-            </h1>
+            <h5>Welcome, {currentUser.name}</h5>
+            <h1>Your one stop solution for building your dream home.</h1>
           </div>
 
           <div className={styles.searchBar_container}>
@@ -85,13 +79,12 @@ function HomePage() {
           </div>
         ) : (
           <div className={styles.featuredServicesContainer}>
-            <FeaturedServicesSection serviceType={"Development"} />
-            <FeaturedServicesSection serviceType={"Web Development"} />
-            <FeaturedServicesSection serviceType={"Graphic Design"} />
+            <FeaturedServicesSection serviceType={"Architecture"} />
+            <FeaturedServicesSection serviceType={"Interior Design"} />
+            <FeaturedServicesSection serviceType={"Landscape Design"} />
           </div>
         )}
       </div>
-      <Footer />
     </React.Fragment>
   );
 }

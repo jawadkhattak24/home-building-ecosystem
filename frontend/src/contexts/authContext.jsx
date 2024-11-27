@@ -10,45 +10,16 @@ export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  function login(userData) {
-    localStorage.setItem("token", userData.token);
-    setCurrentUser(userData.user);
-    console.log("Current user:", currentUser);
+  function login({ user, token }) {
+    localStorage.setItem("token", token);
+    setCurrentUser(user);
     setLoading(false);
   }
 
-  function loginGoogle(userData) {
-    try {
-      if (!userData || typeof userData !== "object") {
-        throw new Error("Invalid user data provided.");
-      }
-
-      const { token, user } = userData;
-
-      if (!token || typeof token !== "string") {
-        throw new Error("Authentication token is missing or invalid.");
-      }
-
-      if (!user || typeof user !== "object") {
-        throw new Error("User information is missing or invalid.");
-      }
-
-      localStorage.setItem("token", token);
-      setCurrentUser(user);
-      console.log("Current user:", user);
-    } catch (error) {
-      console.error("Failed to login with Google:", error);
-      // Optionally, you can implement a user-facing notification here
-      // For example, using a toast notification library
-      // toast.error("Google login failed. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  }
-
   function logout() {
-    localStorage.removeItem("token");
     setCurrentUser(null);
+    localStorage.removeItem("token");
+    setLoading(false);
   }
 
   useEffect(() => {
@@ -57,7 +28,7 @@ export const AuthProvider = ({ children }) => {
       if (token) {
         try {
           const response = await fetch(
-            `${import.meta.env.VITE_API_URL}/api/users/user`,
+            `${import.meta.env.VITE_API_URL}/api/user/me`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -65,7 +36,6 @@ export const AuthProvider = ({ children }) => {
             }
           );
           console.log("Response from fetchUser:", response);
-          // console.log("Response status:", response.status);
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
@@ -76,8 +46,6 @@ export const AuthProvider = ({ children }) => {
         } catch (error) {
           console.log("Failed to fetch user:", error);
           console.error("Error details:", error.message);
-          // localStorage.removeItem("token");
-          // setCurrentUser(null);
         }
       } else {
         setCurrentUser(null);
@@ -91,7 +59,6 @@ export const AuthProvider = ({ children }) => {
   const value = {
     currentUser,
     login,
-    loginGoogle,
     logout,
     loading,
   };

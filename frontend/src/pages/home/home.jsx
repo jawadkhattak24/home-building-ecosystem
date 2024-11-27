@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import styles from "./styles/home.module.scss";
-import Navigation from "../../components/navigation/navigation";
-import Footer from "../../components/footer/footer";
+
 
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -18,7 +17,6 @@ export default function Home() {
 
   return (
     <>
-      <Navigation />
 
       <div className={styles.container}>
         <section id="services" className={styles.section}>
@@ -133,7 +131,6 @@ export default function Home() {
         </section>
       </div>
 
-      <Footer />
     </>
   );
 }
