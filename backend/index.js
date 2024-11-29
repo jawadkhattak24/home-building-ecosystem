@@ -7,11 +7,20 @@ const passport = require("passport");
 const session = require("express-session");
 const dotenv = require("dotenv");
 const cookieParser = require("cookie-parser");
+const authMiddleware = require("./middlewares/auth");
+const Message = require("./models/Message");
+const socketIO = require("socket.io");
 
 const env = process.env.NODE_ENV || "development";
 dotenv.config({ path: `.env.${env}` });
 
 const http = require("http");
+
+const server = http.createServer(app);
+const io = socketIO(server, {
+  cors: { origin: process.env.FRONTEND_URL },
+  debug: true,
+});
 const userRoutes = require("./routes/user");
 const authRoutes = require("./routes/auth");
 
@@ -42,12 +51,46 @@ app.use(passport.session());
 
 app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
 app.use(express.json());
-const server = http.createServer(app);
+// app.use(authMiddleware);
 
 mongoose
   .connect(process.env.MONGODB_URI, {})
   .then(() => console.log("MongoDB Connected"))
   .catch((err) => console.log(err));
+
+io.on("connection", (socket) => {
+  console.log("A user connected");
+
+  socket.on("join-conversation", (conversationId) => {
+    socket.join(conversationId);
+    console.log("User joined conversation:", conversationId);
+  });
+
+  socket.on("leave-conversation", (conversationId) => {
+    socket.leave(conversationId);
+    console.log("User left conversation:", conversationId);
+  });
+
+  socket.on("send-message", async (message) => {
+    console.log("Received send-message event:", message);
+
+    try {
+      const newMessage = new Message({
+        conversationId: message.conversationId,
+        sender: message.sender,
+        content: message.text,
+        timestamp: new Date(),
+      });
+
+      await newMessage.save();
+
+      io.to(message.conversationId).emit("new message", newMessage);
+    } catch (error) {
+      socket.emit("error", error.message);
+      console.error("Error saving message:", error);
+    }
+  });
+});
 
 app.use(
   session({
@@ -66,6 +109,9 @@ app.get("/", (req, res) => {
 
 app.use("/api/user", userRoutes);
 app.use("/auth", authRoutes);
+
+const messageRoutes = require("./routes/conversation");
+app.use("/api/conversations", cors(), messageRoutes);
 
 server.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);

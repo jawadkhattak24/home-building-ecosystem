@@ -353,6 +353,7 @@
   padding: 10px;
   height: 60px;
   width: 450px;
+  background-color: base.$white;
 
   text-align: center;
 }
@@ -523,4 +524,41 @@
   margin-top: 10px;
   font-size: 18px;
   color: #555;
+}
+
+.notification {
+  padding: 8px 12px;
+  border-radius: 4px;
+  margin-top: 8px;
+  font-size: 14px;
+
+  &.success {
+    background-color: #e6ffe6;
+    color: #006600;
+    border: 1px solid #00cc00;
+  }
+
+  &.error {
+    background-color: #ffe6e6;
+    color: #cc0000;
+    border: 1px solid #ff0000;
+  }
+}
+
+.changeEmailButton {
+  padding: 8px 16px;
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-left: 8px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #e0e0e0;
+  }
+}
+
+.professionalInfo_h3,
+.supplierInfo_h3 {
+  margin-bottom: 20px;
 }

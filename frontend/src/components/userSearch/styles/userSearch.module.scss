@@ -1,0 +1,40 @@
+.searchBarParentContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    margin-bottom: 20px;
+  
+    .searchContainer {
+      .searchInput {
+        background-color: #ebe7ed;
+        width: 270px;
+        height: 40px;
+        border: none;
+        border-radius: 5px;
+        padding-left: 10px;
+        font-size: 14px;
+        outline: none;
+      }
+  
+      .searchBtn {
+        border-radius: 5px;
+        text-align: center;
+        padding: 0;
+        width: 80px;
+        height: 40px;
+      }
+    }
+  
+    .searchResults{
+      width: 270px;
+      height:fit-content;
+      padding: 20px;
+      background-color: #ebe7ed;
+  
+      li{
+          cursor: pointer;
+          list-style-type: none;
+      }
+    }
+  }

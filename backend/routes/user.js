@@ -61,6 +61,28 @@ router.get("/check-email", async (req, res) => {
   }
 });
 
+router.post("/update-user-type", async (req, res) => {
+  try {
+    const { userType } = req.body;
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ msg: "Unauthorized" });
+    }
+
+    const token = authHeader.split(" ")[1];
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.id;
+
+    const user = await User.findByIdAndUpdate(userId, { userType });
+    res.status(200).json(user);
+  } catch (err) {
+    console.error("Error updating user type:", err);
+    res.status(500).json({ msg: "Internal server error" });
+  }
+});
+
 const verifyTokenFromCookie = (req, res, next) => {
   const token = req.cookies.authToken;
   if (!token) {
@@ -105,13 +127,26 @@ router.get("/me", async (req, res) => {
         .json({ success: false, message: "User not found" });
     }
 
+    let supplier;
+    let professional;
+
+    if (user.userType === "supplier") {
+      supplier = await Supplier.findOne({ userId: user._id });
+    } else if (user.userType === "professional") {
+      professional = await Professional.findOne({ userId: user._id });
+    }
+
+    const profileComplete = supplier || professional;
+
     res.status(200).json({
       success: true,
       user: {
         id: user._id,
-        username: user.username,
+        userType: user.userType,
+        name: user.name,
         email: user.email,
         profilePictureUrl: user.profilePictureUrl,
+        profileComplete,
       },
     });
   } catch (err) {
@@ -125,6 +160,20 @@ router.get("/me", async (req, res) => {
     return res.status(500).json({ success: false, message: "Server error" });
   }
 });
+
+router.get("/search", async (req, res) => {
+  try {
+    const { query } = req.query;
+    const users = await User.find({
+      name: { $regex: query, $options: "i" },
+    });
+    res.json(users);
+  } catch (error) {
+    console.error("Error searching users:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -187,9 +236,12 @@ router.post("/register", async (req, res) => {
       return res.status(400).json({ msg: "User already exists" });
     }
 
+    const username = name.split(" ").join("").toLowerCase();
+
     user = new User({
       userType,
       name,
+      username,
       email,
       password,
       profilePictureUrl: defaultAvatar,

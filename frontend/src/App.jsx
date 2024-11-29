@@ -11,17 +11,35 @@ import Footer from "./components/footer/footer";
 import ProtectedRoute from "./components/auth/protectedRoute/protectedRoute";
 import PublicRoute from "./components/auth/publicRoute/publicRoute";
 import AuthSuccess from "./components/auth/authRedirect";
-
+import Inbox from "./pages/Inbox/inboxChatProvider";
+import ProfessionalProfileSetup from "./pages/register/professionalProfileSetup/professionalProfileSetup";
+import SupplierProfileSetup from "./pages/register/supplierProfileSetup/supplierProfileSetup";
+import { LoadingProvider } from "./contexts/loadingContext";
+import UserTypeSelection from "./pages/register/userTypeSelection/userTypeSelection";
 function AppContent() {
   const location = useLocation();
-  const showNavigation = ["/login", "/register"].includes(location.pathname);
+
+  const showNavigation = [
+    "/login",
+    "/register",
+    "/professional-profile-setup",
+    "/supplier-profile-setup",
+    "/auth/success",
+    "/user-type-selection",
+  ].includes(location.pathname);
 
   const { currentUser } = useAuth();
   console.log("currentUser from App.jsx", currentUser);
 
-  const showFooter = ["/inbox", "/login", "/register"].includes(
-    location.pathname
-  );
+  const showFooter = [
+    "/inbox",
+    "/login",
+    "/register",
+    "/professional-profile-setup",
+    "/supplier-profile-setup",
+    "/auth/success",
+    "/user-type-selection",
+  ].includes(location.pathname);
 
   return (
     <>
@@ -35,7 +53,19 @@ function AppContent() {
           path="/register"
           element={<PublicRoute element={RegisterPage} />}
         />
-        {/* <Route path="/inbox" element={<ProtectedRoute element={Inbox} />} /> */}
+        <Route
+          path="/professional-profile-setup"
+          element={<ProtectedRoute element={ProfessionalProfileSetup} />}
+        />
+        <Route
+          path="/supplier-profile-setup"
+          element={<ProtectedRoute element={SupplierProfileSetup} />}
+        />
+        <Route
+          path="/user-type-selection"
+          element={<ProtectedRoute element={UserTypeSelection} />}
+        />
+        <Route path="/inbox" element={<ProtectedRoute element={Inbox} />} />
       </Routes>
       {!showFooter && <Footer />}
     </>
@@ -47,7 +77,9 @@ function App() {
     <>
       <Router>
         <AuthProvider>
-          <AppContent />
+          <LoadingProvider>
+            <AppContent />
+          </LoadingProvider>
         </AuthProvider>
       </Router>
     </>

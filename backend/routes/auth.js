@@ -3,11 +3,23 @@ const User = require("../models/User");
 const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
+const dotenv = require("dotenv");
 
-router.get(
-  "/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
-);
+dotenv.config();
+
+router.get("/google", (req, res, next) => {
+  const { userType } = req.query;
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+    state: userType,
+  })(req, res, next);
+});
+
+router.get("/google/login", (req, res, next) => {
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+  })(req, res, next);
+});
 
 router.get(
   "/google/callback",
@@ -16,7 +28,10 @@ router.get(
     const user = req.user;
 
     const token = jwt.sign(
-      { googleId: user.googleId },
+      {
+        id: user._id,
+        userType: user.userType,
+      },
       process.env.JWT_SECRET,
       {
         expiresIn: "1d",
@@ -27,10 +42,60 @@ router.get(
   }
 );
 
-router.get("/facebook", passport.authenticate("facebook"));
+router.get(
+  "/google/login/callback",
+  passport.authenticate("google", { session: false }),
+  (req, res) => {
+    const user = req.user;
+
+    const token = jwt.sign(
+      {
+        id: user._id,
+      },
+      process.env.JWT_SECRET
+    );
+
+    res.redirect(`${process.env.FRONTEND_URL}/auth/success?token=${token}`);
+  }
+);
+
+router.get("/facebook", (req, res, next) => {
+  const { userType } = req.query;
+  passport.authenticate("facebook", {
+    scope: ["email"],
+    state: userType,
+  })(req, res, next);
+});
+
+router.get("/facebook/login", (req, res, next) => {
+  passport.authenticate("facebook", {
+    scope: ["email"],
+  })(req, res, next);
+});
 
 router.get(
   "/facebook/callback",
+  passport.authenticate("facebook", {
+    failureRedirect: "/login",
+    session: false,
+  }),
+  (req, res) => {
+    const user = req.user;
+
+    const token = jwt.sign(
+      { id: user._id, userType: user.userType },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1d",
+      }
+    );
+
+    res.redirect(`${process.env.FRONTEND_URL}/auth/success?token=${token}`);
+  }
+);
+
+router.get(
+  "/facebook/login/callback",
   passport.authenticate("facebook", {
     failureRedirect: "/login",
     session: false,
@@ -42,23 +107,9 @@ router.get(
       expiresIn: "1d",
     });
 
-    res.cookie("authToken", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 24 * 60 * 60 * 1000,
-    });
-
-    res.status(200).json({
-      success: true,
-      user: {
-        id: user._id,
-        username: user.username,
-        email: user.email,
-        profilePictureUrl: user.profilePictureUrl,
-      },
-      token: token,
-    });
+    res.redirect(
+      `${process.env.FRONTEND_URL}/auth.facebook/login/success?token=${token}`
+    );
   }
 );
 

@@ -5,10 +5,12 @@ const userSchema = new mongoose.Schema(
   {
     userType: {
       type: String,
-      enum: ["homeowner", "professional", "supplier"],
+      enum: ["homeowner", "professional", "supplier", "pending"],
       required: false,
+      default: "pending",
     },
     name: { type: String },
+    username: { type: String, unique: true },
     email: { type: String, unique: true },
     password: { type: String },
     profilePictureUrl: { type: String },
@@ -28,6 +30,14 @@ const userSchema = new mongoose.Schema(
       type: String,
       unique: true,
       sparse: true,
+    },
+    provider: {
+      type: String,
+      enum: ["google", "facebook", "local"],
+    },
+    lastLogin: {
+      type: Date,
+      default: Date.now,
     },
   },
   { timestamps: true }

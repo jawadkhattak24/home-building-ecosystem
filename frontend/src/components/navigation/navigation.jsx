@@ -56,9 +56,10 @@ const Navigation = () => {
           <Link to="/materials" className={styles.navLink}>
             Materials
           </Link>
-          {/* <Link to="/join-as-professional" className={styles.proBtn}>
-            Join as Professional
-          </Link> */}
+          <Link to="/inbox" className={styles.navLink}>
+            Inbox
+          </Link>
+
           {!currentUser && (
             <>
               <Link to="/login" className={styles.loginBtn}>

@@ -32,15 +32,13 @@ export default function LoginPage() {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = `${
-      import.meta.env.VITE_API_URL
-    }/auth/google/callback`;
+    window.location.href = `${import.meta.env.VITE_API_URL}/auth/google/login`;
   };
 
   const handleFacebookLogin = () => {
     window.location.href = `${
       import.meta.env.VITE_API_URL
-    }/auth/facebook/callback`;
+    }/auth/facebook/login`;
   };
 
   const handleSubmit = async (e) => {
@@ -99,10 +97,7 @@ export default function LoginPage() {
           </div>
         )}
         <div className={styles.parent_cont}>
-          <form
-            onSubmit={handleSubmit}
-            className={styles.main_content_container}
-          >
+          <div className={styles.main_content_container}>
             <div>
               <Link to="/" className={styles.logo_link}>
                 <h2 className={styles.h2}>Home Building Ecosystem</h2>
@@ -116,13 +111,13 @@ export default function LoginPage() {
                     errorStatus.email ? styles.input_error : ""
                   }`}
                   type="text"
-                  placeholder="email"
+                  placeholder="Email"
                   name="email"
                   onChange={handleChange}
                 />
                 {errorStatus.email && (
                   <p className={styles.errorText}>
-                    email is incorrect. Please try again.
+                    Email is incorrect. Please try again.
                   </p>
                 )}
                 <div className={styles.passwordWrapper}>
@@ -157,7 +152,11 @@ export default function LoginPage() {
               </div>
 
               <div>
-                <button type="submit" className={styles.button_primary}>
+                <button
+                  type="submit"
+                  onClick={handleSubmit}
+                  className={styles.button_primary}
+                >
                   Login
                 </button>
               </div>
@@ -175,21 +174,21 @@ export default function LoginPage() {
                 onClick={handleGoogleLogin}
               >
                 <FaGoogle className={styles.socialIcon} />
-                Login with Google
+                Continue with Google
               </button>
               <button
                 className={styles.socialButton}
                 onClick={handleFacebookLogin}
               >
                 <FaFacebookF className={styles.socialIcon} />
-                Login with Facebook
+                Continue with Facebook
               </button>
             </div>
 
             <div className={styles.register_link_container}>
               <Link to="/register">Dont have an account? Register</Link>
             </div>
-          </form>
+          </div>
         </div>
       </div>
     </React.Fragment>

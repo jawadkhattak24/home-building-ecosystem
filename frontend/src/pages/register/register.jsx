@@ -1,21 +1,25 @@
-import { useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import axios from "redaxios";
 import styles from "./styles/register.module.scss";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, ArrowRight, Eye, EyeOff } from "lucide-react";
 import { FaGoogle, FaFacebookF } from "react-icons/fa";
 import { useAuth } from "../../contexts/authContext";
+import PropTypes from "prop-types";
 
-export default function RegistrationForm() {
+function RegistrationForm() {
   const [step, setStep] = useState(1);
   const navigate = useNavigate();
   const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
+  const [notification, setNotification] = useState({ message: "", type: "" });
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isEmailVerificationSent, setIsEmailVerificationSent] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
   const [emailVerified, setEmailVerified] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [remainingTime, setRemainingTime] = useState(60);
+  const [isResendDisabled, setIsResendDisabled] = useState(false);
 
   const [userData, setUserData] = useState({
     userType: "",
@@ -33,7 +37,9 @@ export default function RegistrationForm() {
     additionalDetails: "",
   });
 
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState({
+    userType: "",
+  });
 
   const serviceTypes = [
     "Architect",
@@ -43,37 +49,47 @@ export default function RegistrationForm() {
     "General Contractor",
     "Carpenter",
   ];
+  console.log("Step in RegistrationForm:", step);
 
   const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
 
   const toggleConfirmPasswordVisibility = () =>
     setShowConfirmPassword((prev) => !prev);
 
-  const sendVerificationCode = async (email) => {
-    const available = await checkAvailability("email", email);
-    if (!available) {
-      setErrors({ email: "Email is already in use" });
-      return;
-    }
+  const [codeCount, setCodeCount] = useState(0);
 
+  const sendVerificationCode = async (email) => {
     try {
+      const available = await checkAvailability("email", email);
+      if (!available) {
+        setErrors({ email: "Email is already in use" });
+        return;
+      }
+
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/user/send-verification`,
         { email }
       );
       if (response.status === 200) {
         setIsEmailVerificationSent(true);
-        alert("Verification code sent to your email");
+        setNotification({
+          message: "Verification code sent to your email",
+          type: "success",
+        });
+        setErrors({});
+        setRemainingTime(60);
+        setIsResendDisabled(true);
       }
     } catch (error) {
       console.error("Error sending verification code:", error);
-      alert("Failed to send verification code");
+      setNotification({
+        message: "Failed to send verification code",
+        type: "error",
+      });
     }
   };
 
   const verifyCode = async () => {
-    console.log("Email in verifyCode:", userData.email);
-    console.log("Verification code in verifyCode:", verificationCode);
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/user/verify-code`,
@@ -84,36 +100,87 @@ export default function RegistrationForm() {
       );
       if (response.status === 200) {
         setEmailVerified(true);
-        alert("Email verified successfully!");
-      } else if (response.status === 400) {
-        alert("Invalid verification code");
+        setNotification({
+          message: "Email verified successfully!",
+          type: "success",
+        });
       }
     } catch (error) {
       console.error("Error verifying code:", error);
-      alert("Invalid verification code");
+      setNotification({
+        message: "Invalid verification code",
+        type: "error",
+      });
     }
   };
 
+  useEffect(() => {
+    let timer;
+    if (remainingTime > 0) {
+      timer = setInterval(() => {
+        setRemainingTime((prevTime) => {
+          if (prevTime <= 1) {
+            setIsResendDisabled(false);
+            return 0;
+          }
+          return prevTime - 1;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [remainingTime]);
+
   const handleGoogleLogin = () => {
+    console.log("Handle google login called");
+
+    console.log("User type in handleGoogleLogin:", userData.userType);
+    setIsLoading(true);
+    const userType = userData.userType;
     window.location.href = `${
       import.meta.env.VITE_API_URL
-    }/auth/google/callback`;
+    }/auth/google?userType=${userType}`;
   };
 
   const handleFacebookLogin = () => {
+    const userType = userData.userType;
+    setIsLoading(true);
     window.location.href = `${
       import.meta.env.VITE_API_URL
-    }/auth/facebook/callback`;
+    }/auth/facebook?userType=${userType}`;
   };
 
-  const handleChange = (e) => {
+  const handleChange = async (e) => {
     const { name, value } = e.target;
-    setUserData({ ...userData, [name]: value });
-    setErrors({ ...errors, [name]: "" });
+    if (name === "email") {
+      setEmailVerified(false);
+      setIsEmailVerificationSent(false);
+      setVerificationCode("");
+      setNotification({ message: "", type: "" });
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(value)) {
+        setErrors((prev) => ({
+          ...prev,
+          email: "Please enter a valid email address",
+        }));
+      } else {
+        setErrors((prev) => ({ ...prev, email: "" }));
+      }
+    }
+    setUserData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleUserTypeSelect = (type) => {
+    console.log("User type in handleUserTypeSelect:", type);
     setUserData({ ...userData, userType: type });
+    setErrors((prev) => ({ ...prev, userType: "" }));
+  };
+
+  const handleChangeEmail = () => {
+    setEmailVerified(false);
+    setIsEmailVerificationSent(false);
+    setVerificationCode("");
+    setNotification({ message: "", type: "" });
   };
 
   const checkAvailability = async (field, value) => {
@@ -128,10 +195,18 @@ export default function RegistrationForm() {
       return false;
     }
   };
+  const newErrors = {};
+
+  const validateUserType = () => {
+    if (!userData.userType) {
+      setErrors((prev) => ({ ...prev, userType: "Please select a user type" }));
+      return;
+    } else {
+      setStep(step + 1);
+    }
+  };
 
   const validateBasicInfo = async () => {
-    const newErrors = {};
-
     if (!userData.name.trim()) {
       newErrors.name = "Name is required";
     }
@@ -199,102 +274,129 @@ export default function RegistrationForm() {
     return Object.keys(newErrors).length === 0;
   };
 
+  const registrationFunction = useCallback(async () => {
+    console.log("Registration function called");
+    const res = await axios.post(
+      `${import.meta.env.VITE_API_URL}/api/user/register`,
+      {
+        userType: userData.userType,
+        name: userData.name,
+        email: userData.email,
+        password: userData.password,
+      }
+    );
+    const { user, token } = res.data;
+    return { user, token, res };
+  }, [userData]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("Handle submit called");
 
-    if (step === 2 && !validateBasicInfo()) {
-      return;
-    }
-
-    if (step === 3) {
-      if (userData.userType === "professional" && !validateProfessionalInfo()) {
-        return;
-      }
-      if (userData.userType === "supplier" && !validateAdvertiserInfo()) {
+    if (step === 2) {
+      const isValid = await validateBasicInfo();
+      if (!isValid) {
+        console.log("Basic info validation failed");
         return;
       }
     }
 
-    try {
-      if (step === 2) {
+    if (userData.userType === "homeowner") {
+      try {
+        console.log("Step 2");
         setIsLoading(true);
-        const res = await axios.post(
-          `${import.meta.env.VITE_API_URL}/api/user/register`,
-          {
-            userType: userData.userType,
-            name: userData.name,
-            email: userData.email,
-            password: userData.password,
-          }
-        );
-
-        const { user, token } = res.data;
-
-        if (res.status === 200) {
-          if (userData.userType === "homeowner") {
-            login(user, token);
-            setTimeout(() => {
-              navigate("/homeNew");
-            }, 2000);
-          } else {
-            setStep(3);
-          }
-        } else {
-          console.error("Registration error:", res.data.message);
-        }
-        setIsLoading(false);
-      }
-
-      if (step === 3) {
-        setIsLoading(true);
-        const endpoint =
-          userData.userType === "professional"
-            ? "/api/user/professional/profile"
-            : "/api/user/supplier/profile";
-
-        const dataToSend =
-          userData.userType === "professional"
-            ? {
-                email: userData.email,
-                serviceType: userData.serviceType,
-                yearsExperience: userData.yearsExperience,
-                bio: userData.bio,
-                certifications: userData.certifications,
-                portfolioLink: userData.portfolioLink,
-              }
-            : {
-                email: userData.email,
-                businessName: userData.businessName,
-                contactInfo: userData.contactInfo,
-                additionalDetails: userData.additionalDetails,
-              };
-
-        const res = await axios.post(
-          `${import.meta.env.VITE_API_URL}${endpoint}`,
-          dataToSend
-        );
-
-        const { user, token } = res.data;
-
-        console.log("Profile creation response:", res.data);
+        const { user, token, res } = await registrationFunction();
 
         if (res.status === 200) {
           login(user, token);
           setTimeout(() => {
-            navigate(
-              userData.userType === "professional"
-                ? "/professional-homepage"
-                : "/supplier-homepage"
-            );
+            navigate("/homeNew");
           }, 2000);
         } else {
-          console.error("Profile creation error:", res.data.message);
+          console.error(
+            "Registration error occured in step 2:",
+            res.data.message
+          );
         }
+      } catch (error) {
+        console.error("Registration error:", error.response?.data);
+        alert(error.response?.data.message || "Registration failed");
+      } finally {
         setIsLoading(false);
       }
-    } catch (error) {
-      console.error("Registration error:", error.response?.data);
-      alert(error.response?.data.message || "Registration failed");
+    } else {
+      setStep(3);
+    }
+
+    if (step === 3) {
+      let isValid = false;
+      if (userData.userType === "professional") {
+        isValid = validateProfessionalInfo();
+      } else {
+        isValid = validateAdvertiserInfo();
+      }
+      if (!isValid) {
+        console.log("Professional or advertiser info validation failed");
+        return;
+      }
+
+      try {
+        console.log("Step 3");
+        setIsLoading(true);
+
+        const { res } = await registrationFunction();
+
+        if (res.status === 200) {
+          const endpoint =
+            userData.userType === "professional"
+              ? "/api/user/professional/profile"
+              : "/api/user/supplier/profile";
+
+          const dataToSend =
+            userData.userType === "professional"
+              ? {
+                  email: userData.email,
+                  serviceType: userData.serviceType,
+                  yearsExperience: userData.yearsExperience,
+                  bio: userData.bio,
+                  certifications: userData.certifications,
+                  portfolioLink: userData.portfolioLink,
+                }
+              : {
+                  email: userData.email,
+                  businessName: userData.businessName,
+                  contactInfo: userData.contactInfo,
+                  additionalDetails: userData.additionalDetails,
+                };
+
+          const profileRes = await axios.post(
+            `${import.meta.env.VITE_API_URL}${endpoint}`,
+            dataToSend
+          );
+
+          const { user, token } = profileRes.data;
+
+          console.log("Profile creation response:", profileRes.data);
+
+          if (profileRes.status === 200) {
+            login(user, token);
+            setTimeout(() => {
+              navigate(
+                userData.userType === "professional"
+                  ? "/professional-homepage"
+                  : "/supplier-homepage"
+              );
+            }, 2000);
+          } else {
+            console.error("Profile creation error:", profileRes.data.message);
+          }
+        }
+      } catch (error) {
+        console.error("Registration error:", error.response?.data);
+        alert(error.response?.data.message || "Registration failed");
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -330,6 +432,15 @@ export default function RegistrationForm() {
               >
                 Advertise Your Building Materials
               </button>
+
+              {errors.userType && (
+                <p
+                  className={styles.verifiedBadge}
+                  style={{ color: "#e74c3c" }}
+                >
+                  ✗ {errors.userType}
+                </p>
+              )}
             </div>
           </div>
         );
@@ -379,25 +490,44 @@ export default function RegistrationForm() {
                     type="email"
                     name="email"
                     className={`${styles.input} ${
-                      isEmailVerificationSent ? styles.disabled : ""
+                      emailVerified ? styles.disabled : ""
                     }`}
                     placeholder="Email"
                     value={userData.email}
                     onChange={handleChange}
-                    disabled={isEmailVerificationSent}
+                    disabled={emailVerified || isEmailVerificationSent}
                   />
-                  {!isEmailVerificationSent && (
-                    <button
-                      type="button"
-                      className={styles.verifyButton}
-                      onClick={() => sendVerificationCode(userData.email)}
-                      disabled={!userData.email || errors.email}
-                    >
-                      Verify Email
-                    </button>
-                  )}
+                  <button
+                    type="button"
+                    className={styles.verifyButton}
+                    onClick={
+                      emailVerified
+                        ? handleChangeEmail
+                        : () => sendVerificationCode(userData.email)
+                    }
+                    disabled={
+                      !userData.email ||
+                      errors.email ||
+                      (isEmailVerificationSent && isResendDisabled)
+                    }
+                  >
+                    {emailVerified
+                      ? "Change Email"
+                      : isEmailVerificationSent
+                      ? remainingTime > 0
+                        ? `Resend Code (${remainingTime}s)`
+                        : "Resend Code"
+                      : "Verify Email"}
+                  </button>
                 </div>
-                {errors.email && <p className={styles.error}>{errors.email}</p>}
+                {errors.email && (
+                  <p
+                    className={styles.verifiedBadge}
+                    style={{ color: "#e74c3c" }}
+                  >
+                    ✗ {errors.email}
+                  </p>
+                )}
 
                 {isEmailVerificationSent && !emailVerified && (
                   <div className={styles.verificationCodeWrapper}>
@@ -418,8 +548,21 @@ export default function RegistrationForm() {
                   </div>
                 )}
 
-                {emailVerified && (
+                {/* {emailVerified && (
                   <p className={styles.verifiedBadge}>✓ Email Verified</p>
+                )} */}
+
+                {notification.message && (
+                  <p
+                    className={styles.verifiedBadge}
+                    style={{
+                      color:
+                        notification.type === "error" ? "#e74c3c" : "#2ecc71",
+                    }}
+                  >
+                    {notification.type === "error" ? "✗" : "✓"}{" "}
+                    {notification.message}
+                  </p>
                 )}
               </div>
 
@@ -479,6 +622,9 @@ export default function RegistrationForm() {
       case 3:
         return userData.userType === "professional" ? (
           <div className={styles.professionalInfo}>
+            <h3 className={styles.professionalInfo_h3}>
+              Setup Your Professional Profile
+            </h3>
             <div className={styles.input_container}>
               <div className={styles.input_wrapper}>
                 <select
@@ -549,6 +695,9 @@ export default function RegistrationForm() {
           </div>
         ) : (
           <div className={styles.advertiserInfo}>
+            <h3 className={styles.supplierInfo_h3}>
+              Setup Your Supplier Profile
+            </h3>
             <div className={styles.input_container}>
               <div className={styles.input_wrapper}>
                 <input
@@ -622,21 +771,21 @@ export default function RegistrationForm() {
       </div>
 
       <div className={styles.parent_cont_left}>
-        <form onSubmit={handleSubmit} className={styles.main_content_container}>
+        <div className={styles.main_content_container}>
           {renderStep()}
 
           <div className={styles.navigation_container}>
             {step === 1 && (
               <button
                 type="button"
-                onClick={() => setStep(step + 1)}
+                onClick={validateUserType}
                 className={styles.nav_button}
               >
                 Next <ArrowRight size={20} />
               </button>
             )}
 
-            {step > 1 && (
+            {(step === 3 || step === 2) && (
               <button
                 type="button"
                 onClick={() => setStep(step - 1)}
@@ -646,9 +795,10 @@ export default function RegistrationForm() {
               </button>
             )}
 
-            {step < 3 && step > 1 && (
+            {step === 2 && (
               <button
                 type="submit"
+                onClick={handleSubmit}
                 className={`${styles.nav_button} ${styles.next_button}`}
               >
                 Next <ArrowRight size={20} />
@@ -656,13 +806,24 @@ export default function RegistrationForm() {
             )}
 
             {step === 3 && (
-              <button type="submit" className={styles.nav_button}>
+              <button
+                type="submit"
+                onClick={handleSubmit}
+                className={styles.nav_button}
+              >
                 Complete Registration <ArrowRight size={20} />
               </button>
             )}
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );
 }
+
+export default RegistrationForm;
+
+RegistrationForm.propTypes = {
+  userData: PropTypes.object.isRequired,
+  setUserType: PropTypes.func.isRequired,
+};
