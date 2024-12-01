@@ -1,4 +1,4 @@
-import { ChatProvider } from "../../../contexts/ChatContext";
+import { ChatProvider } from "../../../contexts/chatContext";
 import Inbox from "./inbox";
 
 function InboxWithChatProvider() {
