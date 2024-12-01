@@ -43,7 +43,7 @@ const keyframes = `
 export const LoadingProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const loadingUI = () => {
+  const LoadingUI = () => {
     return (
       <>
         <style>{keyframes}</style>
@@ -68,7 +68,7 @@ export const LoadingProvider = ({ children }) => {
   };
 
   return (
-    <LoadingContext.Provider value={{ isLoading, setIsLoading, loadingUI }}>
+    <LoadingContext.Provider value={{ isLoading, setIsLoading, LoadingUI }}>
       {children}
     </LoadingContext.Provider>
   );

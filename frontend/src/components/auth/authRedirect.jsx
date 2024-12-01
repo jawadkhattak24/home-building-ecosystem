@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/authContext";
 import axios from "redaxios";
@@ -7,7 +7,7 @@ import { useLoading } from "../../contexts/loadingContext";
 export default function AuthSuccess() {
   const { login } = useAuth();
   const navigate = useNavigate();
-  const { isLoading, setIsLoading, loadingUI } = useLoading();
+  const { isLoading, setIsLoading, LoadingUI } = useLoading();
 
   useEffect(() => {
     const authenticateUser = async () => {
@@ -35,7 +35,7 @@ export default function AuthSuccess() {
         console.log("User type in authRedirect", res.data.user.userType);
 
         if (res.data.user.userType === "homeowner") {
-          login({ user: res.data.user, token });
+          login(res.data.user, token);
           navigate("/homeNew");
         } else if (
           res.data.user.userType === "professional" &&
@@ -50,7 +50,7 @@ export default function AuthSuccess() {
         } else if (res.data.user.userType === "pending") {
           navigate("/user-type-selection");
         } else {
-          login({ user: res.data.user, token });
+          login(res.data.user, token);
           navigate("/homeNew");
         }
       } catch (err) {
@@ -66,7 +66,7 @@ export default function AuthSuccess() {
 
   return (
     <>
-      {isLoading && loadingUI()}
+      {isLoading && LoadingUI()}
       {!isLoading && <p>Redirecting...</p>}
     </>
   );

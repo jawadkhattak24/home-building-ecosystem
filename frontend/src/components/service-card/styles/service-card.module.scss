@@ -1,74 +1,146 @@
 @use "../../../globalStyles/_base.scss" as base;
 
-.service_card {
-  display: flex;
-  flex-direction: column;
-  background-color: base.$white;
+.professional_card {
   width: 400px;
-  border-radius: 5px;
-  height: 280px;
-  // border: 1px solid base.$border-color;
+  border-radius: 12px;
+  overflow: hidden;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
 
   &:hover {
-    transform: scale(1.009);
-    transition: all 0.3s ease-in;
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   }
 
-  .thumbnailImage {
-    border-radius: 5px 5px 0 0;
+  .portfolioImage {
+    width: 100%;
+    height: 200px;
     object-fit: cover;
   }
 
   .cardDetails {
-    width: 400px;
-    height: 130px;
-    display: grid;
-    grid-template-columns: 3fr 1fr;
-    grid-template-rows: 1fr 1fr;
-    padding: 15px 15px;
-    gap: 20px;
-    background-color: base.$white;
-    border: 1px solid base.$border-color;
-    border-radius: 0 0 5px 5px;
+    padding: 16px;
+  }
 
-    .serviceTitle {
-      font-size: 18px;
-      font-family: "Inter", sans-serif;
-      font-weight: 600;
-      color: #000000;
-      margin: 0;
-      grid-column-start: 1;
-      grid-column-end: 3;
-    }
-    .serviceDescription {
-      font: base.$p_reg;
-      color: base.$black;
-      margin: 0;
-      display: -webkit-box;
-      line-clamp: 2;
-      -webkit-line-clamp: 2; /* Number of lines you want to display */
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: pre-wrap; /* Preserves spaces and line breaks */
+  .professionalInfo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+
+    .profileImage {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      object-fit: cover;
     }
 
-    .serviceDescription {
-      grid-column: 1 / 3;
-      grid-row: 2 / 2;
-    }
+    .nameAndType {
+      .name {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin: 0;
+        color: #333;
+      }
 
-    .providerDetails {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-
-      .providerImage {
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        object-fit: cover;
+      .serviceType {
+        font-size: 0.9rem;
+        color: #666;
+        margin: 4px 0 0 0;
       }
     }
   }
+
+  .stats {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #eee;
+
+    .experience {
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    .rating {
+      font-size: 0.9rem;
+      color: #666;
+    }
+  }
 }
+
+// .service_card {
+//   display: flex;
+//   flex-direction: column;
+//   background-color: base.$white;
+//   width: 400px;
+//   border-radius: 5px;
+//   height: 280px;
+//   // border: 1px solid base.$border-color;
+
+//   &:hover {
+//     transform: scale(1.009);
+//     transition: all 0.3s ease-in;
+//   }
+
+//   .thumbnailImage {
+//     border-radius: 5px 5px 0 0;
+//     object-fit: cover;
+//   }
+
+//   .cardDetails {
+//     width: 400px;
+//     height: 130px;
+//     display: grid;
+//     grid-template-columns: 3fr 1fr;
+//     grid-template-rows: 1fr 1fr;
+//     padding: 15px 15px;
+//     gap: 20px;
+//     background-color: base.$white;
+//     border: 1px solid base.$border-color;
+//     border-radius: 0 0 5px 5px;
+
+//     .serviceTitle {
+//       font-size: 18px;
+//       font-family: "Inter", sans-serif;
+//       font-weight: 600;
+//       color: #000000;
+//       margin: 0;
+//       grid-column-start: 1;
+//       grid-column-end: 3;
+//     }
+//     .serviceDescription {
+//       font: base.$p_reg;
+//       color: base.$black;
+//       margin: 0;
+//       display: -webkit-box;
+//       line-clamp: 2;
+//       -webkit-line-clamp: 2; /* Number of lines you want to display */
+//       -webkit-box-orient: vertical;
+//       overflow: hidden;
+//       text-overflow: ellipsis;
+//       white-space: pre-wrap; /* Preserves spaces and line breaks */
+//     }
+
+//     .serviceDescription {
+//       grid-column: 1 / 3;
+//       grid-row: 2 / 2;
+//     }
+
+//     .providerDetails {
+//       display: flex;
+//       align-items: center;
+//       gap: 10px;
+
+//       .providerImage {
+//         border-radius: 50%;
+//         width: 40px;
+//         height: 40px;
+//         object-fit: cover;
+//       }
+//     }
+//   }
+// }

@@ -85,7 +85,16 @@ const Navigation = () => {
               </button>
               {showAvatarMenu && (
                 <div className={styles.avatar_menu}>
-                  <Link to="/profile" className={styles.avatar_menu_item}>
+                  <Link
+                    to={`/${
+                      currentUser.userType === "homeowner"
+                        ? "profile"
+                        : currentUser.userType === "professional"
+                        ? "professional-profile"
+                        : "supplier-profile"
+                    }/${currentUser.id}`}
+                    className={styles.avatar_menu_item}
+                  >
                     <i className="fas fa-user"></i> Profile
                   </Link>
                   <button

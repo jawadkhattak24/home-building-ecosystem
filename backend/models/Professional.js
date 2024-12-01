@@ -5,11 +5,11 @@ const professionalSchema = new mongoose.Schema(
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+      required: false,
     },
     serviceType: {
       type: String,
-      required: true,
+      required: false,
       enum: [
         "Architect",
         "Interior Designer",
@@ -21,8 +21,8 @@ const professionalSchema = new mongoose.Schema(
         "Material Supplier",
       ],
     },
-    yearsExperience: { type: Number, required: true },
-    bio: { type: String, required: true },
+    yearsExperience: { type: Number, required: false },
+    bio: { type: String, required: false },
     certifications: { type: String },
     portfolio: [String],
     rating: { type: Number, default: 0 },
@@ -40,4 +40,6 @@ const professionalSchema = new mongoose.Schema(
 
 professionalSchema.index({ userId: 1 });
 
-module.exports = mongoose.model("Professional", professionalSchema);
+module.exports =
+  mongoose.models.Professional ||
+  mongoose.model("Professional", professionalSchema);

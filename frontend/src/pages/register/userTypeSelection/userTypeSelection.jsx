@@ -5,22 +5,26 @@ import { useAuth } from "../../../contexts/authContext";
 import { useNavigate } from "react-router-dom";
 import { useLoading } from "../../../contexts/loadingContext";
 import axios from "redaxios";
+// import { useAuth } from "../../../contexts/authContext";
 
 const UserTypeSelection = () => {
   const [errors, setErrors] = useState({ userType: "" });
+  const { userType, setUserType } = useAuth();
 
-  const handleUserTypeSelect = (userType) => {
-    setUserType(userType);
+  const handleUserTypeSelect = (selectedUserType) => {
+    setUserType(selectedUserType);
     setErrors((prev) => ({ ...prev, userType: "" }));
   };
-  const { userType, setUserType } = useAuth();
   const navigate = useNavigate();
-  const { isLoading, setIsLoading, loadingUI } = useLoading();
+  const { isLoading, setIsLoading, LoadingUI } = useLoading();
+
   const handleContinue = async () => {
     try {
       setIsLoading(true);
       if (!userType) {
         setErrors({ userType: "Please select a user type" });
+        setIsLoading(false);
+        return;
       }
       const token = localStorage.getItem("token");
 
@@ -33,6 +37,8 @@ const UserTypeSelection = () => {
           },
         }
       );
+
+      console.log("Server response for update userType:", res.data);
 
       if (res.status === 200) {
         if (res.data.userType === "homeowner") {
@@ -52,8 +58,9 @@ const UserTypeSelection = () => {
 
   return (
     <>
-      {isLoading && loadingUI}
+      {isLoading && LoadingUI()}
       <div className={styles.input_container}>
+        <h2>Home Building Ecosystem</h2>
         <div className={styles.userTypeSelection}>
           <h2>What do you want to do?</h2>
           <div className={styles.userTypeButtons_container}>

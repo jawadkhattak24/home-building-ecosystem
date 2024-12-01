@@ -4,13 +4,22 @@ import axios from "redaxios";
 import styles from "./styles/service-card.module.scss";
 import PropTypes from "prop-types";
 
-function ServiceCard({ service }) {
+function ProfessionalCard({ professional }) {
+  const {
+    userId: { name, profilePictureUrl, coverPictureUrl },
+  } = professional;
+
+  useEffect(() => {
+    console.log("Profile Picture URL:", profilePictureUrl);
+    console.log("Cover Picture URL:", coverPictureUrl);
+  }, [profilePictureUrl, coverPictureUrl]);
+
   useEffect(() => {
     const recordImpression = async () => {
       try {
         await axios.post(
-          `${import.meta.env.VITE_API_URL}/api/service/${
-            service._id
+          `${import.meta.env.VITE_API_URL}/api/professional/${
+            professional.id
           }/impression`
         );
       } catch (error) {
@@ -19,52 +28,80 @@ function ServiceCard({ service }) {
     };
 
     recordImpression();
-  }, [service._id]);
+  }, [professional.id]);
+
+  const averageRating =
+    professional.reviews.length > 0
+      ? professional.reviews.reduce((acc, review) => acc + review.rating, 0) /
+        professional.reviews.length
+      : 0;
 
   return (
-    <Link to={`/service/${service._id}`}>
-      <div className={styles.service_card}>
+    <Link to={`/professional-profile/${professional.userId._id}`}>
+      <div className={styles.professional_card}>
         <img
-          className={styles.thumbnailImage}
+          className={styles.portfolioImage}
           width={400}
           height={150}
-          src={service.images[0]}
-          alt={service.category}
+          src={coverPictureUrl}
+          alt={`${professional.serviceType} Portfolio`}
         />
         <div className={styles.cardDetails}>
-          <h3 className={styles.serviceTitle}>{service.title}</h3>
-
-          <div className={styles.providerDetails}>
+          <div className={styles.professionalInfo}>
             <img
-              className={styles.providerImage}
-              width={40}
-              height={40}
-              src={service.providerProfilePicture}
-              alt={service.serviceProvider}
+              className={styles.profileImage}
+              width={60}
+              height={60}
+              src={profilePictureUrl}
+              alt={name}
             />
-
-            <p>{service.serviceProvider}</p>
+            <div className={styles.nameAndType}>
+              <h3 className={styles.name}>{name}</h3>
+              <p className={styles.serviceType}>{professional.serviceType}</p>
+            </div>
           </div>
 
-          <p>
-            ⭐ {service.rating} ({service.numReviews})
-          </p>
+          <div className={styles.stats}>
+            <p className={styles.experience}>
+              {professional.yearsExperience} years experience
+            </p>
+            <p className={styles.rating}>
+              ⭐ {averageRating.toFixed(1)} ({professional.reviews.length}{" "}
+              reviews)
+            </p>
+          </div>
         </div>
       </div>
     </Link>
   );
 }
 
-export default ServiceCard;
+export default ProfessionalCard;
 
-ServiceCard.propTypes = {
-  service: PropTypes.shape({
+ProfessionalCard.propTypes = {
+  professional: PropTypes.shape({
     _id: PropTypes.string.isRequired,
-    category: PropTypes.string.isRequired,
-    images: PropTypes.arrayOf(PropTypes.string).isRequired,
-    thumbnailUrl: PropTypes.string,
-    title: PropTypes.string.isRequired,
-    rating: PropTypes.number,
-    numReviews: PropTypes.number,
+    serviceType: PropTypes.oneOf([
+      "Architect",
+      "Interior Designer",
+      "Contractor",
+      "Plumber",
+      "Painter",
+      "Electrician",
+      "3D Modeler",
+      "Material Supplier",
+    ]).isRequired,
+    yearsExperience: PropTypes.number.isRequired,
+    portfolio: PropTypes.arrayOf(PropTypes.string).isRequired,
+    reviews: PropTypes.arrayOf(
+      PropTypes.shape({
+        rating: PropTypes.number.isRequired,
+      })
+    ).isRequired,
+    userId: PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      profilePictureUrl: PropTypes.string,
+      coverPictureUrl: PropTypes.string,
+    }).isRequired,
   }).isRequired,
 };

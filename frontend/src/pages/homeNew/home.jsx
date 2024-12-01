@@ -79,9 +79,9 @@ function HomePage() {
           </div>
         ) : (
           <div className={styles.featuredServicesContainer}>
-            <FeaturedServicesSection serviceType={"Architecture"} />
-            <FeaturedServicesSection serviceType={"Interior Design"} />
-            <FeaturedServicesSection serviceType={"Landscape Design"} />
+            <FeaturedServicesSection serviceType={"Architect"} />
+            <FeaturedServicesSection serviceType={"Interior Designer"} />
+            <FeaturedServicesSection serviceType={"Electrician"} />
           </div>
         )}
       </div>

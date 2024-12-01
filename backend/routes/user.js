@@ -1,14 +1,15 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
+const Professional = require("../models/Professional");
+const Supplier = require("../models/Supplier");
 const dotenv = require("dotenv");
 const axios = require("axios");
 const { sendVerificationEmail } = require("../utils/emailService");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const EmailVerification = require("../models/EmailVerification");
-const Professional = require("../models/Professional");
-const Supplier = require("../models/Supplier");
+const authMiddleware = require("../middlewares/auth");
 
 const env = process.env.NODE_ENV || "development";
 dotenv.config({ path: `.env.${env}` });
@@ -75,7 +76,17 @@ router.post("/update-user-type", async (req, res) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const userId = decoded.id;
 
-    const user = await User.findByIdAndUpdate(userId, { userType });
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { userType },
+      { new: true, runValidators: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    console.log("UserType updated in api:", user);
     res.status(200).json(user);
   } catch (err) {
     console.error("Error updating user type:", err);
@@ -101,6 +112,7 @@ const verifyTokenFromCookie = (req, res, next) => {
 
 router.get("/me", async (req, res) => {
   const authHeader = req.headers.authorization;
+  console.log("Auth header in me route:", authHeader);
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({ success: false, message: "Unauthorized" });
@@ -161,6 +173,44 @@ router.get("/me", async (req, res) => {
   }
 });
 
+router.get("/user/:userId", authMiddleware, async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    console.log("User Found:", user);
+    res.json(user);
+  } catch (err) {
+    console.error("Error fetching user data:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+router.get("/professional/:userId", authMiddleware, async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const professional = await Professional.findOne({ userId });
+
+    if (!professional) {
+      res.status(400).json("Professional does not exist");
+    }
+    console.log("Professional Found:", professional);
+
+    res.json(professional);
+  } catch (err) {
+    console.error("Error fetching professional data:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+router.get("/supplier/:userId", authMiddleware, async (req, res) => {
+  const { userId } = req.params;
+  const supplier = await Supplier.findOne({ userId });
+  res.json(supplier);
+});
+
 router.get("/search", async (req, res) => {
   try {
     const { query } = req.query;
@@ -184,6 +234,9 @@ router.post("/login", async (req, res) => {
     if (!user) {
       console.log("User not found for email:", email);
       return res.status(400).json({ msg: "Incorrect email" });
+    }
+    if (user.googleId) {
+      return res.status(400).json({ msg: "Login with Google" });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
@@ -210,7 +263,7 @@ router.post("/login", async (req, res) => {
           throw err;
         }
 
-        res.json({ user: payload, token });
+        res.status(200).json({ user: payload, token });
       }
     );
   } catch (err) {
@@ -378,6 +431,7 @@ router.post("/professional/profile", async (req, res) => {
     } = req.body;
 
     const user = await User.findOne({ email });
+    console.log("User in professional profile route:", user);
 
     if (!user) {
       return res.status(404).json({ msg: "User not found" });

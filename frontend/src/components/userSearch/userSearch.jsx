@@ -55,7 +55,13 @@ function UserSearch({ onUserSelect }) {
                 setResults([]);
                 setSearchTerm("");
               }}
+              className={styles.searchResultItem}
             >
+              <img
+                src={user.profilePicUrl}
+                alt={`${user.name}'s avatar`}
+                className={styles.avatar}
+              />
               {user.name}
             </li>
           ))}

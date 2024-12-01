@@ -11,10 +11,9 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [userType, setUserType] = useState("");
 
-  function login({ user, token }) {
+  function login(user, token) {
     localStorage.setItem("token", token);
     setCurrentUser(user);
-    setLoading(false);
   }
 
   function logout() {
@@ -25,6 +24,10 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const fetchUser = async () => {
+      if (currentUser) {
+        setLoading(false);
+        return;
+      }
       const token = localStorage.getItem("token");
       if (token) {
         try {

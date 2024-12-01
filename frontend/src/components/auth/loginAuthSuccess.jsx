@@ -7,7 +7,7 @@ import { useLoading } from "../../contexts/loadingContext";
 export default function LoginAuthSuccess() {
   const { login } = useAuth();
   const navigate = useNavigate();
-  const { isLoading, setIsLoading, loadingUI } = useLoading();
+  const { isLoading, setIsLoading, LoadingUI } = useLoading();
 
   useEffect(() => {
     const authenticateUser = async () => {
@@ -33,10 +33,6 @@ export default function LoginAuthSuccess() {
 
         console.log("User object in authRedirect", res.data.user);
         console.log("User type in authRedirect", res.data.user.userType);
-
-        
-
-
       } catch (err) {
         console.error("Error during authentication:", err);
         navigate("/login");
@@ -50,7 +46,7 @@ export default function LoginAuthSuccess() {
 
   return (
     <>
-      {isLoading && loadingUI()}
+      {isLoading && LoadingUI()}
       {!isLoading && <p>Redirecting...</p>}
     </>
   );

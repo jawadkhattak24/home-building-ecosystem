@@ -12,14 +12,13 @@ function Inbox() {
   console.log("Chat context: ", ChatContext);
   const {
     conversations,
-    // handleNegotiation,
     activeConversation,
     messages,
     currentUser,
     handleSelectConversation,
     handleSendMessage,
-    // handleProposalChanges,
     handleUserSelect,
+    isLoading,
   } = useContext(ChatContext);
 
   console.log("Currently active conversation: ", activeConversation);
@@ -35,6 +34,7 @@ function Inbox() {
             conversations={conversations}
             activeConversation={activeConversation}
             onSelectConversation={handleSelectConversation}
+            isLoading={isLoading}
           />
         </div>
 
@@ -46,7 +46,6 @@ function Inbox() {
                 conversations={conversations}
                 activeConversation={activeConversation}
                 messages={messages}
-                // handleNegotiation={handleNegotiation}
                 conversationId={activeConversation}
               />
               <MessageInput onSendMessage={handleSendMessage} />

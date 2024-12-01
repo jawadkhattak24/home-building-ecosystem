@@ -14,16 +14,28 @@ function FeaturedServicesSection({ serviceType }) {
   useEffect(() => {
     async function fetchServicesByCategory(category) {
       setLoading(true);
+      const token = localStorage.getItem("token");
       try {
+        setLoading(true);
         const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/service/category/${category}`
+          `${import.meta.env.VITE_API_URL}/api/service/category/${category}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
-        setServices(response.data);
+        console.log("Professional Services:", response.data);
+
+        const filteredServices = response.data.filter(
+          (service) => service.userId !== null
+        );
+        setServices(filteredServices);
       } catch (error) {
         console.error("Error fetching featured services:", error);
+      } finally {
+        setLoading(false);
       }
-      setTimeout(() => setLoading(false), 1500);
-      // setLoading(false);
     }
 
     fetchServicesByCategory(serviceType);
@@ -40,7 +52,7 @@ function FeaturedServicesSection({ serviceType }) {
               <SkeletonCard key={index} />
             ))
           : services.map((service, index) => (
-              <ServiceCard key={index} service={service} />
+              <ServiceCard key={index} professional={service} />
             ))}
       </section>
     </div>

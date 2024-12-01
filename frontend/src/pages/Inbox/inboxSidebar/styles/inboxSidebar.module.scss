@@ -46,6 +46,13 @@
     padding: 10px;
     gap: 10px;
     border-bottom: 1px solid base.$background;
+    transition: background-color 0.3s ease;
+
+    // &:hover {
+    //   background-color: #f0f0f0;
+    //   cursor: pointer;
+    //   color: base.$primary;
+    // }
 
     .reciept {
       // color:#330A4D;

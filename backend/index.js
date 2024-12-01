@@ -23,6 +23,7 @@ const io = socketIO(server, {
 });
 const userRoutes = require("./routes/user");
 const authRoutes = require("./routes/auth");
+const serviceRoutes = require("./routes/service");
 
 require("./config/passport");
 
@@ -109,6 +110,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/user", userRoutes);
 app.use("/auth", authRoutes);
+app.use("/api/service", serviceRoutes);
 
 const messageRoutes = require("./routes/conversation");
 app.use("/api/conversations", cors(), messageRoutes);

@@ -16,6 +16,11 @@ import ProfessionalProfileSetup from "./pages/register/professionalProfileSetup/
 import SupplierProfileSetup from "./pages/register/supplierProfileSetup/supplierProfileSetup";
 import { LoadingProvider } from "./contexts/loadingContext";
 import UserTypeSelection from "./pages/register/userTypeSelection/userTypeSelection";
+import ProfessionalHome from "./pages/professionalHome/professionalHome";
+import SupplierHome from "./pages/supplierHome/supplierHome";
+import ViewProfessionalProfile from "./pages/professionalProfile/viewProfessionalProfile/viewProfessionalProfile";
+import Profile from "./pages/profile/profile";
+
 function AppContent() {
   const location = useLocation();
 
@@ -49,6 +54,22 @@ function AppContent() {
         <Route path="/login" element={<PublicRoute element={LoginPage} />} />
         <Route path="/homeNew" element={<ProtectedRoute element={HomeNew} />} />
         <Route path="/auth/success" element={<AuthSuccess />} />
+        <Route
+          path="/professional-profile/:userId"
+          element={<ProtectedRoute element={ViewProfessionalProfile} />}
+        />
+        <Route
+          path="/profile/:userId"
+          element={<ProtectedRoute element={Profile} />}
+        />
+        <Route
+          path="/professional-homepage"
+          element={<ProtectedRoute element={ProfessionalHome} />}
+        />
+        <Route
+          path="/supplier-homepage"
+          element={<ProtectedRoute element={SupplierHome} />}
+        />
         <Route
           path="/register"
           element={<PublicRoute element={RegisterPage} />}

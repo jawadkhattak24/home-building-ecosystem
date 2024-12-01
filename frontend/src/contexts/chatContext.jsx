@@ -8,6 +8,7 @@ export const ChatProvider = ({ children }) => {
   const [conversations, setConversations] = useState([]);
   const [activeConversation, setActiveConversation] = useState(null);
   const [messages, setMessages] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { currentUser } = useAuth();
 
@@ -56,35 +57,9 @@ export const ChatProvider = ({ children }) => {
     };
   }, [activeConversation, currentUser]);
 
-  //   const handleNegotiation = async (negotiationData) => {
-  //     const currentUserId = currentUser?._id || currentUser?.id;
-
-  //     if (activeConversation) {
-  //       return new Promise((resolve, reject) => {
-  //         socket.current.emit(
-  //           "negotiation-update",
-  //           {
-  //             ...negotiationData,
-  //             sender: currentUserId,
-
-  //             conversationId: activeConversation,
-  //           },
-  //           (response) => {
-  //             if (response?.success) {
-  //               console.log("Negotiation updated successfully:", response.data);
-  //               resolve(response.data);
-  //             } else {
-  //               console.error("Failed to update negotiation:", response?.error);
-  //               reject(response?.error);
-  //             }
-  //           }
-  //         );
-  //       });
-  //     }
-  //   };
-
   const fetchConversations = async () => {
     try {
+      // setIsLoading(true);
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/api/conversations`,
         {
@@ -97,6 +72,8 @@ export const ChatProvider = ({ children }) => {
       console.log("Conversations fetched: ", data);
     } catch (error) {
       console.error("Error fetching conversations:", error);
+    } finally {
+      // setIsLoading(false);
     }
   };
 
@@ -120,65 +97,6 @@ export const ChatProvider = ({ children }) => {
         conversationId: activeConversation,
         sender: currentUserId,
         text: text,
-      };
-
-      return new Promise((resolve, reject) => {
-        socket.current.emit("send-message", message, (error) => {
-          if (error) {
-            console.error("Error sending message:", error);
-            reject(error);
-          } else {
-            console.log("Message sent successfully");
-            resolve();
-          }
-        });
-      });
-    } else {
-      console.error("No active conversation found");
-    }
-  };
-
-  const handleProposalChanges = async (budget, deadline, conversationId) => {
-    if (conversationId) {
-      return new Promise((resolve, reject) => {
-        socket.current.emit(
-          "proposal-changes",
-          budget,
-          deadline,
-          conversationId,
-          (response) => {
-            if (response?.success) {
-              console.log("Proposal updated successfully:", response.data);
-              resolve(response.data);
-            } else {
-              console.error("Failed to update proposal:", response?.error);
-              reject(response?.error);
-            }
-          }
-        );
-      });
-    }
-  };
-
-  const handleSendProposalMessage = async (
-    text,
-    conversationId,
-    budget,
-    deadline
-  ) => {
-    console.log("Sending message...", text, currentUser.id, conversationId);
-
-    const currentUserId = currentUser?._id || currentUser?.id;
-
-    if (conversationId) {
-      const message = {
-        conversationId: conversationId,
-        sender: currentUserId,
-        text: text,
-        proposal: {
-          budget: budget,
-          deadline: deadline,
-        },
       };
 
       return new Promise((resolve, reject) => {
@@ -285,12 +203,11 @@ export const ChatProvider = ({ children }) => {
         checkConversationExists,
         messages,
         currentUser,
-        // handleNegotiation,
         handleSelectConversation,
         handleSendMessage,
         fetchConversations,
-        // handleSendProposalMessage,
-        // handleProposalChanges,
+        isLoading,
+        setIsLoading,
         handleUserSelect,
       }}
     >

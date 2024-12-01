@@ -1,19 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styles from "./styles/login.module.scss";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/authContext";
 import axios from "redaxios";
 import { FaGoogle, FaFacebookF } from "react-icons/fa";
 import { Eye, EyeOff } from "lucide-react";
+import { useLoading } from "../../contexts/loadingContext";
 
 export default function LoginPage() {
   const { login } = useAuth();
-  const [isLoading, setIsLoading] = useState(false);
+  const { setIsLoading, isLoading, LoadingUI } = useLoading();
   const [showPassword, setShowPassword] = useState(false);
 
   const [errorStatus, setErrorStatus] = useState({
     email: false,
     password: false,
+    googleId: false,
   });
 
   const navigate = useNavigate();
@@ -32,10 +34,12 @@ export default function LoginPage() {
   };
 
   const handleGoogleLogin = () => {
+    setIsLoading(true);
     window.location.href = `${import.meta.env.VITE_API_URL}/auth/google/login`;
   };
 
   const handleFacebookLogin = () => {
+    setIsLoading(true);
     window.location.href = `${
       import.meta.env.VITE_API_URL
     }/auth/facebook/login`;
@@ -49,18 +53,18 @@ export default function LoginPage() {
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/user/login`,
-        userData,
-        {
-          withCredentials: true,
-        }
+        userData
       );
 
       const { user, token } = await res.data;
+      console.log("Server response status:", res.status);
 
-      // if (res.status === 200) {
-      login({ user, token });
-      navigate("/homeNew");
-      // }
+      if (res.status === 200) {
+        login(user, token);
+        navigate("/homeNew");
+      } else if (res.status === 500) {
+        setErrorStatus({ email: false, password: false });
+      }
     } catch (err) {
       handleError(err);
     } finally {
@@ -81,7 +85,11 @@ export default function LoginPage() {
         setErrorStatus({ email: true, password: false });
       } else if (data.msg === "Incorrect password") {
         setErrorStatus({ email: false, password: true });
+      } else if (data.msg === "Login with Google") {
+        setErrorStatus({ googleId: true });
       }
+    } else if (status === 500) {
+      setErrorStatus({ email: false, password: false });
     } else {
       console.error("Error during login:", err);
     }
@@ -89,6 +97,7 @@ export default function LoginPage() {
 
   return (
     <React.Fragment>
+      {isLoading && LoadingUI}
       <div className={styles.signIn_wrapper}>
         {isLoading && (
           <div className={styles.loadingWrapper}>
@@ -150,6 +159,9 @@ export default function LoginPage() {
                   Forgot password?
                 </a>
               </div>
+              {errorStatus.googleId && (
+                <p className={styles.errorText}>Please login with Google.</p>
+              )}
 
               <div>
                 <button

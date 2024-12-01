@@ -12,7 +12,7 @@ const SupplierProfileSetup = () => {
   const [userData, setUserData] = useState({});
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
-  const { isLoading, setIsLoading, loadingUI } = useLoading();
+  const { isLoading, setIsLoading, LoadingUI } = useLoading();
   const handleChange = (e) => {
     setUserData({ ...userData, [e.target.name]: e.target.value });
   };
@@ -53,7 +53,7 @@ const SupplierProfileSetup = () => {
 
   return (
     <>
-      {isLoading && loadingUI()}
+      {isLoading && LoadingUI()}
       <div className={styles.supplierInfo}>
         <Link to="/" className={styles.home_link}>
           Home Building Ecosystem

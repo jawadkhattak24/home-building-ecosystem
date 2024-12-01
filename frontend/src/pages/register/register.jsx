@@ -56,8 +56,6 @@ function RegistrationForm() {
   const toggleConfirmPasswordVisibility = () =>
     setShowConfirmPassword((prev) => !prev);
 
-  const [codeCount, setCodeCount] = useState(0);
-
   const sendVerificationCode = async (email) => {
     try {
       const available = await checkAvailability("email", email);
@@ -309,9 +307,7 @@ function RegistrationForm() {
 
         if (res.status === 200) {
           login(user, token);
-          setTimeout(() => {
-            navigate("/homeNew");
-          }, 2000);
+          navigate("/homeNew");
         } else {
           console.error(
             "Registration error occured in step 2:",
@@ -801,7 +797,10 @@ function RegistrationForm() {
                 onClick={handleSubmit}
                 className={`${styles.nav_button} ${styles.next_button}`}
               >
-                Next <ArrowRight size={20} />
+                {userData.userType === "homeowner"
+                  ? "Complete Registration"
+                  : "Next"}
+                <ArrowRight size={20} />
               </button>
             )}
 

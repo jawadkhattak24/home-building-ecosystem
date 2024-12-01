@@ -1,0 +1,84 @@
+@use "../../../../../globalStyles/base.scss" as base;
+
+@keyframes shimmer {
+  0% {
+    background-position: -468px 0;
+  }
+  100% {
+    background-position: 468px 0;
+  }
+}
+
+.shimmerBg {
+  animation-duration: 1.5s;
+  animation-fill-mode: forwards;
+  animation-iteration-count: infinite;
+  animation-name: shimmer;
+  animation-timing-function: linear;
+  background: linear-gradient(to right, #f6f7f8 8%, #edeef1 18%, #f6f7f8 33%);
+  background-size: 800px 104px;
+}
+
+.sidebar {
+  overflow-y: auto;
+  max-height: 480px;
+  width: 270px;
+  height: 100%;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  border-radius: 5px;
+  border-right: 1px solid #e0e0e0;
+
+  .message_list {
+    width: 100%;
+    min-height: 90px;
+    padding: 10px;
+    display: flex;
+    gap: 10px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .avatarSkeleton {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    @extend .shimmerBg;
+  }
+
+  .converationsDetailsContainer {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .nameAndDateContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+
+  .nameSkeleton {
+    width: 100px;
+    height: 16px;
+    border-radius: 4px;
+    @extend .shimmerBg;
+  }
+
+  .dateSkeleton {
+    width: 60px;
+    height: 14px;
+    border-radius: 4px;
+    @extend .shimmerBg;
+  }
+
+  .messageSkeleton {
+    width: 180px;
+    height: 14px;
+    border-radius: 4px;
+    margin-top: 4px;
+    @extend .shimmerBg;
+  }
+}

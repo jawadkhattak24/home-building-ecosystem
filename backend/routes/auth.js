@@ -27,6 +27,8 @@ router.get(
   (req, res) => {
     const user = req.user;
 
+    console.log("User in google callback:", user);
+
     const token = jwt.sign(
       {
         id: user._id,

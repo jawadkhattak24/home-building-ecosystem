@@ -11,7 +11,7 @@ const ProfessionalProfileSetup = () => {
   const { currentUser } = useAuth();
   const [userData, setUserData] = useState({});
   const [errors, setErrors] = useState({});
-  const { isLoading, setIsLoading, loadingUI } = useLoading();
+  const { isLoading, setIsLoading, LoadingUI } = useLoading();
   const navigate = useNavigate();
 
   const serviceTypes = [
@@ -64,7 +64,7 @@ const ProfessionalProfileSetup = () => {
 
   return (
     <>
-      {isLoading && loadingUI()}
+      {isLoading && LoadingUI()}
       <div className={styles.professionalInfo}>
         <Link to="/" className={styles.home_link}>
           Home Building Ecosystem

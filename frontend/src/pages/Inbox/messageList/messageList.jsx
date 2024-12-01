@@ -80,7 +80,15 @@ function MessageList({
       <div className={styles.leftSideContainer}>
         <div className={styles.messagesWrapper}>
           <div className={styles.receiptNameBar}>
-            <Link to={`/user/${otherUser._id}`}>
+            <Link
+              to={`/${
+                otherUser.userType === "homeowner"
+                  ? "profile"
+                  : otherUser.userType === "professional"
+                  ? "professional-profile"
+                  : "supplier-profile"
+              }/${otherUser._id}`}
+            >
               <h2 className={styles.receiptName}>{otherUser.name}</h2>
             </Link>
           </div>
