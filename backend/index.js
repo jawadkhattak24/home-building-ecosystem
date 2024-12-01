@@ -31,21 +31,21 @@ console.log("mongodb url :", process.env.MONGODB_URI);
 
 app.use(cookieParser());
 
-// app.use(
-//   session({
-//     secret: process.env.SESSION_SECRET,
-//     resave: false,
-//     saveUninitialized: false,
-//     store: MongoStore.create({
-//       mongoUrl: process.env.MONGODB_URI,
-//       ttl: 24 * 60 * 60 * 1000,
-//     }),
-//     cookie: {
-//       secure: process.env.NODE_ENV === "production",
-//       maxAge: 24 * 60 * 60 * 1000,
-//     },
-//   })
-// );
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGODB_URI,
+      ttl: 24 * 60 * 60 * 1000,
+    }),
+    cookie: {
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 24 * 60 * 60 * 1000,
+    },
+  })
+);
 
 app.use(passport.initialize());
 app.use(passport.session());
