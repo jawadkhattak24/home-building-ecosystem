@@ -50,7 +50,7 @@ function AppContent() {
     <>
       {!showNavigation && <Navigation />}
       <Routes>
-        <Route path="/" element={<PublicRoute element={Home} />} />
+        <Route path="/" element={<PublicRoute element={HomeNew} />} />
         <Route path="/login" element={<PublicRoute element={LoginPage} />} />
         <Route path="/homeNew" element={<ProtectedRoute element={HomeNew} />} />
         <Route path="/auth/success" element={<AuthSuccess />} />
