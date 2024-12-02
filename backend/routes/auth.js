@@ -29,6 +29,7 @@ router.get(
 
     console.log("User in google callback:", user);
 
+    console.log("JWT SECRET: ", process.env.JWT_SECRET);
     const token = jwt.sign(
       {
         id: user._id,
@@ -50,6 +51,7 @@ router.get(
   (req, res) => {
     const user = req.user;
 
+    console.log("JWT SECRET: ", process.env.JWT_SECRET);
     const token = jwt.sign(
       {
         id: user._id,
