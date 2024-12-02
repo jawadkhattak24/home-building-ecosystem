@@ -43,7 +43,7 @@ function HomePage() {
       <div className={styles.home_wrapper}>
         <div className={styles.hero_container}>
           <div className={styles.headings_container}>
-            {currentUser && (
+            {currentUser? && (
             <h5>Welcome, {currentUser.name}</h5>
             )}
             <h1>Your one stop solution for building your dream home.</h1>
