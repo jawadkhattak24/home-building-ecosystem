@@ -9,10 +9,152 @@ const { sendVerificationEmail } = require("../utils/emailService");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const EmailVerification = require("../models/EmailVerification");
+const multer = require("multer");
+const multerS3 = require("multer-s3");
+const { S3Client } = require("@aws-sdk/client-s3");
 const authMiddleware = require("../middlewares/auth");
 
 const env = process.env.NODE_ENV || "development";
 dotenv.config({ path: `.env.${env}` });
+
+const s3 = new S3Client({
+  region: process.env.AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  },
+});
+
+const upload = multer({
+  storage: multerS3({
+    s3: s3,
+    bucket: process.env.AWS_BUCKET_NAME,
+    contentType: multerS3.AUTO_CONTENT_TYPE,
+    // acl: 'public-read',
+    key: function (req, file, cb) {
+      cb(null, Date.now().toString() + "-" + file.originalname);
+    },
+  }),
+});
+
+router.get("/:userId/profile-picture", async (req, res) => {
+  const user = await User.findById(req.params.userId);
+  res.json(user.profilePictureUrl);
+});
+
+router.post(
+  "/:userId/profile-picture",
+  upload.single("profilePicture"),
+  async (req, res) => {
+    try {
+      const user = await User.findById(req.params.userId);
+      if (!user) {
+        return res.status(404).json({ msg: "User not found" });
+      }
+
+      if (!req.file) {
+        return res.status(400).json({ msg: "No profile picture uploaded" });
+      }
+
+      user.profilePictureUrl = req.file.location;
+      await user.save();
+
+      res.json({ msg: "Profile picture uploaded successfully" });
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send("Server error");
+    }
+  }
+);
+
+router.get("/:userId/cover-picture", async (req, res) => {
+  const user = await User.findById(req.params.userId);
+  res.json(user.coverPictureUrl);
+});
+
+router.post(
+  "/:userId/cover-picture",
+  upload.single("coverPicture"),
+  async (req, res) => {
+    console.log("Uploading cover picture");
+    try {
+      const user = await User.findById(req.params.userId);
+      if (!user) {
+        return res.status(404).json({ msg: "User not found" });
+      }
+
+      if (!req.file) {
+        return res.status(400).json({ msg: "No cover picture uploaded" });
+      }
+
+      console.log("Cover picture uploaded successfully");
+
+      user.coverPictureUrl = req.file.location;
+      await user.save();
+
+      res.json({ msg: "Cover picture uploaded successfully" });
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send("Server error");
+    }
+  }
+);
+
+router.put("/professional-profile/update/:field/:userId", async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const field = req.params.field;
+
+    console.log("Update info: ", userId, field, req.body);
+
+    const { dataToSend } = req.body;
+
+    if (field === "name") {
+      const user = await User.findById(userId);
+      console.log("Name change request recieved: ", user);
+
+      if (!user) {
+        res.status(400).json({ msg: "User not found" });
+      }
+      user.name = dataToSend;
+      await user.save();
+
+      res.status(201).json({ msg: "Profile updated successfully" });
+    } else {
+      const user = await User.findById(userId);
+
+      const pro = await Professional.findOne({ userId: userId });
+
+      if (field == "serviceType") {
+        await Professional.findByIdAndUpdate(
+          pro._id,
+          { serviceType: dataToSend },
+          { new: true, runValidators: true }
+        );
+      } else if (field == "bio") {
+        await Professional.findByIdAndUpdate(
+          pro._id,
+          { bio: dataToSend },
+          { new: true, runValidators: true }
+        );
+      } else if (field == "certifications") {
+        await Professional.findByIdAndUpdate(
+          pro._id,
+          { certifications: dataToSend },
+          { new: true, runValidators: true }
+        );
+      }
+
+      if (!user) {
+        res.status(400).json({ msg: "User not found" });
+      }
+
+      res.status(201).json({ msg: "Profile updated successfully" });
+    }
+  } catch (err) {
+    console.error("An error occured updating profile:", err);
+  }
+});
 
 router.get("/check-username", async (req, res) => {
   try {
@@ -509,6 +651,21 @@ router.post("/supplier/profile", async (req, res) => {
     );
   } catch (err) {
     console.error("Error creating supplier profile:", err);
+    res.status(500).json({ msg: "Internal server error" });
+  }
+});
+
+router.get("/supplier-profile/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const supplier = await Supplier.findOne({ userId }).populate(
+      "userId",
+      "name email profilePictureUrl coverPictureUrl"
+    );
+    res.json(supplier);
+    console.log("Supplier profile fetched:", supplier);
+  } catch (err) {
+    console.error("Error fetching supplier profile:", err);
     res.status(500).json({ msg: "Internal server error" });
   }
 });

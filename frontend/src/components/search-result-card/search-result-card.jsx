@@ -2,26 +2,26 @@
 import { useEffect } from "react";
 import styles from "./styles/search-result-card.module.scss";
 import { Link } from "react-router-dom";
-import axios from "redaxios";
+import axios from "axios";
 
 function SearchResultCard({ service }) {
   // console.log("description: ", props.service.description);
 
-  useEffect(() => {
-    const recordImpression = async () => {
-      try {
-        await axios.post(
-          `${import.meta.env.VITE_API_URL}/api/service/${
-            service._id
-          }/impression`
-        );
-      } catch (error) {
-        console.error("Error recording impression:", error);
-      }
-    };
+  // useEffect(() => {
+  //   const recordImpression = async () => {
+  //     try {
+  //       await axios.post(
+  //         `${import.meta.env.VITE_API_URL}/api/service/${
+  //           service._id
+  //         }/impression`
+  //       );
+  //     } catch (error) {
+  //       console.error("Error recording impression:", error);
+  //     }
+  //   };
 
-    recordImpression();
-  }, [service._id]);
+  //   recordImpression();
+  // }, [service._id]);
 
   const Id = service._id;
   return (

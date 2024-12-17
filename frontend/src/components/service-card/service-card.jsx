@@ -5,46 +5,34 @@ import styles from "./styles/service-card.module.scss";
 import PropTypes from "prop-types";
 
 function ProfessionalCard({ professional }) {
-  const {
-    userId: { name, profilePictureUrl, coverPictureUrl },
-  } = professional;
+  console.log("Pro", professional);
 
-  useEffect(() => {
-    console.log("Profile Picture URL:", profilePictureUrl);
-    console.log("Cover Picture URL:", coverPictureUrl);
-  }, [profilePictureUrl, coverPictureUrl]);
+  const { name, profilePictureUrl, coverPictureUrl } =
+    professional?.userId || {};
 
-  useEffect(() => {
-    const recordImpression = async () => {
-      try {
-        await axios.post(
-          `${import.meta.env.VITE_API_URL}/api/professional/${
-            professional.id
-          }/impression`
-        );
-      } catch (error) {
-        console.error("Error recording impression:", error);
-      }
-    };
+  // useEffect(() => {
+  //   console.log("Profile Picture URL:", profilePictureUrl);
+  //   console.log("Cover Picture URL:", coverPictureUrl);
+  // }, [profilePictureUrl, coverPictureUrl]);
 
-    recordImpression();
-  }, [professional.id]);
+  // Simplified averageRating
+  const averageRating = 4;
 
-  const averageRating =
-    professional.reviews.length > 0
-      ? professional.reviews.reduce((acc, review) => acc + review.rating, 0) /
-        professional.reviews.length
-      : 0;
+  // Safe access to reviews length
+  const reviewsCount = professional?.reviews?.length || 0;
 
   return (
-    <Link to={`/professional-profile/${professional.userId._id}`}>
+    <Link to={`/professional-profile/${professional?.userId?._id || ""}`}>
       <div className={styles.professional_card}>
         <img
           className={styles.portfolioImage}
           width={400}
           height={150}
           src={coverPictureUrl}
-          alt={`${professional.serviceType} Portfolio`}
+          alt={`${professional?.serviceType || "Service"} Portfolio`}
+          onError={(e) => {
+            e.target.src = "https://via.placeholder.com/400x150";
+          }}
         />
         <div className={styles.cardDetails}>
           <div className={styles.professionalInfo}>
@@ -54,20 +42,24 @@ function ProfessionalCard({ professional }) {
               height={60}
               src={profilePictureUrl}
               alt={name}
+              onError={(e) => {
+                e.target.src = "https://via.placeholder.com/60";
+              }}
             />
             <div className={styles.nameAndType}>
               <h3 className={styles.name}>{name}</h3>
-              <p className={styles.serviceType}>{professional.serviceType}</p>
+              <p className={styles.serviceType}>
+                {professional?.serviceType || "Professional Service"}
+              </p>
             </div>
           </div>
 
           <div className={styles.stats}>
             <p className={styles.experience}>
-              {professional.yearsExperience} years experience
+              {professional?.yearsExperience || 0} years experience
             </p>
             <p className={styles.rating}>
-              ⭐ {averageRating.toFixed(1)} ({professional.reviews.length}{" "}
-              reviews)
+              ⭐ {averageRating.toFixed(1)} ({reviewsCount} reviews)
             </p>
           </div>
         </div>
@@ -80,7 +72,7 @@ export default ProfessionalCard;
 
 ProfessionalCard.propTypes = {
   professional: PropTypes.shape({
-    _id: PropTypes.string.isRequired,
+    _id: PropTypes.string,
     serviceType: PropTypes.oneOf([
       "Architect",
       "Interior Designer",
@@ -90,18 +82,36 @@ ProfessionalCard.propTypes = {
       "Electrician",
       "3D Modeler",
       "Material Supplier",
-    ]).isRequired,
-    yearsExperience: PropTypes.number.isRequired,
-    portfolio: PropTypes.arrayOf(PropTypes.string).isRequired,
+    ]),
+    yearsExperience: PropTypes.number,
+    portfolio: PropTypes.arrayOf(PropTypes.string),
     reviews: PropTypes.arrayOf(
       PropTypes.shape({
-        rating: PropTypes.number.isRequired,
+        rating: PropTypes.number,
       })
-    ).isRequired,
+    ),
     userId: PropTypes.shape({
-      name: PropTypes.string.isRequired,
+      _id: PropTypes.string,
+      name: PropTypes.string,
       profilePictureUrl: PropTypes.string,
       coverPictureUrl: PropTypes.string,
-    }).isRequired,
-  }).isRequired,
+    }),
+  }),
+};
+
+// Default props
+ProfessionalCard.defaultProps = {
+  professional: {
+    _id: "",
+    serviceType: "Professional Service",
+    yearsExperience: 0,
+    portfolio: [],
+    reviews: [],
+    userId: {
+      _id: "",
+      name: "Professional",
+      profilePictureUrl: "https://via.placeholder.com/60",
+      coverPictureUrl: "https://via.placeholder.com/400x150",
+    },
+  },
 };

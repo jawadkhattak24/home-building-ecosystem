@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import axios from "redaxios";
 import styles from "./styles/home.module.scss";
 import FeaturedServicesSection from "../../components/featured-services-section/featured-services-section";
-import ServiceCard from "../../components/search-result-card/search-result-card";
+import ServiceCard from "../../components/service-card/service-card";
 import { useAuth } from "../../contexts/authContext";
 
 function HomePage() {
-  const { currentUser } = useAuth();
+const { currentUser } = useAuth();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
@@ -28,7 +28,7 @@ function HomePage() {
       setSearchResults(response.data);
       setOldSearchQuery(searchQuery);
     } catch (error) {
-      console.error("Error searching gigs:", error);
+      console.error("Error searching professionals:", error);
     }
   };
 
@@ -54,7 +54,7 @@ function HomePage() {
           <div className={styles.searchBar_container}>
             <form onSubmit={handleSearch}>
               <input
-                placeholder={"Start typing to search services..."}
+                placeholder={"Start typing to search professionals..."}
                 className={styles.hero_searchBar}
                 type="text"
                 value={searchQuery}
@@ -62,6 +62,7 @@ function HomePage() {
               />
               <button
                 className={styles.hero_searchButton}
+                type="submit"
                 // onClick={handleSearch}
               >
                 Search

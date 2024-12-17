@@ -20,6 +20,7 @@ import ProfessionalHome from "./pages/professionalHome/professionalHome";
 import SupplierHome from "./pages/supplierHome/supplierHome";
 import ViewProfessionalProfile from "./pages/professionalProfile/viewProfessionalProfile/viewProfessionalProfile";
 import Profile from "./pages/profile/profile";
+import SupplierProfile from "./pages/supplierProfile/supplierProfile";
 
 function AppContent() {
   const location = useLocation();
@@ -27,6 +28,7 @@ function AppContent() {
   const showNavigation = [
     "/login",
     "/register",
+    "/supplier-profile",
     "/professional-profile-setup",
     "/supplier-profile-setup",
     "/auth/success",
@@ -42,6 +44,7 @@ function AppContent() {
     "/register",
     "/professional-profile-setup",
     "/supplier-profile-setup",
+    "/supplier-profile",
     "/auth/success",
     "/user-type-selection",
   ].includes(location.pathname);
@@ -57,6 +60,10 @@ function AppContent() {
         <Route
           path="/professional-profile/:userId"
           element={<ProtectedRoute element={ViewProfessionalProfile} />}
+        />
+        <Route
+          path="/supplier-profile/:userId"
+          element={<ProtectedRoute element={SupplierProfile} />}
         />
         <Route
           path="/profile/:userId"

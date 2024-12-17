@@ -33,29 +33,33 @@ router.get("/test", (req, res) => {
 //   }),
 // });
 
-router.get("/search", async (req, res) => {
-  const { query } = req.query;
-  try {
-    const services = await Service.find({
-      title: { $regex: query, $options: "i" },
-    });
-    res.json(services);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server error" });
-  }
-});
-
 // router.get("/search", async (req, res) => {
 //   const { query } = req.query;
 //   try {
-//     const services = await Service.find({ title: { $regex: query, $options: "i" } }).limit(5);
+//     const services = await Professional.find({
+//       title: { $regex: query, $options: "i" },
+//     });
 //     res.json(services);
 //   } catch (error) {
 //     console.error(error);
 //     res.status(500).json({ message: "Server error" });
 //   }
 // });
+
+router.get("/search", async (req, res) => {
+  const { query } = req.query;
+  try {
+    const services = await Professional.find({
+      serviceType: { $regex: query, $options: "i" },
+    })
+      .limit(5)
+      .populate("userId", "name profilePictureUrl coverPictureUrl");
+    res.json(services);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 router.get("/category/:category", async (req, res) => {
   const { category } = req.params;
@@ -70,7 +74,6 @@ router.get("/category/:category", async (req, res) => {
         select: "name profilePictureUrl coverPictureUrl",
       });
 
-      
     console.log("Professionals found: ", professionals);
 
     if (professionals.length === 0) {
