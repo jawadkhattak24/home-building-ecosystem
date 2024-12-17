@@ -43,11 +43,9 @@ const { currentUser } = useAuth();
       <div className={styles.home_wrapper}>
         <div className={styles.hero_container}>
           <div className={styles.headings_container}>
-            {currentUser && (
-              <>
-                <h5>Welcome, {currentUser.name}</h5>
-              </>
-            )}
+            {currentUser? (
+            <h5>Welcome, {currentUser.name}</h5>
+            ):null}
             <h1>Your one stop solution for building your dream home.</h1>
           </div>
 

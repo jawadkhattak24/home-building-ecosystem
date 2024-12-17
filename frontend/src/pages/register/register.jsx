@@ -379,8 +379,8 @@ function RegistrationForm() {
             setTimeout(() => {
               navigate(
                 userData.userType === "professional"
-                  ? "/professional-homepage"
-                  : "/supplier-homepage"
+                  ? "/homeNew"
+                  : "/homeNew"
               );
             }, 2000);
           } else {
