@@ -21,6 +21,7 @@ import SupplierHome from "./pages/supplierHome/supplierHome";
 import ViewProfessionalProfile from "./pages/professionalProfile/viewProfessionalProfile/viewProfessionalProfile";
 import Profile from "./pages/profile/profile";
 import SupplierProfile from "./pages/supplierProfile/supplierProfile";
+import CategoryResults from "./components/categoryResults/categoryResults";
 
 function AppContent() {
   const location = useLocation();
@@ -88,6 +89,10 @@ function AppContent() {
         <Route
           path="/supplier-profile-setup"
           element={<ProtectedRoute element={SupplierProfileSetup} />}
+        />
+        <Route
+          path="/professionals/:category"
+          element={<ProtectedRoute element={CategoryResults} />}
         />
         <Route
           path="/user-type-selection"

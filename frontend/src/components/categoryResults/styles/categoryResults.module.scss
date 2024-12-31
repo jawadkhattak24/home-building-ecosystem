@@ -1,0 +1,24 @@
+.categoryResultsMainContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 50px;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
+.categoryResultsContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.categoryResultsTitle {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+}

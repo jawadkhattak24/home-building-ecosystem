@@ -3,7 +3,7 @@
 .header {
   background-color: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 1rem 0;
+  padding: 10px 0;
 }
 
 .container {
@@ -14,7 +14,7 @@
 }
 
 .logo {
-  color: #333;
+  color: #000000;
   font-size: 1.5rem;
   font-weight: 600;
   text-decoration: none;
@@ -31,7 +31,7 @@
 }
 
 .navLink {
-  color: #333;
+  color: base.$black;
   text-decoration: none;
   font-weight: 500;
 
@@ -50,7 +50,7 @@
 }
 
 .loginBtn {
-  color: #333;
+  color: #000000;
 
   &:hover {
     background-color: #f0f0ff;
@@ -69,7 +69,7 @@
 .header {
   background-color: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 1rem 0;
+  padding: 0.5rem 0;
   position: sticky;
   top: 0;
   z-index: 1000;
@@ -90,7 +90,7 @@
   padding: 0.5rem 1rem;
   cursor: pointer;
   font-weight: 500;
-  color: #333;
+  color: #000000;
 
   &:hover {
     color: #ff5722;
@@ -107,7 +107,7 @@
   padding: 0.5rem 0;
 
   a {
-    color: #333;
+    color: base.$black;
     padding: 0.75rem 1rem;
     text-decoration: none;
     display: block;
@@ -154,7 +154,7 @@
   gap: 10px;
   padding: 12px 16px;
   text-decoration: none;
-  color: #333;
+  color: #000000;
   transition: background-color 0.3s ease;
   border: none;
   background: none;

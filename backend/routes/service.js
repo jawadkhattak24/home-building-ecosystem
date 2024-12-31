@@ -66,7 +66,7 @@ router.get("/category/:category", async (req, res) => {
   console.log("Category: ", category);
   try {
     const professionals = await Professional.find({
-      serviceType: category,
+      serviceType: { $regex: `^${category}$`, $options: "i" }
     })
       .sort({ _id: -1 })
       .populate({

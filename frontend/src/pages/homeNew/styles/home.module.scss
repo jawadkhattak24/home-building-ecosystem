@@ -1,64 +1,209 @@
 @use "../../../globalStyles/_base.scss" as base;
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+.home_wrapper {
+  font-family: "Poppins", sans-serif;
+}
+
 .hero_container {
-  padding: 100px 50px;
+  position: relative;
+  padding: 120px 60px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 50px;
-  // background-color: base.$white;
+  height: 90vh;
+  gap: 30px;
   background: linear-gradient(
-    120deg,
+    135deg,
     base.$primary,
     #8b0500,
     base.$primary-dark
   );
-  border-bottom: 1px solid base.$background_light;
+  color: base.$white;
+  overflow: hidden;
 
   .headings_container {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    justify-content: center;
     align-items: center;
+    text-align: center;
+    gap: 15px;
 
-    h5 {
-      font: base.$h5;
-      color: base.$white;
+    .homeIcon {
+      font-size: 3rem;
+      animation: pulse 2s infinite;
     }
 
     h1 {
       font: base.$h1xx;
-      color: base.$white;
-      text-align: center;
+      // max-width: 800px;
+      line-height: 1.2;
+      animation: fadeInDown 1s ease-out;
+    }
+
+    p {
+      font: base.$p_large;
+      max-width: 600px;
+      opacity: 0.9;
+      animation: fadeInUp 1s ease-out;
     }
   }
 
-  .hero_searchBar {
-    width: 580px;
-    height: 60px;
-    background-color: base.$background_light;
-    border-radius: 4px 0 0 4px;
-    border: none;
-    padding: 20px;
-    font: base.$p_large;
-    outline: none;
+  .searchBar_container {
+    width: 100%;
+    max-width: 700px;
+    margin-top: 50px;
+
+    .searchForm {
+      display: flex;
+      align-items: center;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      overflow: hidden;
+      background-color: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      transition: transform 0.3s ease;
+
+      &:hover {
+        transform: translateY(-5px);
+      }
+
+      .searchInputContainer {
+        display: flex;
+        align-items: center;
+        flex: 1;
+        padding: 0 20px;
+
+        .searchIcon {
+          margin-right: 10px;
+          color: base.$white;
+          font-size: 1.2rem;
+        }
+
+        .hero_searchBar {
+          width: 100%;
+          padding: 15px;
+          background: transparent;
+          border: none;
+          color: base.$white;
+          font: base.$p_large;
+          outline: none;
+
+          &::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+          }
+        }
+      }
+
+      .hero_searchButton {
+        padding: 15px 25px;
+        background-color: base.$primary;
+        border: none;
+        color: base.$white;
+        font: base.$p_large;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+
+        &:hover {
+          background-color: base.$primary-dark;
+        }
+      }
+    }
   }
-  .hero_searchButton {
-    cursor: pointer;
-    width: 100px;
-    height: 60px;
-    background-color: base.$primary;
-    border-radius: 0 4px 4px 0;
-    border: none;
-    color: base.$white;
-    font: base.$p_large;
+
+  .decorativeShapes {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    gap: 15px;
+
+    .circle,
+    .triangle,
+    .square {
+      width: 40px;
+      height: 40px;
+      background-color: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .triangle {
+      width: 0;
+      height: 0;
+      border-left: 20px solid transparent;
+      border-right: 20px solid transparent;
+      border-bottom: 35px solid rgba(255, 255, 255, 0.2);
+      background: none;
+    }
+
+    .square {
+      border-radius: 10%;
+    }
+
+    .circle {
+      animation-delay: 0s;
+    }
+
+    .triangle {
+      animation-delay: 2s;
+    }
+
+    .square {
+      animation-delay: 4s;
+    }
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+  100% {
+    transform: translateY(0px);
   }
 }
 
@@ -69,12 +214,16 @@
   background-color: base.$white;
   padding: 40px 50px;
 
+  h2 {
+    font: base.$h2;
+    color: base.$black;
+  }
+
   .searchResultsMainContainer {
     display: flex;
     flex-direction: row;
     gap: 30px;
     flex-wrap: wrap;
-    // padding: 0 50px;
   }
 }
 

@@ -8,7 +8,7 @@ function ProfessionalCard({ professional }) {
   console.log("Pro", professional);
 
   const { name, profilePictureUrl, coverPictureUrl } =
-    professional?.userId || {};
+    professional?.userId || professional?.id || {};
 
   // useEffect(() => {
   //   console.log("Profile Picture URL:", profilePictureUrl);
@@ -90,6 +90,7 @@ ProfessionalCard.propTypes = {
         rating: PropTypes.number,
       })
     ),
+    id: PropTypes.string,
     userId: PropTypes.shape({
       _id: PropTypes.string,
       name: PropTypes.string,

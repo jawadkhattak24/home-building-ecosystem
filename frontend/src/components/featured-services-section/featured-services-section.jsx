@@ -8,6 +8,8 @@ import SkeletonCard from "../skeleton-card/skeleton-card";
 function FeaturedServicesSection({ serviceType }) {
   const { currentUser } = useAuth();
 
+  
+
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
 

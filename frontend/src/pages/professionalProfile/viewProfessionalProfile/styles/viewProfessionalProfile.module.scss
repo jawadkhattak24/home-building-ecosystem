@@ -14,11 +14,20 @@
   align-items: flex-end;
   justify-content: flex-end;
   padding: 20px;
+
   .editCoverImageIcon {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 8px;
+    border-radius: 50%;
     cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     &:hover {
-      color: #fb5012;
+      background-color: #fb5012;
+      color: white;
     }
   }
 }
@@ -45,10 +54,12 @@
 
   .headerInfo {
     color: #333;
+    width: 100%;
 
     h1 {
       font-size: 2.5rem;
       margin: 0;
+      border-bottom: 1px dashed transparent;
     }
 
     h2 {
@@ -72,6 +83,15 @@
       color: #fb5012;
     }
   }
+}
+
+.experienceEditIcon {
+  // position: absolute;
+  // top: 20px;
+  // right: 20px;
+  color: #666;
+  cursor: pointer;
+  transition: color 0.3s ease;
 }
 
 .imageContainer {
@@ -108,7 +128,7 @@
 
 .mainContent {
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 70% 30%;
   gap: 30px;
 }
 
@@ -128,35 +148,34 @@
 .experienceItem {
   display: flex;
   align-items: center;
+  flex-direction: row;
   gap: 10px;
   margin-bottom: 10px;
   color: #666;
 
   svg {
-    color: #fb5012;
+    color: #666;
+
+    &:hover {
+      color: #fb5012;
+    }
   }
 }
 
+.buttonGroup {
+  display: flex;
+  gap: 10px;
+}
+
 .portfolioGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 15px;
+  display: flex;
+  gap: 16px;
+  transition: transform 0.3s ease;
 
   .portfolioItem {
+    flex: 0 0 calc(100% / 3 - 16px);
     aspect-ratio: 1;
-    overflow: hidden;
-    border-radius: 8px;
-
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.3s ease;
-
-      &:hover {
-        transform: scale(1.05);
-      }
-    }
+    min-width: 200px;
   }
 }
 
@@ -325,12 +344,14 @@
 
   .editField {
     display: flex;
+
     align-items: center;
     gap: 8px;
 
-    input {
-      font: inherit;
-      color: inherit;
+    .nameEditInput {
+      font-size: 40px;
+      font-weight: 600;
+      color: #333;
       background: transparent;
       border: none;
       border-bottom: 1px dashed #ccc;
@@ -343,6 +364,13 @@
         outline: none;
         border-bottom-color: #fb5012;
       }
+    }
+
+    .serviceTypeEditInput {
+      font-size: 24px;
+      font-weight: 700;
+      color: #fb5012;
+      margin-bottom: 10px;
     }
 
     button {
@@ -461,9 +489,59 @@
   }
 }
 
-.infoCard {
-  // ... (previous styles remain the same)
+.experienceEditField {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
 
+  textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 12px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    font: inherit;
+    color: #666;
+    resize: vertical;
+    transition: border-color 0.2s ease;
+
+    &:focus {
+      outline: none;
+      border-color: #fb5012;
+    }
+  }
+
+  .buttonGroup {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+
+    button {
+      font-size: 14px;
+      padding: 6px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+
+      &:first-of-type {
+        background-color: #fb5012;
+        color: white;
+      }
+
+      &:last-of-type {
+        background-color: #eee;
+        color: #666;
+      }
+
+      &:hover {
+        opacity: 0.9;
+      }
+    }
+  }
+}
+
+.infoCard {
   .emptyState {
     padding: 40px 20px;
     text-align: center;
@@ -525,60 +603,22 @@
 
   .portfolioContainer {
     position: relative;
-    padding: 0 40px;
-
-    .navButton {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      background: white;
-      border: none;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #666;
-      transition: all 0.2s ease;
-
-      &:hover {
-        background: #fb5012;
-        color: white;
-      }
-
-      &:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-        &:hover {
-          background: white;
-          color: #666;
-        }
-      }
-
-      &.prevButton {
-        left: 0;
-      }
-
-      &.nextButton {
-        right: 0;
-      }
-    }
+    // padding: 0 40px;
+    margin: 20px 0;
+    overflow: hidden;
 
     .portfolioGrid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      display: flex;
       gap: 16px;
-      overflow: hidden;
+      scroll-behavior: smooth;
 
       .portfolioItem {
-        position: relative;
+        flex: 0 0 calc(33.333% - 11px);
         aspect-ratio: 1;
         border-radius: 8px;
         overflow: hidden;
         cursor: pointer;
+        position: relative;
 
         img {
           width: 100%;
@@ -613,13 +653,365 @@
           opacity: 0;
           transition: all 0.2s ease;
           color: #ff4444;
+          padding: 0;
+          margin: 0;
+
+          .deleteIcon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
 
           &:hover {
             background: #ff4444;
             color: white;
           }
         }
+
+        &.uploadPlaceholder {
+          border: 2px dashed #ddd;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background-color: #f8f8f8;
+          transition: all 0.3s ease;
+          cursor: pointer;
+          aspect-ratio: 1;
+          min-width: 200px;
+
+          &:hover {
+            border-color: #fb5012;
+            background-color: rgba(251, 80, 18, 0.05);
+
+            .uploadIcon {
+              color: #fb5012;
+            }
+          }
+
+          .uploadingState {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+
+            .spinner {
+              width: 24px;
+              height: 24px;
+              border: 3px solid #f3f3f3;
+              border-top: 3px solid #fb5012;
+              border-radius: 50%;
+              animation: spin 1s linear infinite;
+            }
+
+            span {
+              color: #666;
+              font-size: 14px;
+            }
+          }
+
+          .fileInput {
+            display: none;
+
+            &:disabled + .uploadLabel {
+              cursor: not-allowed;
+              opacity: 0.7;
+            }
+          }
+
+          .uploadLabel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+            justify-content: center;
+
+            .uploadIcon {
+              font-size: 24px;
+              color: #666;
+              transition: color 0.3s ease;
+            }
+
+            span {
+              font-size: 14px;
+              color: #666;
+            }
+          }
+        }
+      }
+    }
+
+    .navButton {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: white;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fb5012;
+      transition: all 0.2s ease;
+      z-index: 2;
+
+      .navIcon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      &:hover:not(:disabled) {
+        background: #fb5012;
+        color: white;
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        &:hover {
+          background: white;
+          color: #666;
+        }
+      }
+
+      &.prevButton {
+        left: 0;
+      }
+
+      &.nextButton {
+        right: 0;
       }
     }
   }
+}
+
+.imageViewer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+
+  .imageContainer {
+    position: relative;
+    max-width: 90vw;
+    max-height: 90vh;
+
+    img {
+      max-width: 100%;
+      max-height: 90vh;
+      object-fit: contain;
+    }
+  }
+
+  .closeButton {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 10px;
+    z-index: 1001;
+
+    &:hover {
+      color: #fb5012;
+    }
+  }
+
+  .navButton {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover:not(:disabled) {
+      background: rgba(251, 80, 18, 0.8);
+    }
+
+    &:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    &.prevButton {
+      left: 20px;
+    }
+
+    &.nextButton {
+      right: 20px;
+    }
+  }
+}
+
+.nameAndEditButton {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 20px;
+  margin-bottom: 16px;
+
+  h1 {
+    margin: 0;
+  }
+}
+
+.editProfileButton {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid #fb5012;
+  background-color: transparent;
+  color: #fb5012;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: #fb5012;
+    color: white;
+  }
+
+  &.active {
+    background-color: #fb5012;
+    color: white;
+  }
+}
+
+.editIcon {
+  display: none;
+  margin-left: 8px;
+  cursor: pointer;
+  color: #666;
+
+  &:hover {
+    color: #fb5012;
+  }
+}
+
+.editMode {
+  .editIcon {
+    display: inline-block;
+  }
+}
+
+.editableSection {
+  position: relative;
+
+  h1,
+  h2,
+  p,
+  span {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}
+
+.nameEditInput {
+  border: none;
+  outline: none;
+  border-bottom: 1px solid #ccc;
+  font-size: 40px;
+  font-weight: 600;
+  color: #333;
+}
+
+.dialogOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.dialogContent {
+  background-color: white;
+  padding: 24px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+  h3 {
+    margin: 0 0 16px 0;
+    color: #333;
+    font-size: 20px;
+  }
+
+  p {
+    margin: 0 0 24px 0;
+    color: #666;
+    font-size: 16px;
+  }
+
+  .dialogButtons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+
+    button {
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &.cancelButton {
+        background-color: #eee;
+        border: none;
+        color: #666;
+
+        &:hover {
+          background-color: #ddd;
+        }
+      }
+
+      &.deleteButton {
+        background-color: #ff4444;
+        border: none;
+        color: white;
+
+        &:hover {
+          background-color: #ff2222;
+        }
+      }
+    }
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

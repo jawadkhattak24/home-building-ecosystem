@@ -100,6 +100,39 @@ router.post(
   }
 );
 
+router.post(
+  "/professional-profile/update-portfolio/:userId",
+  upload.array("portfolio", 10),
+  async (req, res) => {
+    try {
+      const { userId } = req.params;
+      
+      if (!req.files || req.files.length === 0) {
+        return res.status(400).json({ msg: "No files uploaded" });
+      }
+
+      const portfolio = req.files.map((file) => file.location);
+      
+      const professional = await Professional.findOne({ userId: userId });
+      if (!professional) {
+        return res.status(404).json({ msg: "Professional not found" });
+      }
+
+      professional.portfolio = [...(professional.portfolio || []), ...portfolio];
+      await professional.save();
+
+      res.json({ 
+        msg: "Portfolio uploaded successfully",
+        portfolio: professional.portfolio 
+      });
+    } catch (err) {
+      console.error("Error uploading portfolio:", err);
+      res.status(500).json({ msg: "Internal server error" });
+    }
+  }
+);
+
+
 router.put("/professional-profile/update/:field/:userId", async (req, res) => {
   try {
     const userId = req.params.userId;
@@ -674,5 +707,31 @@ router.post("/logout", (req, res) => {
   res.clearCookie("authToken");
   res.json({ msg: "Logged out successfully" });
 });
+
+
+router.delete(
+  "/professional-profile/delete-portfolio/:userId/:index",
+  async (req, res) => {
+    try {
+      const { userId, index } = req.params;
+      
+      const professional = await Professional.findOne({ userId: userId });
+      if (!professional) {
+        return res.status(404).json({ msg: "Professional not found" });
+      }
+
+      professional.portfolio.splice(index, 1);
+      await professional.save();
+
+      res.json({ 
+        msg: "Portfolio image deleted successfully",
+        portfolio: professional.portfolio 
+      });
+    } catch (err) {
+      console.error("Error deleting portfolio image:", err);
+      res.status(500).json({ msg: "Internal server error" });
+    }
+  }
+);
 
 module.exports = router;

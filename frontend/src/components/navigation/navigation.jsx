@@ -40,24 +40,25 @@ const Navigation = () => {
           <div className={styles.dropdown}>
             <button className={styles.dropbtn}>Find Professionals</button>
             <div className={styles.dropdownContent}>
-              <Link to="/professionals/architects">Architects</Link>
-              <Link to="/professionals/interior-designers">
+              <Link to="/professionals/architect">Architects</Link>
+              <Link to="/professionals/interior-designer">
                 Interior Designers
               </Link>
-              <Link to="/professionals/modelers">3D Modelers</Link>
-              <Link to="/professionals/suppliers">Material Suppliers</Link>
-              <Link to="/professionals/contractors">Contractors</Link>
-              <Link to="/professionals/painters">Painters</Link>
+              <Link to="/professionals/electrician">Electricians</Link>
+              <Link to="/professionals/supplier">Material Suppliers</Link>
+              <Link to="/professionals/contractor">Contractors</Link>
+              <Link to="/professionals/painter">Painters</Link>
             </div>
           </div>
-          <Link to="/projects" className={styles.navLink}>
-            Browse Projects
-          </Link>
+
           <Link to="/materials" className={styles.navLink}>
             Materials
           </Link>
           <Link to="/inbox" className={styles.navLink}>
-            Inbox
+            Messages
+          </Link>
+          <Link to="/saved-items" className={styles.navLink}>
+            Saved Items
           </Link>
 
           {!currentUser && (
@@ -97,6 +98,7 @@ const Navigation = () => {
                   >
                     <i className="fas fa-user"></i> Profile
                   </Link>
+
                   <button
                     className={styles.avatar_menu_item}
                     onClick={handleLogout}
