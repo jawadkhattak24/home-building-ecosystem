@@ -21,6 +21,10 @@ const professionalSchema = new mongoose.Schema(
         "Material Supplier",
       ],
     },
+
+    address: { type: String, required: false },
+    qualifications: [{ type: String, required: false }],
+    ratePerHour: { type: Number, required: false },
     yearsExperience: { type: Number, required: false },
     bio: { type: String, required: false },
     certifications: { type: String },

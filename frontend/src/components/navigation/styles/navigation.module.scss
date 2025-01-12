@@ -2,8 +2,9 @@
 
 .header {
   background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  // box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 10px 0;
+  border-bottom: 1px solid #e0e0e0;
 }
 
 .container {
@@ -28,12 +29,14 @@
   display: flex;
   gap: 2rem;
   align-items: center;
+  justify-content: center;
+  padding-top: 5px;
 }
 
 .navLink {
   color: base.$black;
   text-decoration: none;
-  font-weight: 500;
+  font-weight: 600;
 
   &:hover {
     color: #ff5722;
@@ -68,7 +71,7 @@
 
 .header {
   background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  // box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 0.5rem 0;
   position: sticky;
   top: 0;
@@ -87,10 +90,23 @@
 .dropbtn {
   background: none;
   border: none;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 0rem 0.5rem 0.5rem;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: "AcuminPro";
   cursor: pointer;
-  font-weight: 500;
   color: #000000;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  .chevronDownIcon {
+    color: #191919;
+
+    &:hover {
+      color: #ff5722;
+    }
+  }
 
   &:hover {
     color: #ff5722;
@@ -170,5 +186,79 @@
   i {
     font-size: 18px;
     color: base.$primary;
+  }
+}
+
+.searchBar {
+  display: flex;
+  gap: 16px;
+  height: 40px;
+  // margin-bottom: 24px;
+
+  .searchInput {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    background-color: #f9f9f9;
+    border-radius: 50px;
+    border: 1px solid #e0e0e0;
+    padding: 0 15px;
+    height: 40px;
+
+    .searchIcon {
+      color: #000000;
+      margin-right: 15px;
+      font-size: 16px;
+      width: 18px;
+      height: 18px;
+    }
+
+    input {
+      flex: 1;
+      border: none;
+      padding: 15px 0 10px 0;
+      background-color: #f9f9f9;
+      width: 350px;
+
+      font-size: 16px;
+      font-weight: 700;
+      font-family: "AcuminPro";
+      color: #000000;
+      line-height: 1;
+      height: 100%;
+
+      &::placeholder {
+        font-size: 16px;
+        line-height: 0.8;
+        font-weight: 700;
+        font-family: "AcuminPro";
+        color: #191919;
+      }
+
+      &:focus {
+        outline: none;
+      }
+    }
+
+    .searchType {
+      padding: 8px;
+      border: none;
+      background: #f5f5f5;
+      border-radius: 4px;
+      margin-left: 12px;
+    }
+  }
+
+  .sortButton {
+    padding: 0 20px;
+    background-color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    &:hover {
+      background-color: #f5f5f5;
+    }
   }
 }

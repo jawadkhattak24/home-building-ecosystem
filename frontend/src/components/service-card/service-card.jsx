@@ -1,24 +1,13 @@
-import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import axios from "redaxios";
 import styles from "./styles/service-card.module.scss";
 import PropTypes from "prop-types";
 
 function ProfessionalCard({ professional }) {
-  console.log("Pro", professional);
-
   const { name, profilePictureUrl, coverPictureUrl } =
     professional?.userId || professional?.id || {};
 
-  // useEffect(() => {
-  //   console.log("Profile Picture URL:", profilePictureUrl);
-  //   console.log("Cover Picture URL:", coverPictureUrl);
-  // }, [profilePictureUrl, coverPictureUrl]);
-
-  // Simplified averageRating
   const averageRating = 4;
 
-  // Safe access to reviews length
   const reviewsCount = professional?.reviews?.length || 0;
 
   return (
@@ -100,7 +89,6 @@ ProfessionalCard.propTypes = {
   }),
 };
 
-// Default props
 ProfessionalCard.defaultProps = {
   professional: {
     _id: "",

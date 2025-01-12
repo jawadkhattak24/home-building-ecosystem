@@ -1,4 +1,44 @@
 @font-face {
+  font-family: "AcuminPro";
+  src: url("/Fonts/Acumin-Pro/AcuminPro-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "AcuminPro";
+  src: url("/Fonts/Acumin-Pro/AcuminPro-Bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "AcuminPro";
+  src: url("/Fonts/Acumin-Pro/AcuminPro-Medium.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "AcuminPro";
+  src: url("/Fonts/Acumin-Pro/AcuminPro-SemiBold.otf") format("opentype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "AcuminPro";
+  src: url("/Fonts/Acumin-Pro/AcuminPro-Light.otf") format("opentype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
   font-family: "Inter";
   src: url("/Fonts/Inter/Inter-Regular.woff2") format("woff2");
   font-weight: 400;
@@ -8,10 +48,7 @@
 
 @font-face {
   font-family: "Inter";
-  src: url("/Fonts/Inter/Inter-Bold.woff2")
-  
-  
-   format("woff2");
+  src: url("/Fonts/Inter/Inter-Bold.woff2") format("woff2");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -43,7 +80,7 @@
 
 #root {
   max-width: 1366px;
-  font-family: "Inter";
+  font-family: "AcuminPro";
 }
 
 .logo {

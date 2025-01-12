@@ -14,7 +14,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: base.$background;
+    background-color: base.$white;
 
     .main_content_container {
       width: 450px;
@@ -57,7 +57,7 @@
         .input {
           width: 450px;
           height: 60px;
-          background-color: white;
+          background-color: base.$background;
           border: none;
           border-radius: 4px;
           outline: none;
@@ -121,6 +121,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    background-color: base.$background;
     width: 50vw;
     height: 100vh;
     background-image: url("../../../../assets/40-resized-min.jpg");
@@ -130,7 +131,7 @@
     .h1 {
       font: base.$h1;
       font-style: italic;
-      color: base.$background;
+      color: base.$primary;
     }
     .p {
       font: base.$p_large;
@@ -193,6 +194,7 @@
 }
 
 .socialButton {
+  border: 0.5px solid black;
   padding: 10px;
   height: 60px;
   width: 450px;
@@ -401,8 +403,7 @@
       box-sizing: border-box;
       width: 450px;
       height: 60px;
-      // background-color: base.$background_light;
-      background-color: white;
+      background-color: base.$background;
       border: 2px solid transparent;
       border-radius: 4px;
       outline: 2px solid transparent;
@@ -440,7 +441,7 @@
 
   input {
     width: 100%;
-    padding-right: 120px; // Make space for the button
+    padding-right: 120px;
   }
 
   .verifyButton {
@@ -448,7 +449,7 @@
     right: 10px;
     top: 50%;
     transform: translateY(-50%);
-    height: 40px; // Smaller height to fit inside
+    height: 40px;
     padding: 0 15px;
     background-color: base.$primary;
     border: none;

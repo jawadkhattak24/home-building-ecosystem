@@ -106,24 +106,27 @@ router.post(
   async (req, res) => {
     try {
       const { userId } = req.params;
-      
+
       if (!req.files || req.files.length === 0) {
         return res.status(400).json({ msg: "No files uploaded" });
       }
 
       const portfolio = req.files.map((file) => file.location);
-      
+
       const professional = await Professional.findOne({ userId: userId });
       if (!professional) {
         return res.status(404).json({ msg: "Professional not found" });
       }
 
-      professional.portfolio = [...(professional.portfolio || []), ...portfolio];
+      professional.portfolio = [
+        ...(professional.portfolio || []),
+        ...portfolio,
+      ];
       await professional.save();
 
-      res.json({ 
+      res.json({
         msg: "Portfolio uploaded successfully",
-        portfolio: professional.portfolio 
+        portfolio: professional.portfolio,
       });
     } catch (err) {
       console.error("Error uploading portfolio:", err);
@@ -131,7 +134,6 @@ router.post(
     }
   }
 );
-
 
 router.put("/professional-profile/update/:field/:userId", async (req, res) => {
   try {
@@ -168,6 +170,30 @@ router.put("/professional-profile/update/:field/:userId", async (req, res) => {
         await Professional.findByIdAndUpdate(
           pro._id,
           { bio: dataToSend },
+          { new: true, runValidators: true }
+        );
+      } else if (field == "qualifications") {
+        await Professional.findByIdAndUpdate(
+          pro._id,
+          { qualifications: dataToSend },
+          { new: true, runValidators: true }
+        );
+      } else if (field == "experience") {
+        await Professional.findByIdAndUpdate(
+          pro._id,
+          { yearsExperience: dataToSend },
+          { new: true, runValidators: true }
+        );
+      } else if (field == "address") {
+        await Professional.findByIdAndUpdate(
+          pro._id,
+          { address: dataToSend },
+          { new: true, runValidators: true }
+        );
+      } else if (field == "ratePerHour") {
+        await Professional.findByIdAndUpdate(
+          pro._id,
+          { ratePerHour: dataToSend },
           { new: true, runValidators: true }
         );
       } else if (field == "certifications") {
@@ -708,13 +734,12 @@ router.post("/logout", (req, res) => {
   res.json({ msg: "Logged out successfully" });
 });
 
-
 router.delete(
   "/professional-profile/delete-portfolio/:userId/:index",
   async (req, res) => {
     try {
       const { userId, index } = req.params;
-      
+
       const professional = await Professional.findOne({ userId: userId });
       if (!professional) {
         return res.status(404).json({ msg: "Professional not found" });
@@ -723,9 +748,9 @@ router.delete(
       professional.portfolio.splice(index, 1);
       await professional.save();
 
-      res.json({ 
+      res.json({
         msg: "Portfolio image deleted successfully",
-        portfolio: professional.portfolio 
+        portfolio: professional.portfolio,
       });
     } catch (err) {
       console.error("Error deleting portfolio image:", err);

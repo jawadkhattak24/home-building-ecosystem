@@ -107,9 +107,9 @@ export default function LoginPage() {
         )}
         <div className={styles.parent_cont}>
           <div className={styles.main_content_container}>
-            <div>
+            <div className={styles.logo_container}>
               <Link to="/" className={styles.logo_link}>
-                <h2 className={styles.h2}>Home Building Ecosystem</h2>
+                <h2 className={styles.login_logo}>Home Building Ecosystem</h2>
               </Link>
               <h4 className={styles.h4}>Login Now</h4>
             </div>

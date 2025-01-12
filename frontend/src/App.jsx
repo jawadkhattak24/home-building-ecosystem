@@ -22,6 +22,7 @@ import ViewProfessionalProfile from "./pages/professionalProfile/viewProfessiona
 import Profile from "./pages/profile/profile";
 import SupplierProfile from "./pages/supplierProfile/supplierProfile";
 import CategoryResults from "./components/categoryResults/categoryResults";
+import SearchPage from "./pages/searchPage/searchPage";
 
 function AppContent() {
   const location = useLocation();
@@ -69,6 +70,10 @@ function AppContent() {
         <Route
           path="/profile/:userId"
           element={<ProtectedRoute element={Profile} />}
+        />
+        <Route
+          path="/search"
+          element={<ProtectedRoute element={SearchPage} />}
         />
         <Route
           path="/professional-homepage"
