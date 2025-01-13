@@ -215,6 +215,74 @@ router.put("/professional-profile/update/:field/:userId", async (req, res) => {
   }
 });
 
+router.get("/check-profile-setup/:userId", async (req, res) => {
+  const { userId } = req.params;
+  const { userType } = req.body;
+
+  const user = await User.findById(userId);
+  if (!user) {
+    return res.status(404).json({ msg: "User not found" });
+  }
+
+  if (user.userType === "supplier") {
+    const supplier = await Supplier.findOne({ userId });
+    if (supplier) {
+      return res.status(200).json({ isProfileSetup: true });
+    } else {
+      return res.status(200).json({ isProfileSetup: false });
+    }
+  } else if (user.userType === "professional") {
+    const professional = await Professional.findOne({ userId });
+    if (professional) {
+      return res.status(200).json({ isProfileSetup: true });
+    } else {
+      return res.status(200).json({ isProfileSetup: false });
+    }
+  }
+});
+
+router.put("/switch-userType/:userId", async (req, res) => {
+  const { userId } = req.params;
+  const { userType } = req.body;
+
+  try {
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { userType },
+      { new: true }
+    );
+    res.status(200).json({ message: "User type updated successfully", user });
+  } catch (err) {
+    console.error("An error occured updating userType:", err);
+    res.status(500).json({ msg: "Internal server error" });
+  }
+});
+
+router.post("/setup-profile/:userId", async (req, res) => {
+  const { userId } = req.params;
+  const { userType } = req.body;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    if (user.userType === "supplier") {
+      const supplier = new Supplier({ userId });
+      await supplier.save();
+    } else if (user.userType === "professional") {
+      const professional = new Professional({ userId });
+      await professional.save();
+    }
+
+    res.status(200).json({ isProfileSetup: true });
+  } catch (err) {
+    console.error("Error setting up profile:", err);
+    res.status(500).json({ msg: "Internal server error" });
+  }
+});
+
 router.get("/check-username", async (req, res) => {
   try {
     const { username } = req.query;

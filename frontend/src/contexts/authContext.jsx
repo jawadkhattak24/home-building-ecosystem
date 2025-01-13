@@ -9,7 +9,9 @@ export function useAuth() {
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [userType, setUserType] = useState("");
+  const [globalUserType, setGlobalUserType] = useState(() => {
+    return localStorage.getItem("userType") || "";
+  });
 
   function login(user, token) {
     localStorage.setItem("token", token);
@@ -25,6 +27,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const fetchUser = async () => {
       if (currentUser) {
+        setGlobalUserType(currentUser.userType);
         setLoading(false);
         return;
       }
@@ -65,8 +68,8 @@ export const AuthProvider = ({ children }) => {
     login,
     logout,
     loading,
-    userType,
-    setUserType,
+    globalUserType,
+    setGlobalUserType,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

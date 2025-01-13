@@ -1,26 +1,30 @@
 @use "../../../globalStyles/_base.scss" as base;
 
 .professional_card {
-  width: 400px;
+  width: 312px;
+  height: auto;
   border-radius: 4px;
   overflow: hidden;
   background: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease;
+  // box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0;
+  transition: border 0.2s ease;
+  cursor: pointer;
 
   &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    // transform: translateY(-4px);
+    border: 1px solid base.$primary;
+    // box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   }
 
   .portfolioImage {
     width: 100%;
-    height: 200px;
+    height: 244px;
     object-fit: cover;
   }
 
   .cardDetails {
-    padding: 16px;
+    padding: 10px;
   }
 
   .professionalInfo {
@@ -30,22 +34,22 @@
     margin-bottom: 12px;
 
     .profileImage {
-      width: 60px;
-      height: 60px;
+      width: 50px;
+      height: 50px;
       border-radius: 50%;
       object-fit: cover;
     }
 
     .nameAndType {
       .name {
-        font-size: 1.2rem;
+        font-size: 1rem;
         font-weight: 600;
         margin: 0;
         color: #333;
       }
 
       .serviceType {
-        font-size: 0.9rem;
+        font-size: 0.8rem;
         color: #666;
         margin: 4px 0 0 0;
       }
@@ -61,12 +65,12 @@
     border-top: 1px solid #eee;
 
     .experience {
-      font-size: 0.9rem;
+      font-size: 0.8rem;
       color: #666;
     }
 
     .rating {
-      font-size: 0.9rem;
+      font-size: 0.8rem;
       color: #666;
     }
   }

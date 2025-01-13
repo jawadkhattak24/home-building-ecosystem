@@ -8,8 +8,6 @@ import SkeletonCard from "../skeleton-card/skeleton-card";
 function FeaturedServicesSection({ serviceType }) {
   const { currentUser } = useAuth();
 
-  
-
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -45,12 +43,12 @@ function FeaturedServicesSection({ serviceType }) {
 
   return (
     <div>
-      <h2 style={{ marginLeft: 50, marginTop: 50, marginBottom: 30 }}>
+      <h2 style={{ marginLeft: 30, marginTop: 10 }}>
         Featured in {serviceType}
       </h2>
       <section className={styles.featuredServices_main_container}>
         {loading
-          ? Array.from({ length: 3 }).map((_, index) => (
+          ? Array.from({ length: 5 }).map((_, index) => (
               <SkeletonCard key={index} />
             ))
           : services.map((service, index) => (

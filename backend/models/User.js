@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: ["homeowner", "professional", "supplier", "pending"],
       required: false,
-      default: "pending",
+      default: "homeowner",
     },
     name: { type: String },
     username: { type: String, unique: true },

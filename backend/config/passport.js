@@ -65,7 +65,6 @@ passport.use(
           isVerified: true,
           profilePictureUrl: profile.photos[0]?.value || defaultAvatar,
           coverPictureUrl: defaultCover,
-          userType: userType || "pending",
           lastLogin: new Date(),
           provider: "google",
         };
@@ -94,8 +93,6 @@ passport.use(
       passReqToCallback: true,
     },
     async (req, accessToken, refreshToken, profile, done) => {
-      const userType = req.query.state;
-
       try {
         let user = await User.findOne({ facebookId: profile.id });
 
@@ -112,7 +109,7 @@ passport.use(
           ? profile.emails[0].value.split("@")[0]
           : profile.displayName.replace(/\s/g, "").toLowerCase();
 
-        user = await User.create({
+      user = await User.create({
           facebookId: profile.id,
           name: profile.displayName,
           username: username,
@@ -124,7 +121,6 @@ passport.use(
             ? profile.photos[0].value
             : defaultAvatar,
           coverPictureUrl: defaultCover,
-          userType: userType || "pending",
           lastLogin: new Date(),
           provider: "facebook",
         });

@@ -22,34 +22,15 @@ function RegistrationForm() {
   const [isResendDisabled, setIsResendDisabled] = useState(false);
 
   const [userData, setUserData] = useState({
-    userType: "",
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
-    serviceType: "",
-    yearsExperience: "",
-    bio: "",
-    certifications: "",
-    portfolioLink: "",
-    businessName: "",
-    contactInfo: "",
-    additionalDetails: "",
   });
 
   const [errors, setErrors] = useState({
     userType: "",
   });
-
-  const serviceTypes = [
-    "Architect",
-    "Plumber",
-    "Electrician",
-    "Interior Designer",
-    "General Contractor",
-    "Carpenter",
-  ];
-  console.log("Step in RegistrationForm:", step);
 
   const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
 
@@ -168,12 +149,6 @@ function RegistrationForm() {
     setUserData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleUserTypeSelect = (type) => {
-    console.log("User type in handleUserTypeSelect:", type);
-    setUserData({ ...userData, userType: type });
-    setErrors((prev) => ({ ...prev, userType: "" }));
-  };
-
   const handleChangeEmail = () => {
     setEmailVerified(false);
     setIsEmailVerificationSent(false);
@@ -194,15 +169,6 @@ function RegistrationForm() {
     }
   };
   const newErrors = {};
-
-  const validateUserType = () => {
-    if (!userData.userType) {
-      setErrors((prev) => ({ ...prev, userType: "Please select a user type" }));
-      return;
-    } else {
-      setStep(step + 1);
-    }
-  };
 
   const validateBasicInfo = async () => {
     if (!userData.name.trim()) {
@@ -241,43 +207,18 @@ function RegistrationForm() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const validateProfessionalInfo = () => {
-    const newErrors = {};
-
-    if (!userData.serviceType) {
-      newErrors.serviceType = "Service type is required";
-    }
-    if (!userData.yearsExperience) {
-      newErrors.yearsExperience = "Years of experience is required";
-    }
-    if (!userData.bio) {
-      newErrors.bio = "Bio is required";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const validateAdvertiserInfo = () => {
-    const newErrors = {};
-
-    if (!userData.businessName) {
-      newErrors.businessName = "Business name is required";
-    }
-    if (!userData.contactInfo) {
-      newErrors.contactInfo = "Contact information is required";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
   const registrationFunction = useCallback(async () => {
     console.log("Registration function called");
+
+    const isValid = await validateBasicInfo();
+    if (!isValid) {
+      console.log("Basic info validation failed");
+      return;
+    }
+
     const res = await axios.post(
       `${import.meta.env.VITE_API_URL}/api/user/register`,
       {
-        userType: userData.userType,
         name: userData.name,
         email: userData.email,
         password: userData.password,
@@ -291,110 +232,93 @@ function RegistrationForm() {
     e.preventDefault();
     console.log("Handle submit called");
 
-    if (step === 2) {
-      const isValid = await validateBasicInfo();
-      if (!isValid) {
-        console.log("Basic info validation failed");
-        return;
-      }
-    }
+    try {
+      console.log("Step 2");
+      setIsLoading(true);
+      const { user, token, res } = await registrationFunction();
 
-    if (userData.userType === "homeowner") {
-      try {
-        console.log("Step 2");
-        setIsLoading(true);
-        const { user, token, res } = await registrationFunction();
-
-        if (res.status === 200) {
-          login(user, token);
-          navigate("/homeNew");
-        } else {
-          console.error(
-            "Registration error occured in step 2:",
-            res.data.message
-          );
-        }
-      } catch (error) {
-        console.error("Registration error:", error.response?.data);
-        alert(error.response?.data.message || "Registration failed");
-      } finally {
-        setIsLoading(false);
-      }
-    } else {
-      setStep(3);
-    }
-
-    if (step === 3) {
-      let isValid = false;
-      if (userData.userType === "professional") {
-        isValid = validateProfessionalInfo();
+      if (res.status === 200) {
+        login(user, token);
+        navigate("/homeNew");
       } else {
-        isValid = validateAdvertiserInfo();
+        console.error(res.data.message);
       }
-      if (!isValid) {
-        console.log("Professional or advertiser info validation failed");
-        return;
-      }
-
-      try {
-        console.log("Step 3");
-        setIsLoading(true);
-
-        const { res } = await registrationFunction();
-
-        if (res.status === 200) {
-          const endpoint =
-            userData.userType === "professional"
-              ? "/api/user/professional/profile"
-              : "/api/user/supplier/profile";
-
-          const dataToSend =
-            userData.userType === "professional"
-              ? {
-                  email: userData.email,
-                  serviceType: userData.serviceType,
-                  yearsExperience: userData.yearsExperience,
-                  bio: userData.bio,
-                  certifications: userData.certifications,
-                  portfolioLink: userData.portfolioLink,
-                }
-              : {
-                  email: userData.email,
-                  businessName: userData.businessName,
-                  contactInfo: userData.contactInfo,
-                  additionalDetails: userData.additionalDetails,
-                };
-
-          const profileRes = await axios.post(
-            `${import.meta.env.VITE_API_URL}${endpoint}`,
-            dataToSend
-          );
-
-          const { user, token } = profileRes.data;
-
-          console.log("Profile creation response:", profileRes.data);
-
-          if (profileRes.status === 200) {
-            login(user, token);
-            setTimeout(() => {
-              navigate(
-                userData.userType === "professional"
-                  ? "/homeNew"
-                  : "/homeNew"
-              );
-            }, 2000);
-          } else {
-            console.error("Profile creation error:", profileRes.data.message);
-          }
-        }
-      } catch (error) {
-        console.error("Registration error:", error.response?.data);
-        alert(error.response?.data.message || "Registration failed");
-      } finally {
-        setIsLoading(false);
-      }
+    } catch (error) {
+      console.error("Registration error:", error.response?.data);
+      // alert(error.response?.data.message || "Registration failed");
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  // const renderStep = () => {
+  //     if (userData.userType === "professional") {
+  //       isValid = validateProfessionalInfo();
+  //     } else {
+  //       isValid = validateAdvertiserInfo();
+  //     }
+  //     if (!isValid) {
+  //       console.log("Professional or advertiser info validation failed");
+  //       return;
+  //     }
+
+  //     try {
+  //       console.log("Step 3");
+  //       setIsLoading(true);
+
+  //       const { res } = await registrationFunction();
+
+  //       if (res.status === 200) {
+  //         const endpoint =
+  //           userData.userType === "professional"
+  //             ? "/api/user/professional/profile"
+  //             : "/api/user/supplier/profile";
+
+  //         const dataToSend =
+  //           userData.userType === "professional"
+  //             ? {
+  //                 email: userData.email,
+  //                 serviceType: userData.serviceType,
+  //                 yearsExperience: userData.yearsExperience,
+  //                 bio: userData.bio,
+  //                 certifications: userData.certifications,
+  //                 portfolioLink: userData.portfolioLink,
+  //               }
+  //             : {
+  //                 email: userData.email,
+  //                 businessName: userData.businessName,
+  //                 contactInfo: userData.contactInfo,
+  //                 additionalDetails: userData.additionalDetails,
+  //               };
+
+  //         const profileRes = await axios.post(
+  //           `${import.meta.env.VITE_API_URL}${endpoint}`,
+  //           dataToSend
+  //         );
+
+  //         const { user, token } = profileRes.data;
+
+  //         console.log("Profile creation response:", profileRes.data);
+
+  //         if (profileRes.status === 200) {
+  //           login(user, token);
+  //           setTimeout(() => {
+  //             navigate(
+  //               userData.userType === "professional" ? "/homeNew" : "/homeNew"
+  //             );
+  //           }, 2000);
+  //         } else {
+  //           console.error("Profile creation error:", profileRes.data.message);
+  //         }
+  //       }
+  //     } catch (error) {
+  //       console.error("Registration error:", error.response?.data);
+  //       alert(error.response?.data.message || "Registration failed");
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   }
+  // };
 
   const renderStep = () => {
     switch (step) {
@@ -768,52 +692,184 @@ function RegistrationForm() {
 
       <div className={styles.parent_cont_left}>
         <div className={styles.main_content_container}>
-          {renderStep()}
-
-          <div className={styles.navigation_container}>
-            {step === 1 && (
+          <div className={styles.basicInfo}>
+            <div className={styles.social_login_container}>
               <button
-                type="button"
-                onClick={validateUserType}
-                className={styles.nav_button}
+                className={styles.socialButton}
+                onClick={handleGoogleLogin}
               >
-                Next <ArrowRight size={20} />
+                <FaGoogle className={styles.socialIcon} />
+                Continue with Google
               </button>
-            )}
-
-            {(step === 3 || step === 2) && (
               <button
-                type="button"
-                onClick={() => setStep(step - 1)}
-                className={`${styles.nav_button} ${styles.back_button}`}
+                className={styles.socialButton}
+                onClick={handleFacebookLogin}
               >
-                <ArrowLeft size={20} /> Back
+                <FaFacebookF className={styles.socialIcon} />
+                Continue with Facebook
               </button>
-            )}
+            </div>
 
-            {step === 2 && (
-              <button
-                type="submit"
-                onClick={handleSubmit}
-                className={`${styles.nav_button} ${styles.next_button}`}
-              >
-                {userData.userType === "homeowner"
-                  ? "Complete Registration"
-                  : "Next"}
-                <ArrowRight size={20} />
-              </button>
-            )}
+            <div className={styles.or_container}>
+              <div className={styles.line}></div>
+              <div className={styles.or_text}>or</div>
+              <div className={styles.line}></div>
+            </div>
 
-            {step === 3 && (
-              <button
-                type="submit"
-                onClick={handleSubmit}
-                className={styles.nav_button}
-              >
-                Complete Registration <ArrowRight size={20} />
-              </button>
-            )}
+            <div className={styles.input_container}>
+              <div className={styles.input_wrapper}>
+                <input
+                  type="text"
+                  name="name"
+                  className={styles.input}
+                  placeholder="Name"
+                  value={userData.name}
+                  onChange={handleChange}
+                />
+                {errors.name && <p className={styles.error}>{errors.name}</p>}
+              </div>
+
+              <div className={styles.emailVerificationContainer}>
+                <div className={styles.emailInputWrapper}>
+                  <input
+                    type="email"
+                    name="email"
+                    className={`${styles.input} ${
+                      emailVerified ? styles.disabled : ""
+                    }`}
+                    placeholder="Email"
+                    value={userData.email}
+                    onChange={handleChange}
+                    disabled={emailVerified || isEmailVerificationSent}
+                  />
+                  <button
+                    type="button"
+                    className={styles.verifyButton}
+                    onClick={
+                      emailVerified
+                        ? handleChangeEmail
+                        : () => sendVerificationCode(userData.email)
+                    }
+                    disabled={
+                      !userData.email ||
+                      errors.email ||
+                      (isEmailVerificationSent && isResendDisabled)
+                    }
+                  >
+                    {emailVerified
+                      ? "Change Email"
+                      : isEmailVerificationSent
+                      ? remainingTime > 0
+                        ? `Resend Code (${remainingTime}s)`
+                        : "Resend Code"
+                      : "Verify Email"}
+                  </button>
+                </div>
+                {errors.email && (
+                  <p
+                    className={styles.verifiedBadge}
+                    style={{ color: "#e74c3c" }}
+                  >
+                    ✗ {errors.email}
+                  </p>
+                )}
+
+                {isEmailVerificationSent && !emailVerified && (
+                  <div className={styles.verificationCodeWrapper}>
+                    <input
+                      type="text"
+                      placeholder="Enter verification code"
+                      className={styles.input}
+                      value={verificationCode}
+                      onChange={(e) => setVerificationCode(e.target.value)}
+                    />
+                    <button
+                      type="button"
+                      className={styles.verifyButton}
+                      onClick={verifyCode}
+                    >
+                      Submit Code
+                    </button>
+                  </div>
+                )}
+
+                {/* {emailVerified && (
+                  <p className={styles.verifiedBadge}>✓ Email Verified</p>
+                )} */}
+
+                {notification.message && (
+                  <p
+                    className={styles.verifiedBadge}
+                    style={{
+                      color:
+                        notification.type === "error" ? "#e74c3c" : "#2ecc71",
+                    }}
+                  >
+                    {notification.type === "error" ? "✗" : "✓"}{" "}
+                    {notification.message}
+                  </p>
+                )}
+              </div>
+
+              <div className={styles.input_wrapper}>
+                <div className={styles.passwordWrapper}>
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    className={styles.input}
+                    placeholder="Password"
+                    value={userData.password}
+                    onChange={handleChange}
+                  />
+                  <button
+                    type="button"
+                    className={styles.eyeButton}
+                    onClick={togglePasswordVisibility}
+                  >
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                </div>
+                {errors.password && (
+                  <p className={styles.error}>{errors.password}</p>
+                )}
+              </div>
+
+              <div className={styles.input_wrapper}>
+                <div className={styles.passwordWrapper}>
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    name="confirmPassword"
+                    className={styles.input}
+                    placeholder="Confirm Password"
+                    value={userData.confirmPassword}
+                    onChange={handleChange}
+                  />
+                  <button
+                    type="button"
+                    className={styles.eyeButton}
+                    onClick={toggleConfirmPasswordVisibility}
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff size={20} />
+                    ) : (
+                      <Eye size={20} />
+                    )}
+                  </button>
+                </div>
+                {errors.confirmPassword && (
+                  <p className={styles.error}>{errors.confirmPassword}</p>
+                )}
+              </div>
+            </div>
           </div>
+
+          <button
+            type="submit"
+            onClick={handleSubmit}
+            className={styles.register_button}
+          >
+            Register
+          </button>
         </div>
       </div>
     </div>
