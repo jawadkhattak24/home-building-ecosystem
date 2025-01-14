@@ -58,7 +58,12 @@ function AppContent() {
       <Routes>
         <Route path="/" element={<PublicRoute element={HomeNew} />} />
         <Route path="/login" element={<PublicRoute element={LoginPage} />} />
-        <Route path="/homeNew" element={<ProtectedRoute element={HomeNew} />} />
+        <Route
+          path="/homeNew"
+          element={
+            <ProtectedRoute allowedRoles={["homeowner"]} element={HomeNew} />
+          }
+        />
         <Route path="/auth/success" element={<AuthSuccess />} />
         <Route
           path="/professional-profile/:userId"
@@ -66,7 +71,12 @@ function AppContent() {
         />
         <Route
           path="/professional-profile/setup"
-          element={<ProtectedRoute element={SetupProfessionalProfile} />}
+          element={
+            <ProtectedRoute
+              allowedRoles={["professional"]}
+              element={SetupProfessionalProfile}
+            />
+          }
         />
         <Route
           path="/supplier-profile/:userId"
@@ -82,7 +92,9 @@ function AppContent() {
         />
         <Route
           path="/search"
-          element={<ProtectedRoute element={SearchPage} />}
+          element={
+            <ProtectedRoute allowedRoles={["homeowner"]} element={SearchPage} />
+          }
         />
         <Route
           path="/professional-homepage"
