@@ -5,6 +5,12 @@
   color: red;
 }
 
+.featuredServicesContainer {
+  background-color: #f9f9f9;
+  padding-top: 20px;
+  border: 1px solid #e0e0e0;
+}
+
 .featuredServices_main_container {
   display: flex;
   flex-direction: row;
@@ -14,8 +20,8 @@
   padding-left: 30px;
   padding-right: 30px;
   padding-bottom: 30px;
-  border-bottom: 1px solid #e0e0e0;
-  background-color: base.$primary-light;
+  // border-bottom: 1px solid #e0e0e0;
+  background-color: #f9f9f9;
 
   .service_card_wrapper {
     margin-right: 16px;

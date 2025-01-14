@@ -42,9 +42,9 @@ function FeaturedServicesSection({ serviceType }) {
   }, [serviceType]);
 
   return (
-    <div>
+    <div className={styles.featuredServicesContainer}>
       <h2 style={{ marginLeft: 30, marginTop: 10 }}>
-        Featured in {serviceType}
+        Featured {serviceType}{"s"}
       </h2>
       <section className={styles.featuredServices_main_container}>
         {loading

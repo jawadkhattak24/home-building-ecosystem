@@ -77,6 +77,10 @@ export const ChatProvider = ({ children }) => {
     }
   };
 
+  const setInitialActiveConversation = (conversationId) => {
+    setActiveConversation(conversationId);
+  };
+
   const handleSelectConversation = (id) => {
     console.log("Selected conversation:", id);
     setActiveConversation(id);
@@ -209,6 +213,7 @@ export const ChatProvider = ({ children }) => {
         isLoading,
         setIsLoading,
         handleUserSelect,
+        setInitialActiveConversation,
       }}
     >
       {children}

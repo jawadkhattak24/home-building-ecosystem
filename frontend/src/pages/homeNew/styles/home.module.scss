@@ -4,10 +4,11 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: "AcuminPro";
 }
 
 .home_wrapper {
-  font-family: "Poppins", sans-serif;
+  font-family: "AcuminPro";
 }
 
 .hero_container {
@@ -43,13 +44,16 @@
     h1 {
       font: base.$h1xx;
       // max-width: 800px;
+      font-family: "AcuminPro";
       line-height: 1.2;
+      
       animation: fadeInDown 1s ease-out;
     }
 
     p {
       font: base.$p_large;
       max-width: 600px;
+      font-family: "AcuminPro";
       opacity: 0.9;
       animation: fadeInUp 1s ease-out;
     }
@@ -78,6 +82,7 @@
         display: flex;
         align-items: center;
         flex: 1;
+        font-family: "AcuminPro";
         padding: 0 20px;
 
         .searchIcon {
@@ -93,6 +98,7 @@
           border: none;
           color: base.$white;
           font: base.$p_large;
+          font-family: "AcuminPro";
           outline: none;
 
           &::placeholder {
@@ -109,6 +115,7 @@
         font: base.$p_large;
         cursor: pointer;
         transition: background-color 0.3s ease;
+        font-family: "AcuminPro";
 
         &:hover {
           background-color: base.$primary-dark;

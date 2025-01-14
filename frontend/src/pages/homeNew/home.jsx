@@ -14,11 +14,6 @@ function HomePage() {
   const [searchResults, setSearchResults] = useState([]);
   const [oldSearchQuery, setOldSearchQuery] = useState("");
 
-  
-
-
-
-
   const handleSearch = async (e) => {
     e.preventDefault();
     if (searchQuery.trim() === "") {
@@ -55,8 +50,10 @@ function HomePage() {
         >
           <div className={styles.headings_container}>
             {/* <FaHome className={styles.homeIcon} /> */}
-            <h1>Transform Your Dream <br/> Home Into Reality</h1>
-            <p>
+            <h1 className={styles.hero_heading}>
+              Transform Your Dream <br /> Home Into Reality
+            </h1>
+            <p className={styles.hero_subheading}>
               Find Pakistan's top professionals and building material suppliers
               - all on a single platform.
             </p>
@@ -97,7 +94,10 @@ function HomePage() {
             <h2>Search Results for "{oldSearchQuery || searchQuery}"</h2>
             <div className={styles.searchResultsMainContainer}>
               {searchResults.map((professional) => (
-                <ServiceCard key={professional._id} professional={professional} />
+                <ServiceCard
+                  key={professional._id}
+                  professional={professional}
+                />
               ))}
             </div>
           </div>

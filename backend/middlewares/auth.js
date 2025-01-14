@@ -15,6 +15,7 @@ const authMiddleware = async (req, res, next) => {
       throw new Error("Invalid token format");
     }
 
+    
     const token = parts[1];
     // console.log("Token:", token);
     const decoded = jwt.verify(token, process.env.JWT_SECRET);

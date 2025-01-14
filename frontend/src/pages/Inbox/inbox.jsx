@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 
 import styles from "./styles/inbox.module.scss";
 import UserSearch from "../../components/userSearch/userSearch";
@@ -7,6 +7,14 @@ import MessageList from "./messageList/messageList";
 import MessageInput from "./messageInput/messageInput";
 import { ChatContext } from "../../contexts/chatContext";
 // import ProjectInfoSidebar from "./ProjectDetailsSidebar/projectInfoSidebar";
+
+const PlaceholderUI = () => {
+  return (
+    <div className={styles.placeholderUI}>
+      <p>{"Please select a conversation to start messaging"}</p>
+    </div>
+  );
+};
 
 function Inbox() {
   console.log("Chat context: ", ChatContext);
@@ -18,10 +26,27 @@ function Inbox() {
     handleSelectConversation,
     handleSendMessage,
     handleUserSelect,
+    fetchConversations,
+    setInitialActiveConversation,
     isLoading,
   } = useContext(ChatContext);
 
   console.log("Currently active conversation: ", activeConversation);
+
+  useEffect(() => {
+    fetchConversations();
+  }, [messages]);
+
+  useEffect(() => {
+    const storedConversationId = localStorage.getItem("activeConversation");
+
+    console.log("Stored conversation ID: ", storedConversationId);
+
+    if (storedConversationId) {
+      setInitialActiveConversation(storedConversationId);
+      localStorage.removeItem("activeConversation");
+    }
+  }, []);
 
   return (
     <div className="app">
@@ -38,6 +63,8 @@ function Inbox() {
           />
         </div>
 
+        {!activeConversation && <PlaceholderUI />}
+
         {activeConversation && (
           <>
             <div className={styles.messageParentContainer}>
@@ -47,6 +74,7 @@ function Inbox() {
                 activeConversation={activeConversation}
                 messages={messages}
                 conversationId={activeConversation}
+                placeholderUI={PlaceholderUI}
               />
               <MessageInput onSendMessage={handleSendMessage} />
             </div>

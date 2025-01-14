@@ -1,33 +1,52 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from "./styles/searchPage.module.scss";
 import ProfessionalCard from "../../components/service-card/service-card";
 import { ChevronDown } from "lucide-react";
 import { BiSort } from "react-icons/bi";
 import axios from "axios";
+import { useSearchParams } from "react-router-dom";
 
 function SearchPage() {
+  const [searchParams] = useSearchParams();
+  const query = searchParams.get("query");
   const [searchType, setSearchType] = useState("professionals");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(query || "");
+  console.log(query);
+  const [searchCategory, setSearchCategory] = useState("");
+
+  // setSearchQuery(query);
 
   const [professionals, setProfessionals] = useState([]);
   const [materials, setMaterials] = useState([]);
 
+  // Add useEffect to fetch results when component mounts or query changes
+  useEffect(() => {
+    if (query) {
+      fetchProfessionals();
+    }
+  }, [query]); // Dependency array includes query
+
   const fetchProfessionals = async () => {
     try {
-      setProfessionals([]);
+      setProfessionals([]); // Clear existing results
       console.log("Triggering fetch");
-      setTimeout(async () => {
-        console.log("Fetching professionals...");
-        const response = await axios.get(
-          `${
-            import.meta.env.VITE_API_URL
-          }/api/service/search?query=${searchQuery}`
-        );
-        setProfessionals(response.data);
-        console.log(response.data);
-      }, 2000);
+      console.log("Fetching professionals...");
+      const response = await axios.get(
+        `${
+          import.meta.env.VITE_API_URL
+        }/api/service/search?query=${searchQuery}`
+      );
+      setProfessionals(response.data);
+      console.log(response.data);
     } catch (error) {
       console.error("Error fetching professionals:", error);
+    }
+  };
+
+  // Modify the input to trigger search on Enter key
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      fetchProfessionals();
     }
   };
 
@@ -186,7 +205,7 @@ function SearchPage() {
               placeholder="Search the building world"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={fetchProfessionals}
+              onKeyDown={handleKeyDown}
             />
             <select
               value={searchType}

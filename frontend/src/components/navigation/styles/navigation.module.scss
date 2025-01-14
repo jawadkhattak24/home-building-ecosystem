@@ -81,9 +81,31 @@
 .dropdown {
   position: relative;
   display: inline-block;
+  
 
   &:hover .dropdownContent {
     display: block;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+.dropdownItem {
+  padding: 0.5rem 0rem 0.5rem 0.5rem;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: "AcuminPro";
+  cursor: pointer;
+  background-color: base.$white;
+  color: #000000;
+  border: none;
+  text-decoration: none;
+
+  &:hover {
+    background-color: base.$white;
+    color: #ff5722;
   }
 }
 
@@ -98,6 +120,7 @@
   color: #000000;
   display: flex;
   align-items: center;
+  outline: none;
   gap: 4px;
 
   .chevronDownIcon {
@@ -121,6 +144,7 @@
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
   border-radius: 4px;
   padding: 0.5rem 0;
+  
 
   a {
     color: base.$black;
@@ -133,6 +157,13 @@
       color: #ff5722;
     }
   }
+}
+
+.dropbtnDisabled {
+  color: #191919;
+  opacity: 0.5;
+  cursor: not-allowed;
+  outline: none;
 }
 
 .avatar_container {

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useContext } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
@@ -6,6 +6,8 @@ import "leaflet/dist/leaflet.css";
 import styles from "./styles/viewProfessionalProfile.module.scss";
 import { useLoading } from "../../../contexts/loadingContext";
 import { useAuth } from "../../../contexts/authContext";
+import { useNavigate } from "react-router-dom";
+import { ChatContext } from "../../../contexts/chatContext";
 import {
   FaStar,
   FaRegStar,
@@ -15,9 +17,6 @@ import {
   FaTimes,
   FaSave,
   FaCheck,
-
-
-  
   FaCloudUploadAlt,
   FaImages,
   FaTrash,
@@ -29,6 +28,13 @@ import {
 import { LucideChevronLeft, LucideChevronRight } from "lucide-react";
 
 const ViewProfessionalProfile = () => {
+  const {
+    activeConversation,
+    setActiveConversation,
+    checkConversationExists,
+    handleUserSelect,
+  } = useContext(ChatContext);
+  const navigate = useNavigate();
   const { userId } = useParams();
   const { currentUser } = useAuth();
   const { isLoading, setIsLoading, LoadingUI } = useLoading();
@@ -73,7 +79,9 @@ const ViewProfessionalProfile = () => {
 
   useEffect(() => {
     if (bioRef.current) {
-      const lineHeight = parseInt(window.getComputedStyle(bioRef.current).lineHeight);
+      const lineHeight = parseInt(
+        window.getComputedStyle(bioRef.current).lineHeight
+      );
       const height = bioRef.current.scrollHeight;
       const lines = height / lineHeight;
       setShouldShowViewMore(lines > 3);
@@ -135,6 +143,43 @@ const ViewProfessionalProfile = () => {
 
   const handleChange = (field, value) => {
     setEditedData({ ...editedData, [field]: value });
+  };
+
+  const handleContact = async () => {
+    console.log("Contacting user: ", userData);
+    let conversationId;
+
+    const conversationExists = await checkConversationExists(
+      userData._id,
+      currentUser.id
+    );
+    if (conversationExists) {
+      console.log("Conversation exists: ", conversationExists);
+      conversationId = conversationExists;
+      localStorage.setItem("activeConversation", conversationId);
+      navigate("/inbox");
+    } else {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/conversations`,
+        {
+          participant: userData._id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      const data = response.data;
+      await new Promise((resolve) => {
+        setActiveConversation(data._id);
+        resolve();
+      });
+      conversationId = data._id;
+      localStorage.setItem("activeConversation", conversationId);
+
+      navigate("/inbox");
+    }
   };
 
   const handleProfilePictureUpload = async (event) => {
@@ -521,7 +566,9 @@ const ViewProfessionalProfile = () => {
               {isEditMode ? "Done Editing" : "Edit Profile"}
             </button>
           ) : (
-            <button className={styles.contactButton}>Contact</button>
+            <button onClick={handleContact} className={styles.contactButton}>
+              Contact
+            </button>
           )}
         </div>
         <div className={styles.userInfo}>
@@ -780,18 +827,20 @@ const ViewProfessionalProfile = () => {
               </div>
             ) : (
               <div className={styles.bioWrapper}>
-                <p 
+                <p
                   ref={bioRef}
-                  className={`${styles.bioDescription} ${!isExpanded ? styles.collapsed : ''}`}
+                  className={`${styles.bioDescription} ${
+                    !isExpanded ? styles.collapsed : ""
+                  }`}
                 >
                   {professionalData?.bio || "No bio yet"}
                 </p>
                 {shouldShowViewMore && (
-                  <button 
+                  <button
                     className={styles.viewMoreButton}
                     onClick={() => setIsExpanded(!isExpanded)}
                   >
-                    {isExpanded ? 'View Less' : 'View More'}
+                    {isExpanded ? "View Less" : "View More"}
                   </button>
                 )}
                 {isOwner && isEditMode && (
@@ -805,82 +854,14 @@ const ViewProfessionalProfile = () => {
           </div>
         </div>
       </div>
-      <div className={styles.portfolioContainer}>
-        <h2>Portfolio</h2>
+      <div className={styles.mainPortfolioContainer}>
+        <div className={styles.portfolioContainer}>
+          <h2>Portfolio</h2>
 
-        {portfolio.length === 0 ? (
-          <div className={styles.emptyState}>
-            {isOwner ? (
-              <div className={styles.uploadZone}>
-                <input
-                  type="file"
-                  id="portfolio-upload"
-                  multiple
-                  accept="image/*"
-                  onChange={handleFileUpload}
-                  className={styles.fileInput}
-                />
-                <label
-                  htmlFor="portfolio-upload"
-                  className={styles.uploadLabel}
-                >
-                  <FaCloudUploadAlt className={styles.uploadIcon} />
-                  <p>Click to upload images</p>
-                  <span>Supported formats: JPG, PNG, WEBP (Max 5MB)</span>
-                </label>
-              </div>
-            ) : (
-              <div className={styles.noContent}>
-                <FaImages className={styles.emptyIcon} />
-                <p>No portfolio items yet</p>
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className={styles.portfolioContainer}>
-            <button
-              className={`${styles.navButton} ${styles.prevButton}`}
-              onClick={handlePrevious}
-              disabled={currentIndex === 0}
-            >
-              <div className={styles.navIcon}>
-                <LucideChevronLeft size={20} />
-              </div>
-            </button>
-
-            <div
-              className={styles.portfolioGrid}
-              style={{
-                transform: `translateX(-${
-                  currentIndex * (100 / itemsToShow)
-                }%)`,
-                transition: "transform 0.3s ease",
-              }}
-            >
-              {portfolio.map((image, index) => (
-                <div
-                  key={index}
-                  className={styles.portfolioItem}
-                  onClick={() => handleImageClick(index)}
-                >
-                  <img src={image} alt={`Portfolio ${index + 1}`} />
-                  {isOwner && isEditMode && (
-                    <button
-                      className={styles.deleteButton}
-                      onClick={(e) => handleDeleteClick(e, index)}
-                    >
-                      <div className={styles.deleteIcon}>
-                        <FaTrash size={20} />
-                      </div>
-                    </button>
-                  )}
-                </div>
-              ))}
-
-              {isOwner && isEditMode && portfolio.length < 5 && (
-                <div
-                  className={`${styles.portfolioItem} ${styles.uploadPlaceholder}`}
-                >
+          {portfolio.length === 0 ? (
+            <div className={styles.emptyState}>
+              {isOwner ? (
+                <div className={styles.uploadZone}>
                   <input
                     type="file"
                     id="portfolio-upload"
@@ -888,44 +869,114 @@ const ViewProfessionalProfile = () => {
                     accept="image/*"
                     onChange={handleFileUpload}
                     className={styles.fileInput}
-                    disabled={isUploading}
                   />
                   <label
                     htmlFor="portfolio-upload"
                     className={styles.uploadLabel}
                   >
-                    {isUploading ? (
-                      <div className={styles.uploadingState}>
-                        <div className={styles.spinner}></div>
-                        <span>Uploading...</span>
-                      </div>
-                    ) : (
-                      <>
-                        <FaCloudUploadAlt className={styles.uploadIcon} />
-                        <span>Add Photo</span>
-                      </>
-                    )}
+                    <FaCloudUploadAlt className={styles.uploadIcon} />
+                    <p>Click to upload images</p>
+                    <span>Supported formats: JPG, PNG, WEBP (Max 5MB)</span>
                   </label>
+                </div>
+              ) : (
+                <div className={styles.noContent}>
+                  <FaImages className={styles.emptyIcon} />
+                  <p>No portfolio items yet</p>
                 </div>
               )}
             </div>
+          ) : (
+            <div className={styles.portfolioContainer}>
+              <button
+                className={`${styles.navButton} ${styles.prevButton}`}
+                onClick={handlePrevious}
+                disabled={currentIndex === 0}
+              >
+                <div className={styles.navIcon}>
+                  <LucideChevronLeft size={20} />
+                </div>
+              </button>
 
-            <button
-              className={`${styles.navButton} ${styles.nextButton}`}
-              onClick={handleNext}
-              disabled={
-                currentIndex >=
-                portfolio.length +
-                  (isOwner && isEditMode && portfolio.length < 5 ? 1 : 0) -
-                  itemsToShow
-              }
-            >
-              <div className={styles.navIcon}>
-                <LucideChevronRight size={20} />
+              <div
+                className={styles.portfolioGrid}
+                style={{
+                  transform: `translateX(-${
+                    currentIndex * (100 / itemsToShow)
+                  }%)`,
+                  transition: "transform 0.3s ease",
+                }}
+              >
+                {portfolio.map((image, index) => (
+                  <div
+                    key={index}
+                    className={styles.portfolioItem}
+                    onClick={() => handleImageClick(index)}
+                  >
+                    <img src={image} alt={`Portfolio ${index + 1}`} />
+                    {isOwner && isEditMode && (
+                      <button
+                        className={styles.deleteButton}
+                        onClick={(e) => handleDeleteClick(e, index)}
+                      >
+                        <div className={styles.deleteIcon}>
+                          <FaTrash size={20} />
+                        </div>
+                      </button>
+                    )}
+                  </div>
+                ))}
+
+                {isOwner && isEditMode && portfolio.length < 5 && (
+                  <div
+                    className={`${styles.portfolioItem} ${styles.uploadPlaceholder}`}
+                  >
+                    <input
+                      type="file"
+                      id="portfolio-upload"
+                      multiple
+                      accept="image/*"
+                      onChange={handleFileUpload}
+                      className={styles.fileInput}
+                      disabled={isUploading}
+                    />
+                    <label
+                      htmlFor="portfolio-upload"
+                      className={styles.uploadLabel}
+                    >
+                      {isUploading ? (
+                        <div className={styles.uploadingState}>
+                          <div className={styles.spinner}></div>
+                          <span>Uploading...</span>
+                        </div>
+                      ) : (
+                        <>
+                          <FaCloudUploadAlt className={styles.uploadIcon} />
+                          <span>Add Photo</span>
+                        </>
+                      )}
+                    </label>
+                  </div>
+                )}
               </div>
-            </button>
-          </div>
-        )}
+
+              <button
+                className={`${styles.navButton} ${styles.nextButton}`}
+                onClick={handleNext}
+                disabled={
+                  currentIndex >=
+                  portfolio.length +
+                    (isOwner && isEditMode && portfolio.length < 5 ? 1 : 0) -
+                    itemsToShow
+                }
+              >
+                <div className={styles.navIcon}>
+                  <LucideChevronRight size={20} />
+                </div>
+              </button>
+            </div>
+          )}
+        </div>
       </div>
       <div className={styles.reviewsContainer}>
         <h2>Reviews</h2>

@@ -21,7 +21,7 @@
     .userCard {
       width: 30%;
       height: 800px;
-      background-color: #eef0ff;
+      background-color: #f9f9f9;
       padding: 50px 20px;
       border-radius: 5px;
       display: flex;
@@ -216,7 +216,8 @@
     .userInfo {
       width: 70%;
       min-height: 800px;
-      background-color: #eef0ff;
+      border: 1px solid #e0e0e0;
+      background-color: #f9f9f9;
       padding: 25px 20px;
       display: flex;
       flex-direction: column;
@@ -658,20 +659,26 @@
     }
   }
 
+  .mainPortfolioContainer {
+    border: 1px solid #e0e0e0;
+    background-color: #f9f9f9;
+  }
   .portfolioContainer {
     width: 100%;
     height: 500px;
-    background-color: #eef0ff;
+    background-color: #f9f9f9;
     padding: 20px;
     border-radius: 5px;
+    // border: 1px solid #e0e0e0;
   }
 
   .reviewsContainer {
     width: 100%;
     height: 500px;
-    background-color: #eef0ff;
+    background-color: #f9f9f9;
     padding: 20px;
     border-radius: 5px;
+    border: 1px solid #e0e0e0;
   }
 }
 

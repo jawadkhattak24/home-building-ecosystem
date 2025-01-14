@@ -91,12 +91,11 @@ router.get("/:conversationId", async (req, res) => {
 
 router.post("/", async (req, res) => {
   try {
-    const { participant, serviceId } = req.body;
+    const { participant } = req.body;
     // console.log("User ID coming from conversations api route: ", req.user);
 
     const conversation = new Conversation({
       participants: [req.user._id, participant],
-      serviceId: serviceId,
     });
     await conversation.save();
 

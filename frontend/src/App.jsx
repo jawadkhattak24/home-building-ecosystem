@@ -18,13 +18,13 @@ import { LoadingProvider } from "./contexts/loadingContext";
 import UserTypeSelection from "./pages/register/userTypeSelection/userTypeSelection";
 import ProfessionalHome from "./pages/professionalHome/professionalHome";
 import SupplierHome from "./pages/supplierHome/supplierHome";
-import ViewProfessionalProfile from "./pages/professionalProfile/viewProfessionalProfile/viewProfessionalProfile";
+import ViewProfessionalProfile from "./pages/professionalProfile/viewProfessionalProfile/professionalProfileChatProvider";
 import Profile from "./pages/profile/profile";
 import SupplierProfile from "./pages/supplierProfile/supplierProfile";
 import CategoryResults from "./components/categoryResults/categoryResults";
 import SearchPage from "./pages/searchPage/searchPage";
 import SetupProfessionalProfile from "./pages/professionalProfile/setupProfessionalProfile/setupProfessionalProfile";
-
+import HomeownerProfile from "./pages/homeowner/homeownerProfile/homeownerProfile";
 function AppContent() {
   const location = useLocation();
 
@@ -75,6 +75,10 @@ function AppContent() {
         <Route
           path="/profile/:userId"
           element={<ProtectedRoute element={Profile} />}
+        />
+        <Route
+          path="/homeowner-profile/:userId"
+          element={<ProtectedRoute element={HomeownerProfile} />}
         />
         <Route
           path="/search"

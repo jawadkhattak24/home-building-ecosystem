@@ -16,6 +16,7 @@ function MessageList({
   activeConversation,
   //   handleNegotiation,
   messages,
+  placeholderUI,
 }) {
   //   const { handleProposalChanges } = useContext(ChatContext);
   const [otherUser, setOtherUser] = useState({});
@@ -75,6 +76,12 @@ function MessageList({
     }
   }, [messages]);
 
+  console.log("activeConversation", activeConversation);
+
+  if (!activeConversation) {
+    return placeholderUI();
+  }
+
   return (
     otherUser && (
       <div className={styles.leftSideContainer}>
@@ -83,7 +90,7 @@ function MessageList({
             <Link
               to={`/${
                 otherUser.userType === "homeowner"
-                  ? "profile"
+                  ? "homeowner-profile"
                   : otherUser.userType === "professional"
                   ? "professional-profile"
                   : "supplier-profile"
@@ -184,4 +191,5 @@ MessageList.propTypes = {
   messages: PropTypes.array.isRequired,
   conversationId: PropTypes.string.isRequired,
   handleNegotiation: PropTypes.func.isRequired,
+  placeholderUI: PropTypes.func.isRequired,
 };

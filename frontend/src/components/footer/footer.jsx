@@ -17,10 +17,7 @@ const Footer = () => {
                 <a href="/join-as-professional">Join as Professional</a>
               </li>
               <li>
-                <a href="/pricing">Pricing</a>
-              </li>
-              <li>
-                <a href="/success-stories">Success Stories</a>
+                <a href="/analytics">Set up your portfolio</a>
               </li>
               <li>
                 <a href="/professional-resources">Resources</a>
@@ -35,51 +32,31 @@ const Footer = () => {
                 <a href="/how-it-works">How It Works</a>
               </li>
               <li>
-                <a href="/find-professionals">Find Professionals</a>
+                <a href="/hire-professionals">Hire Professionals</a>
               </li>
               <li>
-                <a href="/project-planning">Project Planning</a>
-              </li>
-              <li>
-                <a href="/cost-calculator">Cost Calculator</a>
+                <a href="/find-materials">Find Materials</a>
               </li>
             </ul>
           </div>
 
           <div className={styles.section}>
-            <h4>Categories</h4>
+            <h4>For Suppliers</h4>
             <ul>
               <li>
-                <a href="/architects">Architects</a>
+                <a href="/advertise-materials">Advertise materials</a>
               </li>
               <li>
-                <a href="/interior-designers">Interior Designers</a>
+                <a href="/find-buyers">Find buyers</a>
               </li>
               <li>
-                <a href="/suppliers">Material Suppliers</a>
-              </li>
-              <li>
-                <a href="/contractors">Contractors</a>
+                <a href="/selling-guide">Selling Guide</a>
               </li>
             </ul>
           </div>
         </div>
 
         <div className={styles.bottom}>
-          <div className={styles.social}>
-            <a href="#">
-              <i className="fab fa-facebook"></i>
-            </a>
-            <a href="#">
-              <i className="fab fa-twitter"></i>
-            </a>
-            <a href="#">
-              <i className="fab fa-linkedin"></i>
-            </a>
-            <a href="#">
-              <i className="fab fa-instagram"></i>
-            </a>
-          </div>
           <p>&copy; 2024 Home Building Ecosystem. All rights reserved.</p>
         </div>
       </div>

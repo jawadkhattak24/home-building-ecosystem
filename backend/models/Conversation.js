@@ -9,12 +9,6 @@ const conversationSchema = new mongoose.Schema({
     },
   ],
 
-  status: {
-    type: String,
-    enum: ["proposal", "accepted", "rejected"],
-    default: "proposal",
-  },
-
   //   serviceId: {
   //     type: mongoose.Schema.Types.ObjectId,
   //     ref: "Service",
