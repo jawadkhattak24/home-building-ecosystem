@@ -184,7 +184,7 @@ const Navigation = () => {
         <header className={styles.header}>
           <div className={styles.container}>
             <Link to="/" className={styles.logo}>
-              BuildKar
+              Home Building Ecosystem
             </Link>
             <div className={styles.searchBar}>
               <div className={styles.searchInput}>

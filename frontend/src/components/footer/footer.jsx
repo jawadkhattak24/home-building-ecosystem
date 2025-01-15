@@ -32,7 +32,7 @@ const Footer = () => {
                 <a href="/how-it-works">How It Works</a>
               </li>
               <li>
-                <a href="/hire-professionals">Hire Professionals</a>
+                <a href="/hire-professionals">Hire People</a>
               </li>
               <li>
                 <a href="/find-materials">Find Materials</a>
