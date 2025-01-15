@@ -484,7 +484,7 @@ const Navigation = () => {
                 <Link to="/professional/jobs" className={styles.navLink}>
                   Jobs
                 </Link>
-                <Link to="/professional/analytics" className={styles.navLink}>
+                <Link to="/analytics" className={styles.navLink}>
                   Analytics
                 </Link>
                 <Link

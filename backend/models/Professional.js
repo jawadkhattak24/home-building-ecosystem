@@ -38,6 +38,16 @@ const professionalSchema = new mongoose.Schema(
         createdAt: { type: Date, default: Date.now },
       },
     ],
+    analytics: {
+      type: Object,
+      default: {
+        impressions: 0,
+        clicks: 0,
+        saved: 0,
+        contacted: 0,
+        reviews: 0,
+      },
+    },
   },
   { timestamps: true }
 );

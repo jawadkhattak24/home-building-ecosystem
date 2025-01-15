@@ -26,6 +26,7 @@ import SearchPage from "./pages/searchPage/searchPage";
 import SetupProfessionalProfile from "./pages/professionalProfile/setupProfessionalProfile/setupProfessionalProfile";
 import HomeownerProfile from "./pages/homeowner/homeownerProfile/homeownerProfile";
 import SavedItemsPage from "./pages/homeowner/savedItemsPage/savedItemsPage";
+import ProfessionalAnalytics from "./pages/professionalAnalytics/professionalAnalytics";
 
 function AppContent() {
   const location = useLocation();
@@ -71,13 +72,25 @@ function AppContent() {
           path="/professional-profile/:userId"
           element={<ProtectedRoute element={ViewProfessionalProfile} />}
         />
-        <Route path="/savedItems" element={<ProtectedRoute element={SavedItemsPage} />} />
+        <Route
+          path="/savedItems"
+          element={<ProtectedRoute element={SavedItemsPage} />}
+        />
         <Route
           path="/professional-profile/setup"
           element={
             <ProtectedRoute
               allowedRoles={["professional"]}
               element={SetupProfessionalProfile}
+            />
+          }
+        />
+        <Route
+          path="/analytics"
+          element={
+            <ProtectedRoute
+              allowedRoles={["professional"]}
+              element={ProfessionalAnalytics}
             />
           }
         />

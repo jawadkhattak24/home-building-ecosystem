@@ -258,6 +258,17 @@ router.put("/switch-userType/:userId", async (req, res) => {
   }
 });
 
+router.get("/professional-analytics/:userId", async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const professional = await Professional.findOne({ userId });
+    res.json(professional.analytics);
+  } catch (err) {
+    console.error("An error occured fetching professional analytics:", err);
+    res.status(500).json({ msg: "Internal server error" });
+  }
+});
+
 router.post("/setup-profile/:userId", async (req, res) => {
   const { userId } = req.params;
   const { userType } = req.body;
