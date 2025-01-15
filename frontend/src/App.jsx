@@ -25,6 +25,8 @@ import CategoryResults from "./components/categoryResults/categoryResults";
 import SearchPage from "./pages/searchPage/searchPage";
 import SetupProfessionalProfile from "./pages/professionalProfile/setupProfessionalProfile/setupProfessionalProfile";
 import HomeownerProfile from "./pages/homeowner/homeownerProfile/homeownerProfile";
+import SavedItemsPage from "./pages/homeowner/savedItemsPage/savedItemsPage";
+
 function AppContent() {
   const location = useLocation();
 
@@ -69,6 +71,7 @@ function AppContent() {
           path="/professional-profile/:userId"
           element={<ProtectedRoute element={ViewProfessionalProfile} />}
         />
+        <Route path="/savedItems" element={<ProtectedRoute element={SavedItemsPage} />} />
         <Route
           path="/professional-profile/setup"
           element={
