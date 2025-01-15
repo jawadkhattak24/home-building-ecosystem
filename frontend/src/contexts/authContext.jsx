@@ -6,11 +6,11 @@ export function useAuth() {
   return useContext(AuthContext);
 }
 
-export const AuthProvider = ({ children }) => {
+export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [globalUserType, setGlobalUserType] = useState(() => {
-    return localStorage.getItem("userType") || "";
+    return localStorage.getItem("userType") || null;
   });
 
   function login(user, token) {
@@ -63,17 +63,28 @@ export const AuthProvider = ({ children }) => {
     fetchUser();
   }, []);
 
+  const updateUserType = (newUserType) => {
+    setGlobalUserType(newUserType);
+    if (currentUser) {
+      setCurrentUser(prev => ({
+        ...prev,
+        userType: newUserType
+      }));
+    }
+  };
+
   const value = {
     currentUser,
+    setCurrentUser,
+    globalUserType,
+    setGlobalUserType: updateUserType,
     login,
     logout,
     loading,
-    globalUserType,
-    setGlobalUserType,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-};
+}
 
 AuthProvider.propTypes = {
   children: PropTypes.node.isRequired,

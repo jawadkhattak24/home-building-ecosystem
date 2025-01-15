@@ -9,6 +9,7 @@ import { useLoading } from "../../contexts/loadingContext";
 
 const Navigation = () => {
   const { currentUser, logout, globalUserType } = useAuth();
+  console.log("Current user:", currentUser);
   const { setGlobalUserType } = useAuth();
   const [showAvatarMenu, setShowAvatarMenu] = useState(false);
   const avatarMenuRef = useRef(null);
@@ -61,16 +62,17 @@ const Navigation = () => {
 
   const handleUserTypeSwitch = async (userType) => {
     setShowAvatarMenu(false);
+    setIsLoading(true);
 
     console.log("Switching user type to:", userType);
     try {
       const response = await axios.put(
-        `${import.meta.env.VITE_API_URL}/api/user/switch-userType/${
-          currentUser.id
-        }`,
+        `${import.meta.env.VITE_API_URL}/api/user/switch-userType/${currentUser.id}`,
         { userType: userType }
       );
 
+      currentUser.userType = response.data.user.userType;
+      
       setGlobalUserType(response.data.user.userType);
 
       if (response.status === 200) {
@@ -104,7 +106,9 @@ const Navigation = () => {
         }
       }
     } catch (error) {
-      console.error("Error switching to supplier", error);
+      console.error("Error switching user type:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -201,6 +205,7 @@ const Navigation = () => {
                   <title id="IconBase-title-8f46da7f-207f-4224-95cb-e741d5d98fbf">
                     search
                   </title>
+
                   <desc id="IconBase-description-8f46da7f-207f-4224-95cb-e741d5d98fbf">
                     magnifying glass
                   </desc>
@@ -238,7 +243,7 @@ const Navigation = () => {
                   </button>
                   <button
                     className={styles.dropdownItem}
-                    onClick={() => handleSearchClick("interior-designer")}
+                    onClick={() => handleSearchClick("interior designer")}
                   >
                     Interior Designers
                   </button>
@@ -365,7 +370,7 @@ const Navigation = () => {
                   </button>
                   <button
                     className={styles.dropdownItem}
-                    onClick={() => handleSearchClick("interior-designer")}
+                    onClick={() => handleSearchClick("interior designer")}
                   >
                     Interior Designers
                   </button>
@@ -407,7 +412,9 @@ const Navigation = () => {
               </div>
 
               <div className={styles.dropdown}>
-                <button className={`${styles.dropbtn} ${styles.dropbtnDisabled}`}>
+                <button
+                  className={`${styles.dropbtn} ${styles.dropbtnDisabled}`}
+                >
                   Find Material{" "}
                   <ChevronDownIcon
                     className={styles.chevronDownIcon}

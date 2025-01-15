@@ -8,10 +8,11 @@ const ProtectedRoute = React.memo(
   ({
     element: Element,
     allowedRoles = [],
-    redirectPath = "/signIn",
+    redirectPath = "/login",
     ...rest
   }) => {
     const { currentUser, loading } = useAuth();
+    console.log("Current user in protected route:", currentUser);
     const userType = currentUser?.userType;
 
     if (loading) {
@@ -24,7 +25,7 @@ const ProtectedRoute = React.memo(
     }
 
     if (!currentUser) {
-      return <Navigate to="/signIn" replace />;
+      return <Navigate to="/login" replace />;
     }
 
     if (allowedRoles.length > 0 && !allowedRoles.includes(userType)) {
@@ -32,8 +33,8 @@ const ProtectedRoute = React.memo(
         userType === "homeowner"
           ? "/homeNew"
           : userType === "professional"
-          ? `/professional-profile/${currentUser._id}`
-          : `/supplier-profile/${currentUser._id}`;
+          ? `/professional-profile/${currentUser.id}`
+          : `/supplier-profile/${currentUser.id}`;
       return <Navigate to={redirectTo} replace />;
     }
 

@@ -31,6 +31,8 @@ export default function LoginAuthSuccess() {
           }
         );
 
+        login(res.data.user, token);
+
         console.log("User object in authRedirect", res.data.user);
         console.log("User type in authRedirect", res.data.user.userType);
       } catch (err) {

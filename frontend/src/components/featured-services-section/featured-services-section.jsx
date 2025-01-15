@@ -48,7 +48,7 @@ function FeaturedServicesSection({ serviceType }) {
       </h2>
       <section className={styles.featuredServices_main_container}>
         {loading
-          ? Array.from({ length: 5 }).map((_, index) => (
+          ? Array.from({ length: 3 }).map((_, index) => (
               <SkeletonCard key={index} />
             ))
           : services.map((service, index) => (
