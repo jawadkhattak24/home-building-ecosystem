@@ -14,14 +14,7 @@ import styles from "./styles/homeownerProfile.module.scss";
 import { useAuth } from "../../../contexts/authContext";
 import { LucideChevronLeft, LucideChevronRight } from "lucide-react";
 
-import {
-  FaStar,
-  FaRegStar,
-  FaMapMarkerAlt,
-  FaCertificate,
-  FaBriefcase,
-  FaPencilAlt,
-} from "react-icons/fa";
+import { FaStar, FaRegStar, FaPencilAlt } from "react-icons/fa";
 
 const HomeownerProfile = () => {
   const { userId } = useParams();
@@ -279,29 +272,31 @@ const HomeownerProfile = () => {
         const token = localStorage.getItem("token");
 
         const professionalResponse = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/user/professional/${userId}`,
+          `${import.meta.env.VITE_API_URL}/api/user/user/${userId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         );
+
+        console.log("Professional Response in homeowner: ", professionalResponse.data);
 
         setProfessionalData(professionalResponse.data);
 
-        const userResponse = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/user/user/${
-            professionalResponse.data.userId
-          }`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        setUserData(userResponse.data);
-        setCoverPicture(userResponse.data.coverPictureUrl);
-        setProfilePicture(userResponse.data.profilePictureUrl);
+        // const userResponse = await axios.get(
+        //   `${import.meta.env.VITE_API_URL}/api/user/user/${
+        //     professionalResponse.data.userId
+        //   }`,
+        //   {
+        //     headers: {
+        //       Authorization: `Bearer ${token}`,
+        //     },
+        //   }
+        // );
+        setUserData(professionalResponse.data);
+        setCoverPicture(professionalResponse.data.coverPictureUrl);
+        setProfilePicture(professionalResponse.data.profilePictureUrl);
 
         setIsOwner(professionalResponse.data.userId === currentUser.id);
 

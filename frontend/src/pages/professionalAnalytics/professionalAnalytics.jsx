@@ -29,7 +29,7 @@ const ProfessionalAnalytics = () => {
       <h1>Professional Analytics</h1>
       <div className={styles.analyticsContainer}>
         <div className={styles.analyticsItem}>
-          <h2>Profile Views</h2>
+          <h2>Impressions</h2>
           <p>{analytics?.impressions || 0}</p>
         </div>
         <div className={styles.analyticsItem}>

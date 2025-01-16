@@ -86,6 +86,7 @@
           align-items: center;
           justify-content: center;
           margin-top: 20px;
+          width: 100%;
 
           .editIcon {
             font-size: 16px;
@@ -130,6 +131,16 @@
           .name {
             font-size: 24px;
             font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+
+            .verifiedIcon {
+              color: base.$primary;
+              font-size: 18px;
+              margin-bottom: 5px;
+            }
             // color: #333;
           }
 
@@ -227,11 +238,28 @@
       border-radius: 5px;
 
       .serviceTypeContainer {
-        display: flex;
+        display: grid;
+        grid-template-columns: 3fr 0.5fr;
+        grid-template-rows: 1fr 1fr;
         flex-direction: column;
         align-items: flex-start;
         justify-content: flex-start;
         gap: 10px;
+        width: 100%;
+
+        .saveButton {
+          grid-column: 2;
+          font-size: 24px;
+          padding: 0;
+          margin: 0;
+          // align-self: flex-end;
+          justify-self: end;
+          grid-row: 1;
+          background-color: transparent;
+          color: base.$primary;
+          border: none;
+          cursor: pointer;
+        }
 
         .serviceTypeWrapper {
           .editField {
@@ -331,7 +359,7 @@
         justify-content: space-between;
         border-radius: 5px;
         // background-color: #fdb9a0;
-        background-color: #fecbb8;
+        background-color: #ffe1d6;
         gap: 10px;
 
         .addressText {
@@ -688,6 +716,20 @@
   color: base.$primary;
   border: none;
   cursor: pointer;
+
+  .saveIcon {
+    font-size: 24px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #000000;
+    &:hover {
+      color: #fb5012;
+    }
+  }
+
+  .saved {
+    color: #fb5012;
+  }
 }
 
 .cancelButton {

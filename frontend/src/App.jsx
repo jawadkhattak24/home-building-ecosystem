@@ -73,7 +73,7 @@ function AppContent() {
           element={<ProtectedRoute element={ViewProfessionalProfile} />}
         />
         <Route
-          path="/savedItems"
+          path="/saved-items"
           element={<ProtectedRoute element={SavedItemsPage} />}
         />
         <Route

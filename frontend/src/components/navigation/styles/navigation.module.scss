@@ -16,12 +16,13 @@
 
 .logo {
   color: #000000;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-weight: 600;
   text-decoration: none;
+  color: base.$primary;
 
   &:hover {
-    color: #ff5722;
+    color: base.$primary-dark;
   }
 }
 
@@ -30,13 +31,44 @@
   gap: 2rem;
   align-items: center;
   justify-content: center;
-  padding-top: 5px;
+  // padding-top: 5px;
+}
+
+.professionalNav {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  justify-content: center;
+  // padding-top: 5px;
+}
+
+.navEnvelope {
+  height: 20px;
+  padding: 0;
+  margin: 0;
+  color: base.$black;
+
+  &:hover {
+    color: base.$primary-dark;
+  }
+}
+
+.navHeart {
+  height: 20px;
+  padding: 0;
+  margin: 0;
+  color: base.$black;
+
+  &:hover {
+    color: base.$primary-dark;
+  }
 }
 
 .navLink {
   color: base.$black;
   text-decoration: none;
   font-weight: 600;
+  margin-top: 5px;
 
   &:hover {
     color: #ff5722;
@@ -81,7 +113,6 @@
 .dropdown {
   position: relative;
   display: inline-block;
-  
 
   &:hover .dropdownContent {
     display: block;
@@ -144,7 +175,6 @@
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
   border-radius: 4px;
   padding: 0.5rem 0;
-  
 
   a {
     color: base.$black;
@@ -174,6 +204,10 @@
   background: none;
   border: none;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  margin: 0;
+  border: none;
   padding: 0;
 }
 
@@ -233,6 +267,7 @@
   display: flex;
   gap: 16px;
   height: 40px;
+  margin-right: 100px;
   // margin-bottom: 24px;
 
   .searchInput {

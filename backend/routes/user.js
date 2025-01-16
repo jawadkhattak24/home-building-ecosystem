@@ -258,6 +258,74 @@ router.put("/switch-userType/:userId", async (req, res) => {
   }
 });
 
+router.post("/professional/save/:professionalId", async (req, res) => {
+  const { professionalId } = req.params;
+  const { userId } = req.body;
+
+  try {
+    const professional = await Professional.findOne({ userId: professionalId });
+    const user = await User.findById(userId);
+
+    if (!professional || !user) {
+      return res.status(404).json({ msg: "Professional or User not found" });
+    }
+
+    if (user.savedProfiles.includes(professionalId)) {
+      return res
+        .status(400)
+        .json({ msg: "Profile already saved", savedProfiles: user });
+    }
+
+    professional.saveCount = (professional.saveCount || 0) + 1;
+    await professional.save();
+
+    user.savedProfiles.push(professionalId);
+    await user.save();
+
+    res.status(200).json({
+      msg: "Profile saved successfully",
+      savedProfiles: user,
+    });
+  } catch (err) {
+    console.error("Error saving profile:", err);
+    res.status(500).json({ msg: "Internal server error" });
+  }
+});
+
+router.delete("/professional/unsave/:professionalId", async (req, res) => {
+  const { professionalId } = req.params;
+  const { userId } = req.body;
+
+  try {
+    const professional = await Professional.findById(professionalId);
+    const user = await User.findById(userId);
+
+    if (!professional || !user) {
+      return res.status(404).json({ msg: "Professional or User not found" });
+    }
+
+    if (!user.savedProfiles.includes(professionalId)) {
+      return res.status(400).json({ msg: "Profile not saved" });
+    }
+
+    professional.saveCount = Math.max((professional.saveCount || 0) - 1, 0);
+    await professional.save();
+
+    user.savedProfiles = user.savedProfiles.filter(
+      (id) => id.toString() !== professionalId
+    );
+    await user.save();
+
+    res.status(200).json({
+      msg: "Profile unsaved successfully",
+      savedProfiles: user.savedProfiles,
+    });
+  } catch (err) {
+    console.error("Error unsaving profile:", err);
+    res.status(500).json({ msg: "Internal server error" });
+  }
+});
+
 router.get("/professional-analytics/:userId", async (req, res) => {
   const { userId } = req.params;
   try {
@@ -439,6 +507,7 @@ router.get("/me", async (req, res) => {
         email: user.email,
         profilePictureUrl: user.profilePictureUrl,
         profileComplete,
+        savedProfiles: user.savedProfiles,
       },
     });
   } catch (err) {
@@ -468,16 +537,72 @@ router.get("/user/:userId", authMiddleware, async (req, res) => {
   }
 });
 
-router.get("/professional/:userId", authMiddleware, async (req, res) => {
+router.post("/:professionalId/impression", async (req, res) => {
+  try {
+    const { professionalId } = req.params;
+    const professional = await Professional.findByIdAndUpdate(
+      professionalId,
+      { $inc: { "analytics.impressions": 1 } },
+      { new: true }
+    );
+    if (!professional) {
+      return res.status(404).json({ message: "Professional not found" });
+    }
+    res.json({
+      message: "Impression recorded",
+      impressions: professional.analytics.impressions,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.post("/professional/:professionalId/click", async (req, res) => {
+  const { professionalId } = req.params;
+  try {
+    const professional = await Professional.findByIdAndUpdate(
+      professionalId,
+      { $inc: { "analytics.clicks": 1 } },
+      { new: true }
+    );
+    res.json({
+      message: "Click recorded",
+      clicks: professional.analytics.clicks,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.get("/professional/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
-    const professional = await Professional.findOne({ userId });
+    const professional = await Professional.findOne({ userId }).populate(
+      "userId",
+      "name email profilePictureUrl"
+    );
 
     if (!professional) {
-      res.status(400).json("Professional does not exist");
+      return res.status(400).json("Professional does not exist");
     }
     console.log("Professional Found:", professional);
 
+    res.json(professional);
+  } catch (err) {
+    console.error("Error fetching professional data:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+router.get("/saved-professionals/:userId", async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const professional = await Professional.findOne({ userId }).populate(
+      "userId",
+      "name email profilePictureUrl"
+    );
     res.json(professional);
   } catch (err) {
     console.error("Error fetching professional data:", err);
@@ -559,10 +684,23 @@ router.post("/register", async (req, res) => {
     "https://servicesthumbnailbucket.s3.ap-south-1.amazonaws.com/defaultCover.png";
 
   try {
-    const { userType, name, email, password } = req.body;
-    // const ip = req.ip;
-    // console.log("IP in register route:", ip);
-    // console.log("IP in register route:", req.socket.remoteAddress);
+    const { name, email, password } = req.body;
+
+    const clientIp =
+      req.headers["x-forwarded-for"]?.split(",")[0] || req.socket.remoteAddress;
+
+    let location = { city: "Unknown", country: "Unknown" };
+    try {
+      const geoResponse = await axios.get(`http://ip-api.com/json/${clientIp}`);
+      if (geoResponse.data.status === "success") {
+        location = {
+          city: geoResponse.data.city,
+          country: geoResponse.data.country,
+        };
+      }
+    } catch (geoError) {
+      console.error("Error fetching location:", geoError);
+    }
 
     let user = await User.findOne({ email });
     if (user) {
@@ -572,7 +710,7 @@ router.post("/register", async (req, res) => {
     const username = name.split(" ").join("").toLowerCase();
 
     user = new User({
-      userType,
+      userType: "homeowner",
       name,
       username,
       email,
@@ -580,34 +718,35 @@ router.post("/register", async (req, res) => {
       profilePictureUrl: defaultAvatar,
       coverPictureUrl: defaultCover,
       isVerified: true,
+      city: location.city,
+      country: location.country,
     });
 
     await user.save();
 
-    if (userType === "homeowner") {
-      const payload = {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        profilePictureUrl: user.profilePictureUrl,
-      };
+    const payload = {
+      userType: user.userType,
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      profilePictureUrl: user.profilePictureUrl,
+      city: user.city,
+      country: user.country,
+    };
 
-      jwt.sign(
-        payload,
-        process.env.JWT_SECRET,
-        { expiresIn: "1d" },
-        (err, token) => {
-          if (err) {
-            console.error("Error signing JWT token:", err);
-            throw err;
-          }
-
-          res.status(200).json({ user: payload, token });
+    jwt.sign(
+      payload,
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" },
+      (err, token) => {
+        if (err) {
+          console.error("Error signing JWT token:", err);
+          throw err;
         }
-      );
-    } else {
-      res.status(200).json({ msg: "User registered successfully" });
-    }
+
+        res.status(200).json({ user: payload, token });
+      }
+    );
   } catch (err) {
     console.error(err);
     res.status(500).json({

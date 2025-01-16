@@ -31,7 +31,7 @@ passport.use(
       passReqToCallback: true,
     },
     async (req, accessToken, refreshToken, profile, done) => {
-      const userType = req.query.state;
+    const userType = req.query.state;
 
       console.log("Profile ID:", profile.id);
       console.log("Full Profile:", JSON.stringify(profile, null, 2));

@@ -61,7 +61,7 @@ export default function LoginPage() {
 
       if (res.status === 200) {
         login(user, token);
-        navigate("/homeNew");
+        navigate("/");
       } else if (res.status === 500) {
         setErrorStatus({ email: false, password: false });
       }

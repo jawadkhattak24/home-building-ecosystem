@@ -1,10 +1,18 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
 import styles from "./styles/service-card.module.scss";
 import PropTypes from "prop-types";
 
-function ProfessionalCard({ professional }) {
+function ProfessionalCard({ professional, showCoverImage }) {
   const { name, profilePictureUrl, coverPictureUrl } =
     professional?.userId || professional?.id || {};
+
+  useEffect(() => {
+    axios.post(
+      `${import.meta.env.VITE_API_URL}/api/user/${professional?._id}/impression`
+    );
+  }, [professional?._id]);
 
   const averageRating = 4;
 
@@ -13,16 +21,15 @@ function ProfessionalCard({ professional }) {
   return (
     <Link to={`/professional-profile/${professional?.userId?._id || ""}`}>
       <div className={styles.professional_card}>
-        <img
-          className={styles.portfolioImage}
-          width={400}
-          height={150}
-          src={coverPictureUrl}
-          alt={`${professional?.serviceType || "Service"} Portfolio`}
-          onError={(e) => {
-            e.target.src = "https://via.placeholder.com/400x150";
-          }}
-        />
+        {showCoverImage === false ? null : (
+          <img
+            className={styles.portfolioImage}
+            width={400}
+            height={150}
+            src={professional?.portfolio[0]}
+            alt={`${professional?.serviceType || "Service"} Portfolio`}
+          />
+        )}
         <div className={styles.cardDetails}>
           <div className={styles.professionalInfo}>
             <img
@@ -31,9 +38,6 @@ function ProfessionalCard({ professional }) {
               height={60}
               src={profilePictureUrl}
               alt={name}
-              onError={(e) => {
-                e.target.src = "https://via.placeholder.com/60";
-              }}
             />
             <div className={styles.nameAndType}>
               <h3 className={styles.name}>{name}</h3>
@@ -45,7 +49,7 @@ function ProfessionalCard({ professional }) {
 
           <div className={styles.stats}>
             <p className={styles.experience}>
-              {professional?.yearsExperience || 0} years experience
+              {Math.floor(Math.random() * 15)} years experience
             </p>
             <p className={styles.rating}>
               ⭐ {averageRating.toFixed(1)} ({reviewsCount} reviews)

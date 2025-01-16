@@ -43,15 +43,14 @@ export default function AuthSuccess() {
         ) {
           navigate("/professional-profile-setup");
         } else if (
-          res.data.user.userType === "supplier" &&
-          !res.data.user.profileComplete
+          res.data.user.userType === "supplier"
         ) {
           navigate("/supplier-profile-setup");
         } else if (res.data.user.userType === "pending") {
           navigate("/user-type-selection");
         } else {
           login(res.data.user, token);
-          navigate("/homeNew");
+          navigate("/");
         }
       } catch (err) {
         console.error("Error during authentication:", err);

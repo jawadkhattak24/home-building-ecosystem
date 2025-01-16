@@ -34,7 +34,7 @@ const ProtectedRoute = React.memo(
           ? "/homeNew"
           : userType === "professional"
           ? `/professional-profile/${currentUser.id}`
-          : `/supplier-profile/${currentUser.id}`;
+          : `/homeNew`;
       return <Navigate to={redirectTo} replace />;
     }
 

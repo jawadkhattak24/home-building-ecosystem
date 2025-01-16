@@ -1,13 +1,11 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 
-
-
 const userSchema = new mongoose.Schema(
   {
     userType: {
       type: String,
-      enum: ["homeowner", "professional", "supplier", "pending"],
+      enum: ["homeowner", "professional", "supplier"],
       required: false,
       default: "homeowner",
     },
@@ -19,6 +17,7 @@ const userSchema = new mongoose.Schema(
     coverPictureUrl: { type: String },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
+    savedProfiles: { type: [String], default: [] },
     isVerified: {
       type: Boolean,
       default: false,
@@ -40,6 +39,14 @@ const userSchema = new mongoose.Schema(
     lastLogin: {
       type: Date,
       default: Date.now,
+    },
+    city: {
+      type: String,
+      default: "N/A",
+    },
+    country: {
+      type: String,
+      default: "N/A",
     },
   },
   { timestamps: true }

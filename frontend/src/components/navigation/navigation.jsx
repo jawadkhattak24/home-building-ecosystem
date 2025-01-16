@@ -6,6 +6,7 @@ import { ChevronDownIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useLoading } from "../../contexts/loadingContext";
+import { FaEnvelope, FaHeart } from "react-icons/fa";
 
 const Navigation = () => {
   const { currentUser, logout, globalUserType } = useAuth();
@@ -67,12 +68,14 @@ const Navigation = () => {
     console.log("Switching user type to:", userType);
     try {
       const response = await axios.put(
-        `${import.meta.env.VITE_API_URL}/api/user/switch-userType/${currentUser.id}`,
+        `${import.meta.env.VITE_API_URL}/api/user/switch-userType/${
+          currentUser.id
+        }`,
         { userType: userType }
       );
 
       currentUser.userType = response.data.user.userType;
-      
+
       setGlobalUserType(response.data.user.userType);
 
       if (response.status === 200) {
@@ -145,6 +148,7 @@ const Navigation = () => {
 
           {currentUser.userType !== "supplier" && (
             <button
+              disabled
               className={styles.avatar_menu_item}
               onClick={() => handleUserTypeSwitch("supplier")}
             >
@@ -318,38 +322,6 @@ const Navigation = () => {
             <Link to="/" className={styles.logo}>
               Home Building Ecosystem
             </Link>
-            <div className={styles.searchBar}>
-              <div className={styles.searchInput}>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 12 12"
-                  aria-labelledby="IconBase-title-8f46da7f-207f-4224-95cb-e741d5d98fbf IconBase-description-8f46da7f-207f-4224-95cb-e741d5d98fbf"
-                  role="graphics-symbol img"
-                  width="100%"
-                  height="100%"
-                  className={styles.searchIcon}
-                  aria-hidden="true"
-                >
-                  <title id="IconBase-title-8f46da7f-207f-4224-95cb-e741d5d98fbf">
-                    search
-                  </title>
-                  <desc id="IconBase-description-8f46da7f-207f-4224-95cb-e741d5d98fbf">
-                    magnifying glass
-                  </desc>
-                  <g>
-                    <path d="M11.407,10.421,8.818,7.832a4.276,4.276,0,1,0-.985.985l2.589,2.589a.7.7,0,0,0,.985-.985ZM2.355,5.352a3,3,0,1,1,3,3,3,3,0,0,1-3-3Z"></path>
-                  </g>
-                </svg>
-
-                <input
-                  type="text"
-                  placeholder="Search the building world"
-                  // value={searchQuery}
-                  // onChange={(e) => setSearchQuery(e.target.value)}
-                  // onKeyDown={fetchProfessionals}
-                />
-              </div>
-            </div>
 
             <nav className={styles.nav}>
               <div className={styles.dropdown}>
@@ -432,13 +404,46 @@ const Navigation = () => {
                 </div> */}
               </div>
 
+              <div className={styles.searchBar}>
+                <div className={styles.searchInput}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 12 12"
+                    aria-labelledby="IconBase-title-8f46da7f-207f-4224-95cb-e741d5d98fbf IconBase-description-8f46da7f-207f-4224-95cb-e741d5d98fbf"
+                    role="graphics-symbol img"
+                    width="100%"
+                    height="100%"
+                    className={styles.searchIcon}
+                    aria-hidden="true"
+                  >
+                    <title id="IconBase-title-8f46da7f-207f-4224-95cb-e741d5d98fbf">
+                      search
+                    </title>
+                    <desc id="IconBase-description-8f46da7f-207f-4224-95cb-e741d5d98fbf">
+                      magnifying glass
+                    </desc>
+                    <g>
+                      <path d="M11.407,10.421,8.818,7.832a4.276,4.276,0,1,0-.985.985l2.589,2.589a.7.7,0,0,0,.985-.985ZM2.355,5.352a3,3,0,1,1,3,3,3,3,0,0,1-3-3Z"></path>
+                    </g>
+                  </svg>
+
+                  <input
+                    type="text"
+                    placeholder="Search the building world"
+                    // value={searchQuery}
+                    // onChange={(e) => setSearchQuery(e.target.value)}
+                    // onKeyDown={fetchProfessionals}
+                  />
+                </div>
+              </div>
+
               {currentUser && (
                 <>
-                  <Link to="/inbox" className={styles.navLink}>
-                    Messages
+                  <Link to="/inbox" className={styles.navEnvelope}>
+                    <FaEnvelope size={20} />
                   </Link>
-                  <Link to="/saved-items" className={styles.navLink}>
-                    Saved Items
+                  <Link to="/saved-items" className={styles.navHeart}>
+                    <FaHeart size={20} />
                   </Link>
                 </>
               )}
@@ -476,7 +481,7 @@ const Navigation = () => {
               Home Building Ecosystem
             </Link>
 
-            <nav className={styles.nav}>
+            <nav className={styles.professionalNav}>
               <>
                 <Link to="/inbox" className={styles.navLink}>
                   Messages

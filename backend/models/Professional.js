@@ -25,11 +25,12 @@ const professionalSchema = new mongoose.Schema(
     address: { type: String, required: false },
     qualifications: [{ type: String, required: false }],
     ratePerHour: { type: Number, required: false },
-    yearsExperience: { type: Number, required: false },
+    yearsExperience: { type: Number, required: false, default: 7 },
     bio: { type: String, required: false },
     certifications: { type: String },
     portfolio: [String],
     rating: { type: Number, default: 0 },
+    saveCount: { type: Number, default: 0 },
     reviews: [
       {
         userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },

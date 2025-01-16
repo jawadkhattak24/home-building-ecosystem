@@ -1,11 +1,33 @@
-.savedItemsParentContainer{
+.savedItemsParentContainer {
+  display: flex;
+  padding: 20px;
+  margin: 20px;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+
+  .savedItemsContainer {
     display: flex;
-    justify-content: center;
-    align-items: center;
+    margin-top: 20px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: flex-start;
+    align-items: flex-start;
+    height: 70vh;
+    width: 100%;
+  }
 
-    .heading{
-        font-family: "AcuminPro";
-        font-size: 18px;
-
-    }
+  .heading {
+    font-family: "AcuminPro";
+    font-size: 18px;
+  }
+  .noSavedItems {
+    font-family: "AcuminPro";
+    font-size: 18px;
+    color: #808080;
+  }
 }

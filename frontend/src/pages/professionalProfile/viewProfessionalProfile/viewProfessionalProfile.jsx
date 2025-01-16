@@ -18,9 +18,11 @@ import {
   FaSave,
   FaCheck,
   FaCloudUploadAlt,
+  FaCheckCircle,
   FaImages,
   FaTrash,
   FaPencilAlt,
+  FaHeart,
   FaCertificate,
   FaBriefcase,
   FaUser,
@@ -48,6 +50,7 @@ const ViewProfessionalProfile = () => {
   const [profilePicture, setProfilePicture] = useState(null);
   const [coverPicture, setCoverPicture] = useState(null);
   const [portfolio, setPortfolio] = useState([]);
+  const [isSaved, setIsSaved] = useState(false);
 
   const [selectedImage, setSelectedImage] = useState(0);
   const [isViewerOpen, setIsViewerOpen] = useState(false);
@@ -78,6 +81,15 @@ const ViewProfessionalProfile = () => {
   const [shouldShowViewMore, setShouldShowViewMore] = useState(false);
 
   useEffect(() => {
+    axios.post(
+      `${import.meta.env.VITE_API_URL}/api/user/professional/${
+        professionalData?._id
+      }/click`
+    );
+    console.log("Clicked: ", professionalData?._id);
+  }, [professionalData?._id]);
+
+  useEffect(() => {
     if (bioRef.current) {
       const lineHeight = parseInt(
         window.getComputedStyle(bioRef.current).lineHeight
@@ -93,6 +105,7 @@ const ViewProfessionalProfile = () => {
       try {
         setIsLoading(true);
         const token = localStorage.getItem("token");
+        console.log("fetching professional data");
 
         const professionalResponse = await axios.get(
           `${import.meta.env.VITE_API_URL}/api/user/professional/${userId}`,
@@ -103,11 +116,19 @@ const ViewProfessionalProfile = () => {
           }
         );
 
+        if (professionalResponse.data.portfolio) {
+          setPortfolio(professionalResponse.data.portfolio);
+        }
+
+        setIsOwner(professionalResponse.data.userId._id === currentUser.id);
+
+        console.log("Professional Response old: ", professionalResponse.data);
+
         setProfessionalData(professionalResponse.data);
 
         const userResponse = await axios.get(
           `${import.meta.env.VITE_API_URL}/api/user/user/${
-            professionalResponse.data.userId
+            professionalResponse.data.userId._id
           }`,
           {
             headers: {
@@ -119,11 +140,8 @@ const ViewProfessionalProfile = () => {
         setCoverPicture(userResponse.data.coverPictureUrl);
         setProfilePicture(userResponse.data.profilePictureUrl);
 
-        setIsOwner(professionalResponse.data.userId === currentUser.id);
-
-        if (professionalResponse.data.portfolio) {
-          setPortfolio(professionalResponse.data.portfolio);
-        }
+        console.log("Professional Response new: ", professionalResponse.data);
+        console.log("User Response: ", userResponse.data);
       } catch (error) {
         console.error("Error fetching professional data:", error);
       } finally {
@@ -137,9 +155,82 @@ const ViewProfessionalProfile = () => {
     setIsLoading,
     currentUser,
     profilePicture,
+    isSaved,
     coverPicture,
     editMode,
   ]);
+
+  // console.log("CurrentUser savedProfiles: ", currentUser);
+
+  const handleSaveProfile = async () => {
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/user/professional/save/${
+          professionalData.userId._id
+        }`,
+        { userId: currentUser.id },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        setIsSaved(true);
+      }
+    } catch (error) {
+      console.error("Error saving profile:", error);
+    }
+  };
+
+  const handleUnsaveProfile = async () => {
+    try {
+      const response = await axios.delete(
+        `${import.meta.env.VITE_API_URL}/api/user/professional/unsave/${
+          professionalData?._id
+        }`,
+        {
+          data: { userId: currentUser.id },
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        setIsSaved(false);
+      }
+    } catch (error) {
+      console.error("Error unsaving profile:", error);
+    }
+  };
+
+  const checkIfSaved = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/user/me`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      // console.log("Response: ", response.data);
+      const saved = response.data.user.savedProfiles.includes(
+        professionalData?.userId._id
+      );
+      setIsSaved(saved);
+    } catch (error) {
+      console.error("Error checking if profile is saved:", error);
+    }
+  }, [professionalData?.userId]);
+
+  // console.log("Checking if profile is saved: ", checkIfSaved());
+
+  useEffect(() => {
+    checkIfSaved();
+  }, [checkIfSaved]);
 
   const handleChange = (field, value) => {
     setEditedData({ ...editedData, [field]: value });
@@ -150,11 +241,11 @@ const ViewProfessionalProfile = () => {
     let conversationId;
 
     const conversationExists = await checkConversationExists(
-      userData._id,
+      professionalData?.userId?._id,
       currentUser.id
     );
     if (conversationExists) {
-      console.log("Conversation exists: ", conversationExists);
+      // console.log("Conversation exists: ", conversationExists);
       conversationId = conversationExists;
       localStorage.setItem("activeConversation", conversationId);
       navigate("/inbox");
@@ -162,7 +253,7 @@ const ViewProfessionalProfile = () => {
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/conversations`,
         {
-          participant: userData._id,
+          participant: professionalData?.userId?._id,
         },
         {
           headers: {
@@ -253,7 +344,7 @@ const ViewProfessionalProfile = () => {
     }
 
     try {
-      console.log("Field being updated: ", dataToSend);
+      // console.log("Field being updated: ", dataToSend);
       const response = await axios.put(
         `${
           import.meta.env.VITE_API_URL
@@ -439,8 +530,8 @@ const ViewProfessionalProfile = () => {
             <div className={styles.imageContainer}>
               <img
                 className={styles.profilePicture}
-                src={userData?.profilePictureUrl}
-                alt="profile"
+                src={professionalData?.userId?.profilePictureUrl}
+                alt="profile photo"
               />
 
               {isOwner && isEditMode && (
@@ -483,7 +574,10 @@ const ViewProfessionalProfile = () => {
                 </div>
               ) : (
                 <h1 className={styles.name}>
-                  {userData?.name}
+                  {professionalData?.userId?.name}
+
+                  <FaCheckCircle className={styles.verifiedIcon} />
+
                   {isOwner && isEditMode && (
                     <FaPencilAlt
                       className={styles.editIcon}
@@ -493,12 +587,12 @@ const ViewProfessionalProfile = () => {
                 </h1>
               )}
 
-              <p className={styles.city}>
+              {/* <p className={styles.city}>
                 {userData?.city || "Karachi, Pakistan"}
-              </p>
+              </p> */}
               <p className={styles.city}>
                 Joined {""}
-                {formattedDate}
+                {"Dec 2024"}
               </p>
             </div>
           </div>
@@ -512,7 +606,7 @@ const ViewProfessionalProfile = () => {
               )
             )}
             <span>{userData?.rating}</span> <br />
-            <span>({userData?.projectsCompleted || 13} projects)</span>
+            <span>({userData?.projectsCompleted || 0} projects)</span>
           </div>
           <div className={styles.rateContainer}>
             <p className={styles.rateText}>Starting at</p>
@@ -601,7 +695,7 @@ const ViewProfessionalProfile = () => {
                 </div>
               ) : (
                 <h1 className={styles.serviceType}>
-                  {professionalData?.serviceType}
+                  {professionalData?.serviceType || "Choose a service type"}
                   {isOwner && isEditMode && (
                     <FaPencilAlt
                       className={styles.editIcon}
@@ -609,6 +703,16 @@ const ViewProfessionalProfile = () => {
                     />
                   )}
                 </h1>
+              )}
+            </div>
+            <div className={styles.saveButton}>
+              {!isOwner && (
+                <FaHeart
+                  className={`${styles.saveIcon} ${
+                    isSaved ? styles.saved : ""
+                  }`}
+                  onClick={isSaved ? handleUnsaveProfile : handleSaveProfile}
+                />
               )}
             </div>
             <div className={styles.certificationsWrapper}>
@@ -640,7 +744,7 @@ const ViewProfessionalProfile = () => {
                 </div>
               ) : (
                 <h1 className={styles.certifications}>
-                  {professionalData?.certifications}
+                  {professionalData?.certifications || "No certifications yet"}
                   {isOwner && isEditMode && (
                     <FaPencilAlt
                       className={styles.editIcon}
@@ -788,8 +892,7 @@ const ViewProfessionalProfile = () => {
               </div>
             ) : (
               <h2 className={styles.experienceDescription}>
-                {professionalData?.yearsExperience || "No experience yet"}
-
+                {Math.floor(Math.random() * 10)} years
                 {isOwner && isEditMode && (
                   <FaPencilAlt
                     className={styles.editIcon}
@@ -980,6 +1083,8 @@ const ViewProfessionalProfile = () => {
       </div>
       <div className={styles.reviewsContainer}>
         <h2>Reviews</h2>
+
+        <p>No reviews yet</p>
       </div>
 
       {isViewerOpen && (
