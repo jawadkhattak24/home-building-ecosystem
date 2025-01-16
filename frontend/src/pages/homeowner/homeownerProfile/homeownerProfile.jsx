@@ -265,6 +265,9 @@ const HomeownerProfile = () => {
     }
   }, [profilePicture, coverPicture]);
 
+  const coverPictureNew =
+    "https://images.unsplash.com/photo-1507089947368-19c1da9775ae?q=80&w=1476&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
+
   useEffect(() => {
     const fetchProfessionalData = async () => {
       try {
@@ -280,7 +283,10 @@ const HomeownerProfile = () => {
           }
         );
 
-        console.log("Professional Response in homeowner: ", professionalResponse.data);
+        console.log(
+          "Professional Response in homeowner: ",
+          professionalResponse.data
+        );
 
         setProfessionalData(professionalResponse.data);
 
@@ -421,7 +427,7 @@ const HomeownerProfile = () => {
     >
       <div
         className={styles.coverImage}
-        style={{ backgroundImage: `url(${coverPicture})` }}
+        style={{ backgroundImage: `url(${coverPictureNew})` }}
       >
         {isOwner && isEditMode && (
           <label htmlFor="coverImage" className={styles.editCoverImageIcon}>
