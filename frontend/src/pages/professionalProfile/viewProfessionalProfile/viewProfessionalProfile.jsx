@@ -81,6 +81,10 @@ const ViewProfessionalProfile = () => {
   const [shouldShowViewMore, setShouldShowViewMore] = useState(false);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
     axios.post(
       `${import.meta.env.VITE_API_URL}/api/user/professional/${
         professionalData?._id
@@ -188,7 +192,7 @@ const ViewProfessionalProfile = () => {
     try {
       const response = await axios.delete(
         `${import.meta.env.VITE_API_URL}/api/user/professional/unsave/${
-          professionalData?._id
+          professionalData?.userId._id
         }`,
         {
           data: { userId: currentUser.id },

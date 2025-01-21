@@ -5,9 +5,9 @@
   width: 100vw;
   display: flex;
   flex-direction: row;
-  background-color: #f5f5f5;
+  // background-color: #f5f5f5;
 
-  .parent_cont_left {
+  .parent_cont_right {
     width: 50vw;
     height: 100vh;
     display: flex;
@@ -116,17 +116,27 @@
     }
   }
 
-  .parent_cont_right {
+  .parent_cont_left {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: base.$background;
+    // background-color: base.$background;
     width: 50vw;
     height: 100vh;
-    background-image: url("../../../../assets/40-resized-min.jpg");
-    background-repeat: no-repeat;
-    background-size: cover;
+    // background-image: url("../../../../assets/40-resized-min.jpg");
+    // background-repeat: no-repeat;
+    // background-size: cover;
+
+    .shaderGif {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -1;
+    }
 
     .h1 {
       font: base.$h1;
@@ -147,6 +157,17 @@
         text-decoration: underline;
       }
     }
+  }
+}
+
+.logo_link {
+  text-decoration: none;
+  color: base.$black;
+  font-size: 25px;
+
+  h2 {
+    color: base.$black;
+     
   }
 }
 
@@ -569,6 +590,7 @@
   background-color: base.$primary;
   color: base.$white;
   font-family: "AcuminPro";
+  font-size: 22px;
   width: 450px;
   height: 60px;
   border: none;

@@ -1,7 +1,7 @@
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
 import Home from "./pages/home/home";
 import HomeNew from "./pages/homeNew/home";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LoginPage from "./pages/login/login";
 import RegisterPage from "./pages/register/register";
 import { AuthProvider, useAuth } from "./contexts/authContext";
@@ -61,6 +61,7 @@ function AppContent() {
       <Routes>
         <Route path="/" element={<PublicRoute element={HomeNew} />} />
         <Route path="/login" element={<PublicRoute element={LoginPage} />} />
+        <Route path="/register" element={<PublicRoute element={RegisterPage} />} />
         <Route
           path="/homeNew"
           element={
@@ -119,10 +120,6 @@ function AppContent() {
         <Route
           path="/supplier-homepage"
           element={<ProtectedRoute element={SupplierHome} />}
-        />
-        <Route
-          path="/register"
-          element={<PublicRoute element={RegisterPage} />}
         />
         <Route
           path="/professional-profile-setup"

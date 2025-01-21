@@ -6,6 +6,7 @@ import axios from "redaxios";
 import { FaGoogle, FaFacebookF } from "react-icons/fa";
 import { Eye, EyeOff } from "lucide-react";
 import { useLoading } from "../../contexts/loadingContext";
+import shaderGif from "../../assets/shadergradientHD.webm";
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -27,6 +28,7 @@ export default function LoginPage() {
 
   const handleChange = (e) => {
     setUserData({ ...userData, [e.target.name]: e.target.value });
+    setErrorStatus({ email: false, password: false });
   };
 
   const togglePasswordVisibility = () => {
@@ -61,7 +63,8 @@ export default function LoginPage() {
 
       if (res.status === 200) {
         login(user, token);
-        navigate("/");
+        console.log("Navigating to homeNew from login");
+        navigate("/homeNew");
       } else if (res.status === 500) {
         setErrorStatus({ email: false, password: false });
       }
@@ -106,6 +109,15 @@ export default function LoginPage() {
           </div>
         )}
         <div className={styles.parent_cont}>
+          <video
+            src={shaderGif}
+            loading="lazy"
+            preload="none"
+            autoPlay
+            loop
+            muted
+            className={styles.shaderGif}
+          />
           <div className={styles.main_content_container}>
             <div className={styles.logo_container}>
               <Link to="/" className={styles.logo_link}>

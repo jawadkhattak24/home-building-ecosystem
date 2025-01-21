@@ -30,7 +30,6 @@ const professionalSchema = new mongoose.Schema(
     certifications: { type: String },
     portfolio: [String],
     rating: { type: Number, default: 0 },
-    saveCount: { type: Number, default: 0 },
     reviews: [
       {
         userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
@@ -42,9 +41,9 @@ const professionalSchema = new mongoose.Schema(
     analytics: {
       type: Object,
       default: {
+        saveCount: { type: Number, default: 0 },
         impressions: 0,
         clicks: 0,
-        saved: 0,
         contacted: 0,
         reviews: 0,
       },

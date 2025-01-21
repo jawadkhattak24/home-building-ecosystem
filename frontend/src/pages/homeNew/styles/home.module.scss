@@ -20,14 +20,25 @@
   align-items: center;
   height: 90vh;
   gap: 30px;
-  background: linear-gradient(
-    135deg,
-    base.$primary,
-    #8b0500,
-    base.$primary-dark
-  );
+  // background: linear-gradient(
+  //   135deg,
+  //   base.$primary,
+  //   #8b0500,
+  //   base.$primary-dark
+  // );
+  
   color: base.$white;
   overflow: hidden;
+
+  .shaderGif {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+  }
 
   .headings_container {
     display: flex;
@@ -46,12 +57,14 @@
       // max-width: 800px;
       font-family: "AcuminPro";
       line-height: 1.2;
+      // color: #000000;
       
       animation: fadeInDown 1s ease-out;
     }
-
+    
     p {
       font: base.$p_large;
+      // color: #000000;
       max-width: 600px;
       font-family: "AcuminPro";
       opacity: 0.9;

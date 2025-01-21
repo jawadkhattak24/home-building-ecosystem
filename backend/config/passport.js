@@ -58,6 +58,7 @@ passport.use(
         const username = profile.emails[0].value.split("@")[0];
 
         const newUser = {
+          userType: "homeowner",
           googleId: profile.id,
           name: profile.displayName,
           username: username,

@@ -36,7 +36,7 @@ export default function AuthSuccess() {
 
         if (res.data.user.userType === "homeowner") {
           login(res.data.user, token);
-          navigate("/homeNew");
+          navigate("/");
         } else if (
           res.data.user.userType === "professional" &&
           !res.data.user.profileComplete

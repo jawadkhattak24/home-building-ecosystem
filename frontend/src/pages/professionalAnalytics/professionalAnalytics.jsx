@@ -18,6 +18,7 @@ const ProfessionalAnalytics = () => {
           currentUser.id
         }`
       );
+      console.log("Analytics:", response.data);
       setAnalytics(response.data);
     } catch (error) {
       console.error("An error occured fetching professional analytics:", error);
@@ -38,7 +39,7 @@ const ProfessionalAnalytics = () => {
         </div>
         <div className={styles.analyticsItem}>
           <h2>Saved</h2>
-          <p>{analytics?.saved || 0}</p>
+          <p>{analytics?.analytics?.saveCount || 0}</p>
         </div>
         <div className={styles.analyticsItem}>
           <h2>Contacted</h2>

@@ -263,8 +263,12 @@ router.post("/professional/save/:professionalId", async (req, res) => {
   const { userId } = req.body;
 
   try {
-    const professional = await Professional.findOne({ userId: professionalId });
     const user = await User.findById(userId);
+    console.log("User ID:", userId);
+    console.log("User saved profiles:", user.savedProfiles);
+    console.log("Professional ID:", professionalId);
+    const professional = await Professional.findOne({ userId: professionalId });
+    console.log("Professional found:", professional);
 
     if (!professional || !user) {
       return res.status(404).json({ msg: "Professional or User not found" });
@@ -276,10 +280,11 @@ router.post("/professional/save/:professionalId", async (req, res) => {
         .json({ msg: "Profile already saved", savedProfiles: user });
     }
 
-    professional.saveCount = (professional.saveCount || 0) + 1;
+    professional.analytics.saveCount =
+      (professional.analytics.saveCount || 0) + 1;
     await professional.save();
 
-    user.savedProfiles.push(professionalId);
+    user.savedProfiles.push(professional.userId);
     await user.save();
 
     res.status(200).json({
@@ -296,11 +301,19 @@ router.delete("/professional/unsave/:professionalId", async (req, res) => {
   const { professionalId } = req.params;
   const { userId } = req.body;
 
-  try {
-    const professional = await Professional.findById(professionalId);
-    const user = await User.findById(userId);
+  console.log("Unsave request recieved:", professionalId, userId);
 
-    if (!professional || !user) {
+  try {
+    console.log("User ID:", userId);
+    console.log("Professional ID:", professionalId);
+
+    const user = await User.findById(userId);
+    console.log("User saved profiles:", user.savedProfiles);
+
+    const professional = await Professional.findOne({ userId: professionalId });
+    console.log("Professional found:", professional);
+
+    if (!professional) {
       return res.status(404).json({ msg: "Professional or User not found" });
     }
 
@@ -308,11 +321,14 @@ router.delete("/professional/unsave/:professionalId", async (req, res) => {
       return res.status(400).json({ msg: "Profile not saved" });
     }
 
-    professional.saveCount = Math.max((professional.saveCount || 0) - 1, 0);
+    professional.analytics.saveCount = Math.max(
+      (professional.analytics.saveCount || 0) - 1,
+      0
+    );
     await professional.save();
 
     user.savedProfiles = user.savedProfiles.filter(
-      (id) => id.toString() !== professionalId
+      (id) => id.toString() !== professional.userId
     );
     await user.save();
 
@@ -653,6 +669,7 @@ router.post("/login", async (req, res) => {
 
     const payload = {
       id: user._id,
+      userType: user.userType,
       name: user.name,
       email: user.email,
       profilePictureUrl: user.profilePictureUrl,
@@ -781,7 +798,7 @@ router.post("/send-verification", async (req, res) => {
       await user.save();
     }
 
-    // await sendVerificationEmail(email, verificationCode);
+    // await sendVerificationEmail(email, 96925);
 
     res.status(200).json({ message: "Verification code sent to your email" });
   } catch (err) {

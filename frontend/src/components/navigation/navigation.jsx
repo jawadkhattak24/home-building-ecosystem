@@ -10,7 +10,7 @@ import { FaEnvelope, FaHeart } from "react-icons/fa";
 
 const Navigation = () => {
   const { currentUser, logout, globalUserType } = useAuth();
-  console.log("Current user:", currentUser);
+  console.log("Current user in navigation:", currentUser);
   const { setGlobalUserType } = useAuth();
   const [showAvatarMenu, setShowAvatarMenu] = useState(false);
   const avatarMenuRef = useRef(null);
@@ -40,26 +40,26 @@ const Navigation = () => {
     return () => document.removeEventListener("mousedown", handleOutsideClick);
   }, []);
 
-  const checkProfileSetup = async () => {
-    const response = await axios.get(
-      `${import.meta.env.VITE_API_URL}/api/user/check-profile-setup/${
-        currentUser.id
-      }`
-    );
-    return response.data.isProfileSetup;
-  };
+  // const checkProfileSetup = async () => {
+  //   const response = await axios.get(
+  //     `${import.meta.env.VITE_API_URL}/api/user/check-profile-setup/${
+  //       currentUser.id
+  //     }`
+  //   );
+  //   return response.data.isProfileSetup;
+  // };
 
-  const setupProfile = async (userId, userType) => {
-    try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/user/setup-profile/${userId}`,
-        { userType }
-      );
-      return response.data.isProfileSetup;
-    } catch (error) {
-      console.error("Error setting up profile", error);
-    }
-  };
+  // const setupProfile = async (userId, userType) => {
+  //   try {
+  //     const response = await axios.post(
+  //       `${import.meta.env.VITE_API_URL}/api/user/setup-profile/${userId}`,
+  //       { userType }
+  //     );
+  //     return response.data.isProfileSetup;
+  //   } catch (error) {
+  //     console.error("Error setting up profile", error);
+  //   }
+  // };
 
   const handleUserTypeSwitch = async (userType) => {
     setShowAvatarMenu(false);
@@ -80,34 +80,14 @@ const Navigation = () => {
 
       if (response.status === 200) {
         if (response.data.user.userType === "supplier") {
-          const isProfileSetup = await checkProfileSetup(userType);
-          if (!isProfileSetup) {
-            navigate("/supplier-profile/setup");
-          } else {
             navigate("/supplier/home");
-          }
-        } else if (response.data.user.userType === "professional") {
-          console.log("Checking professional profile setup");
-          const isProfileSetup = await checkProfileSetup(userType);
-          if (!isProfileSetup) {
-            let profileSetupRes;
-            try {
-              profileSetupRes = await setupProfile(currentUser.id, userType);
-            } catch (error) {
-              console.error("Error setting up professional profile", error);
-            }
-            if (profileSetupRes.status === 200) {
-              navigate(`/professional-profile/${currentUser.id}`);
-            } else {
-              console.error("Error setting up professional profile");
-            }
-          } else {
+          } else if (response.data.user.userType === "professional") {
             navigate(`/professional-profile/${currentUser.id}`);
-          }
-        } else {
+          } else {
           navigate("/");
         }
       }
+      
     } catch (error) {
       console.error("Error switching user type:", error);
     } finally {

@@ -83,6 +83,7 @@ ProfessionalCard.propTypes = {
         rating: PropTypes.number,
       })
     ),
+    showCoverImage: PropTypes.bool,
     id: PropTypes.string,
     userId: PropTypes.shape({
       _id: PropTypes.string,
@@ -93,18 +94,4 @@ ProfessionalCard.propTypes = {
   }),
 };
 
-ProfessionalCard.defaultProps = {
-  professional: {
-    _id: "",
-    serviceType: "Professional Service",
-    yearsExperience: 0,
-    portfolio: [],
-    reviews: [],
-    userId: {
-      _id: "",
-      name: "Professional",
-      profilePictureUrl: "https://via.placeholder.com/60",
-      coverPictureUrl: "https://via.placeholder.com/400x150",
-    },
-  },
-};
+

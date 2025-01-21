@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "redaxios";
 import styles from "./styles/home.module.scss";
 import FeaturedServicesSection from "../../components/featured-services-section/featured-services-section";
@@ -6,9 +6,18 @@ import ServiceCard from "../../components/service-card/service-card";
 import { useAuth } from "../../contexts/authContext";
 import { FaSearch, FaHome } from "react-icons/fa";
 import { motion } from "framer-motion";
+import shaderGif from "../../assets/shadergradientHD.webm";
 
 function HomePage() {
   const { currentUser } = useAuth();
+  console.log("Current User in HomeNew:", currentUser);
+
+  // useEffect(()=>{
+  //   const fetchUser=async ()=>{
+  //   const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/user/me`)
+  //   }
+
+  // })
 
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
@@ -48,6 +57,16 @@ function HomePage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
+          <video
+            src={shaderGif}
+            loading="lazy"
+            preload="none"
+            autoPlay
+            speed={0.5}
+            loop
+            muted
+            className={styles.shaderGif}
+          />
           <div className={styles.headings_container}>
             {/* <FaHome className={styles.homeIcon} /> */}
             <h1 className={styles.hero_heading}>
@@ -76,17 +95,6 @@ function HomePage() {
               </button>
             </form>
           </div>
-
-          <motion.div
-            className={styles.decorativeShapes}
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 1, duration: 1 }}
-          >
-            <div className={styles.circle}></div>
-            <div className={styles.triangle}></div>
-            <div className={styles.square}></div>
-          </motion.div>
         </motion.div>
 
         {searchResults.length > 0 ? (
