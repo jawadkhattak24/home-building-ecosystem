@@ -28,6 +28,7 @@ import {
   FaUser,
 } from "react-icons/fa";
 import { LucideChevronLeft, LucideChevronRight } from "lucide-react";
+import LoadingSkeleton from "./loadingSkeleton/loadingSkeleton";
 
 const ViewProfessionalProfile = () => {
   const {
@@ -74,11 +75,16 @@ const ViewProfessionalProfile = () => {
   });
 
   const itemsToShow = 3;
-  const position = [24.8607, 67.0104];
+  const position = [33.7269, 73.0869];
 
   const [isExpanded, setIsExpanded] = useState(false);
   const bioRef = useRef(null);
   const [shouldShowViewMore, setShouldShowViewMore] = useState(false);
+
+  const [mapPosition, setMapPosition] = useState(null);
+
+  const [isGeocoding, setIsGeocoding] = useState(false);
+  const [geocodingError, setGeocodingError] = useState(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -90,7 +96,7 @@ const ViewProfessionalProfile = () => {
         professionalData?._id
       }/click`
     );
-    console.log("Clicked: ", professionalData?._id);
+    // console.log("Clicked: ", professionalData?._id);
   }, [professionalData?._id]);
 
   useEffect(() => {
@@ -109,7 +115,7 @@ const ViewProfessionalProfile = () => {
       try {
         setIsLoading(true);
         const token = localStorage.getItem("token");
-        console.log("fetching professional data");
+        // console.log("fetching professional data");
 
         const professionalResponse = await axios.get(
           `${import.meta.env.VITE_API_URL}/api/user/professional/${userId}`,
@@ -126,7 +132,7 @@ const ViewProfessionalProfile = () => {
 
         setIsOwner(professionalResponse.data.userId._id === currentUser.id);
 
-        console.log("Professional Response old: ", professionalResponse.data);
+        // console.log("Professional Response old: ", professionalResponse.data);
 
         setProfessionalData(professionalResponse.data);
 
@@ -141,15 +147,16 @@ const ViewProfessionalProfile = () => {
           }
         );
         setUserData(userResponse.data);
-        setCoverPicture(userResponse.data.coverPictureUrl);
         setProfilePicture(userResponse.data.profilePictureUrl);
 
-        console.log("Professional Response new: ", professionalResponse.data);
-        console.log("User Response: ", userResponse.data);
+        // console.log("Professional Response new: ", professionalResponse.data);
+        // console.log("User Response: ", userResponse.data);
       } catch (error) {
         console.error("Error fetching professional data:", error);
       } finally {
-        setIsLoading(false);
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 10);
       }
     };
 
@@ -163,8 +170,6 @@ const ViewProfessionalProfile = () => {
     coverPicture,
     editMode,
   ]);
-
-  // console.log("CurrentUser savedProfiles: ", currentUser);
 
   const handleSaveProfile = async () => {
     try {
@@ -241,7 +246,7 @@ const ViewProfessionalProfile = () => {
   };
 
   const handleContact = async () => {
-    console.log("Contacting user: ", userData);
+    // console.log("Contacting user: ", userData);
     let conversationId;
 
     const conversationExists = await checkConversationExists(
@@ -317,31 +322,31 @@ const ViewProfessionalProfile = () => {
     switch (field) {
       case "name":
         dataToSend = editedData.name;
-        console.log(field);
+        // console.log(field);
         break;
       case "serviceType":
         dataToSend = editedData.serviceType;
-        console.log(field);
+        // console.log(field);
         break;
       case "bio":
         dataToSend = editedData.bio;
-        console.log(field);
+        // console.log(field);
         break;
       case "certifications":
         dataToSend = editedData.certifications;
-        console.log(field);
+        // console.log(field);
         break;
       case "qualifications":
         dataToSend = editedData.qualifications;
-        console.log(field);
+        // console.log(field);
         break;
       case "address":
         dataToSend = editedData.address;
-        console.log(field);
+        // console.log(field);
         break;
       case "ratePerHour":
         dataToSend = editedData.ratePerHour;
-        console.log(field);
+        // console.log(field);
         break;
       default:
         dataToSend = "";
@@ -516,15 +521,55 @@ const ViewProfessionalProfile = () => {
     }
   };
 
-  console.log("userData", userData);
-  console.log("professionalData", professionalData);
-  console.log("professionalData?.ratePerHour", professionalData?.ratePerHour);
+  // console.log("userData", userData);
+  // console.log("professionalData", professionalData);
+  // console.log("professionalData?.ratePerHour", professionalData?.ratePerHour);
   const specialization = ["Architect", "Interior Designer", "Contractor"];
 
   const formattedDate = new Date(userData?.createdAt).toLocaleDateString(
     "en-US",
     { month: "short", year: "numeric" }
   );
+
+  const geocodeAddress = async (address) => {
+    setIsGeocoding(true);
+    try {
+      const response = await axios.get(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+          address
+        )}`
+      );
+
+      if (response.data && response.data.length > 0) {
+        const { lat, lon } = response.data[0];
+        return [parseFloat(lat), parseFloat(lon)];
+      }
+      return null;
+    } catch (error) {
+      console.error("Geocoding error:", error);
+      setGeocodingError(error.message);
+      return null;
+    } finally {
+      setIsGeocoding(false);
+    }
+  };
+
+  useEffect(() => {
+    const updateMapPosition = async () => {
+      if (professionalData?.address) {
+        const coordinates = await geocodeAddress(professionalData.address);
+        if (coordinates) {
+          setMapPosition(coordinates);
+        }
+      }
+    };
+
+    updateMapPosition();
+  }, [professionalData?.address]);
+
+  if (isLoading) {
+    return <LoadingSkeleton />;
+  }
 
   return (
     <div className={styles.viewProfessionalProfile}>
@@ -591,12 +636,12 @@ const ViewProfessionalProfile = () => {
                 </h1>
               )}
 
-              {/* <p className={styles.city}>
-                {userData?.city || "Karachi, Pakistan"}
-              </p> */}
+              <p className={styles.city}>
+                {userData?.city == "Unknown" ? "" : userData?.city}
+              </p>
               <p className={styles.city}>
                 Joined {""}
-                {"Dec 2024"}
+                {formattedDate}
               </p>
             </div>
           </div>
@@ -799,16 +844,22 @@ const ViewProfessionalProfile = () => {
                 )}
               </p>
             </div>
-            <MapContainer
-              className={styles.mapContainer}
-              center={position}
-              zoom={14}
-            >
-              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-              <Marker position={position}>
-                <Popup>5245 Olde Wadsworth Boulevard Arvada, CO 80102</Popup>
-              </Marker>
-            </MapContainer>
+
+            {professionalData?.address &&
+              (mapPosition ? (
+                <MapContainer
+                  className={styles.mapContainer}
+                  center={mapPosition}
+                  zoom={14}
+                >
+                  <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                  <Marker position={mapPosition}>
+                    <Popup>{professionalData.address}</Popup>
+                  </Marker>
+                </MapContainer>
+              ) : (
+                <div className={styles.mapError}></div>
+              ))}
           </div>
 
           {/* <div className={styles.specializationContainer}>

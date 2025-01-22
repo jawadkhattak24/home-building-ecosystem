@@ -1,0 +1,286 @@
+@use "../../../globalStyles/base" as base;
+
+.supplierHomepage {
+  margin: 30px;
+  max-width: 1366px;
+  background-color: f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+}
+
+.header {
+  padding: 20px;
+  // margin-top: -220px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  gap: 20px;
+
+  .headerContainer {
+    display: flex;
+    // flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-end;
+    width: 100%;
+    height: 300px;
+    padding: 20px;
+    // width: 100%;
+    position: relative;
+    // height: 300px;
+
+    .coverImageContainer {
+      width: 100%;
+      height: 300px;
+      overflow: hidden;
+      border-radius: 5px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: -1;
+
+      .coverImage {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+
+    .logoAndBrandingContainer {
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      align-items: flex-start;
+      margin-top: 100px;
+      gap: 1rem;
+      // width: 100%;
+      background-color: #f9f9f9;
+      padding: 1rem 1.5rem 1rem 1rem;
+      border-radius: 5px;
+      border: 1px solid transparent;
+      background-image: linear-gradient(white, white),
+        linear-gradient(to right, #ff5005, #dbba95, #9011ff);
+      background-origin: border-box;
+      background-clip: padding-box, border-box;
+
+      .logoContainer {
+        width: 150px;
+        height: 150px;
+        overflow: hidden;
+        border-radius: 5px;
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+      }
+
+      .branding {
+        // background-color: #f9f9f9;
+        // width: 100%;
+        padding: 0.5rem;
+
+        h1 {
+          color: base.$black;
+          margin: 0;
+        }
+
+        .businessTypeAndRating {
+          display: flex;
+          flex-direction: row;
+          justify-content: flex-start;
+          align-items: center;
+          gap: 1rem;
+
+          .businessType {
+            color: base.$primary;
+            margin: 0;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-weight: bold;
+            background: lighten(base.$primary, 40%);
+          }
+
+          .rating {
+            background: lighten(base.$primary, 40%);
+            color: darken(base.$primary, 10%);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-weight: bold;
+          }
+        }
+      }
+    }
+  }
+
+  .actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .businessInfoGrid {
+    display: grid;
+    grid-template-columns: 2fr auto;
+    grid-template-rows: 1fr;
+    gap: 2rem;
+
+    .addressAndContactContainer {
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      border-top: 1px solid #e0e0e0;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 2rem;
+
+      .contactContainer {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+
+        .contactInfo {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.5rem;
+
+          h3 {
+            margin: 0 0 0.5rem 0;
+            color: #666;
+            font-size: 1.2rem;
+          }
+
+          p {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 500;
+            color: base.$black;
+          }
+
+          .socialMedia {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+
+            a {
+              color: base.$black;
+              text-decoration: none;
+              font-size: 18px;
+            }
+          }
+        }
+      }
+
+      .addressContainer {
+        // display: flex;
+        // flex-direction: column;
+        // align-items: flex-start;
+        // gap: 0.5rem;
+
+        h3 {
+          margin: 0 0 0.5rem 0;
+          color: #666;
+          font-size: 1.2rem;
+        }
+
+        p {
+          margin: 0;
+          font-size: 18px;
+          font-weight: 500;
+          // color: base.$primary;
+        }
+      }
+    }
+
+    .businessDescriptionContainer {
+      padding-top: 20px;
+      border-top: 1px solid #e0e0e0;
+
+      h3 {
+        margin: 0 0 0.5rem 0;
+        color: #666;
+        font-size: 1.2rem;
+      }
+
+      p {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 500;
+        color: base.$black;
+        max-width: 1000px;
+      }
+    }
+  }
+
+  .reviewsContainer {
+    padding-top: 20px;
+    width: 100%;
+    height: 300px;
+    border-top: 1px solid #e0e0e0;
+  }
+
+  .listingsContainer {
+    padding-top: 20px;
+    width: 100%;
+    height: 300px;
+    border-top: 1px solid #e0e0e0;
+  }
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+
+  .statCard {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    h3 {
+      margin: 0 0 0.5rem 0;
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    p {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: base.$primary;
+    }
+  }
+}
+
+.listingsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.primaryButton {
+  background: base.$primary;
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover {
+    background: darken(base.$primary, 10%);
+  }
+}
+
+.roleSelect {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-left: 0.5rem;
+}

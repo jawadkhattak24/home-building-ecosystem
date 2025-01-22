@@ -130,6 +130,7 @@ function MessageList({
                 const timeString = messageDate.toLocaleTimeString([], {
                   hour: "2-digit",
                   minute: "2-digit",
+                  hour12: true,
                 });
 
                 let displayDateTime;

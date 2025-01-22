@@ -337,3 +337,34 @@
     }
   }
 }
+
+.switching {
+  cursor: wait !important;
+  opacity: 0.7;
+}
+
+:global(.switching) {
+  cursor: wait !important;
+}
+
+:global(.page-transition-enter) {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+:global(.page-transition-enter-active) {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms ease-in-out, transform 300ms ease-in-out;
+}
+
+:global(.page-transition-exit) {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+:global(.page-transition-exit-active) {
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: opacity 300ms ease-in-out, transform 300ms ease-in-out;
+}

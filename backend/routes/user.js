@@ -245,15 +245,55 @@ router.put("/switch-userType/:userId", async (req, res) => {
   const { userId } = req.params;
   const { userType } = req.body;
 
+  console.log("Switching user type to:", userType);
+
   try {
-    const user = await User.findByIdAndUpdate(
-      userId,
-      { userType },
-      { new: true }
-    );
-    res.status(200).json({ message: "User type updated successfully", user });
+    const user = await User.findById(userId);
+    console.log("User found:", user);
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    if (!["professional", "supplier", "homeowner"].includes(userType)) {
+      return res.status(400).json({ msg: "Invalid user type" });
+    }
+
+    if (userType === "homeowner") {
+      user.userType = "homeowner";
+      await user.save();
+      return res
+        .status(200)
+        .json({ msg: "User type updated to homeowner", user });
+    }
+
+    if (userType === "professional") {
+      const existingProfessional = await Professional.findOne({ userId });
+      console.log("Existing professional:", existingProfessional);
+      if (!existingProfessional && !user.hasProfessionalProfile) {
+        await Professional.create({ userId });
+        user.hasProfessionalProfile = true;
+      }
+    }
+
+    if (userType === "supplier") {
+      const existingSupplier = await Supplier.findOne({ userId });
+      if (!existingSupplier && !user.hasSupplierProfile) {
+        await Supplier.create({ userId });
+        user.hasSupplierProfile = true;
+      }
+    }
+
+    user.userType = userType;
+    console.log("User type updated to:", userType);
+    const updatedUser = await user.save();
+    console.log("Updated user:", updatedUser);
+
+    res.status(200).json({
+      message: "User type updated successfully",
+      user: updatedUser,
+    });
   } catch (err) {
-    console.error("An error occured updating userType:", err);
+    console.error("An error occurred updating userType:", err);
     res.status(500).json({ msg: "Internal server error" });
   }
 });
@@ -476,7 +516,7 @@ const verifyTokenFromCookie = (req, res, next) => {
 
 router.get("/me", async (req, res) => {
   const authHeader = req.headers.authorization;
-  console.log("Auth header in me route:", authHeader);
+  // console.log("Auth header in me route:", authHeader);
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({ success: false, message: "Unauthorized" });
@@ -486,7 +526,7 @@ router.get("/me", async (req, res) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("Decoded token:", decoded);
+    // console.log("Decoded token:", decoded);
 
     let user;
     if (decoded.id !== undefined) {

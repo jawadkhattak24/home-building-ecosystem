@@ -1,0 +1,287 @@
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.loadingSkeleton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 30px;
+  gap: 20px;
+
+  .basicInfoContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
+    height: 100%;
+
+    .userCard {
+      width: 30%;
+      height: 800px;
+      background-color: #f9f9f9;
+      padding: 50px 20px;
+      border-radius: 5px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 50px;
+
+      .nameAndPictureContainer {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        width: 100%;
+
+        .imageContainer {
+          .profilePicture {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 1000px 100%;
+            animation: shimmer 2s infinite linear;
+          }
+        }
+
+        .nameContainer {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 10px;
+          width: 100%;
+
+          .name {
+            width: 60%;
+            height: 30px;
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 1000px 100%;
+            animation: shimmer 2s infinite linear;
+            border-radius: 4px;
+          }
+
+          .city, .joinDate {
+            width: 40%;
+            height: 20px;
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 1000px 100%;
+            animation: shimmer 2s infinite linear;
+            border-radius: 4px;
+          }
+        }
+      }
+
+      .rating {
+        width: 60%;
+        height: 25px;
+        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+        background-size: 1000px 100%;
+        animation: shimmer 2s infinite linear;
+        border-radius: 4px;
+      }
+
+      .rateContainer {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+
+        .rateText, .rateAmount {
+          width: 40%;
+          height: 20px;
+          background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+          background-size: 1000px 100%;
+          animation: shimmer 2s infinite linear;
+          border-radius: 4px;
+        }
+      }
+
+      .contactButton {
+        width: 40%;
+        height: 40px;
+        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+        background-size: 1000px 100%;
+        animation: shimmer 2s infinite linear;
+        border-radius: 5px;
+      }
+    }
+
+    .userInfo {
+      width: 70%;
+      min-height: 800px;
+      background-color: #f9f9f9;
+      padding: 25px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 50px;
+      border-radius: 5px;
+
+      .serviceTypeContainer {
+        display: grid;
+        grid-template-columns: 3fr 0.5fr;
+        grid-template-rows: 1fr 1fr;
+        gap: 10px;
+        width: 100%;
+
+        .serviceType {
+          height: 40px;
+          background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+          background-size: 1000px 100%;
+          animation: shimmer 2s infinite linear;
+          border-radius: 4px;
+        }
+
+        .certifications {
+          height: 30px;
+          background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+          background-size: 1000px 100%;
+          animation: shimmer 2s infinite linear;
+          border-radius: 4px;
+        }
+      }
+
+      .addressContainer {
+        display: flex;
+        width: 100%;
+        height: 150px;
+        align-items: center;
+        justify-content: space-between;
+        border-radius: 5px;
+        background-color: #ffe1d6;
+        padding: 20px;
+        gap: 10px;
+
+        .addressText {
+          width: 40%;
+          height: 80px;
+          background: linear-gradient(90deg, #ffd1c1 25%, #ffc1ac 50%, #ffd1c1 75%);
+          background-size: 1000px 100%;
+          animation: shimmer 2s infinite linear;
+          border-radius: 4px;
+        }
+
+        .mapPlaceholder {
+          width: 350px;
+          height: 150px;
+          background: linear-gradient(90deg, #ffd1c1 25%, #ffc1ac 50%, #ffd1c1 75%);
+          background-size: 1000px 100%;
+          animation: shimmer 2s infinite linear;
+          border-radius: 8px;
+        }
+      }
+
+      .qualificationsContainer, .experienceContainer, .bioContainer {
+        .heading {
+          width: 30%;
+          height: 25px;
+          background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+          background-size: 1000px 100%;
+          animation: shimmer 2s infinite linear;
+          border-radius: 4px;
+          margin-bottom: 15px;
+        }
+
+        .content {
+          width: 100%;
+          height: 30px;
+          background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+          background-size: 1000px 100%;
+          animation: shimmer 2s infinite linear;
+          border-radius: 4px;
+        }
+
+        &.bioContainer .content {
+          height: auto;
+          background: none;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+
+          .line {
+            width: 100%;
+            height: 20px;
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 1000px 100%;
+            animation: shimmer 2s infinite linear;
+            border-radius: 4px;
+
+            &:last-child {
+              width: 60%;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .portfolioSection {
+    width: 100%;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+
+    .heading {
+      width: 20%;
+      height: 25px;
+      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 1000px 100%;
+      animation: shimmer 2s infinite linear;
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
+
+    .portfolioGrid {
+      display: flex;
+      gap: 16px;
+
+      .portfolioItem {
+        flex: 0 0 calc(33.333% - 11px);
+        aspect-ratio: 1;
+        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+        background-size: 1000px 100%;
+        animation: shimmer 2s infinite linear;
+        border-radius: 4px;
+      }
+    }
+  }
+
+  .reviewsSection {
+    width: 100%;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+
+    .heading {
+      width: 20%;
+      height: 25px;
+      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 1000px 100%;
+      animation: shimmer 2s infinite linear;
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
+
+    .content {
+      width: 100%;
+      height: 100px;
+      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 1000px 100%;
+      animation: shimmer 2s infinite linear;
+      border-radius: 4px;
+    }
+  }
+}

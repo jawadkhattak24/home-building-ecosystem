@@ -6,7 +6,6 @@ import { Eye, EyeOff } from "lucide-react";
 import { FaGoogle, FaFacebookF } from "react-icons/fa";
 import { useAuth } from "../../contexts/authContext";
 import shaderGif from "../../assets/shadergradientHD.webm";
-import PropTypes from "prop-types";
 
 function RegistrationForm() {
   const navigate = useNavigate();
@@ -112,16 +111,16 @@ function RegistrationForm() {
   const handleGoogleLogin = () => {
     console.log("Handle google login called");
 
-    console.log("User type in handleGoogleLogin:", userData.userType);
+    const userType = "homeowner";
+    console.log("User type in handleGoogleLogin:", userType);
     setIsLoading(true);
-    const userType = userData.userType;
     window.location.href = `${
       import.meta.env.VITE_API_URL
     }/auth/google?userType=${userType}`;
   };
-
+  
   const handleFacebookLogin = () => {
-    const userType = userData.userType;
+    const userType = "homeowner";
     setIsLoading(true);
     window.location.href = `${
       import.meta.env.VITE_API_URL
@@ -459,7 +458,3 @@ function RegistrationForm() {
 
 export default RegistrationForm;
 
-RegistrationForm.propTypes = {
-  userData: PropTypes.object.isRequired,
-  setUserType: PropTypes.func.isRequired,
-};

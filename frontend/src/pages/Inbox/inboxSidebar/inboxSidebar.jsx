@@ -57,7 +57,7 @@ function Sidebar({
     } else {
       return messageDate.toLocaleDateString("en-US", {
         year: "numeric",
-        month: "long",
+        month: "numeric",
         day: "numeric",
       });
     }

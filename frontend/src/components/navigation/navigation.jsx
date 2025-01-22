@@ -8,11 +8,13 @@ import axios from "axios";
 import { useLoading } from "../../contexts/loadingContext";
 import { FaEnvelope, FaHeart } from "react-icons/fa";
 
+
+
 const Navigation = () => {
-  const { currentUser, logout, globalUserType } = useAuth();
+  const { currentUser, logout, globalUserType, setGlobalUserType } = useAuth();
   console.log("Current user in navigation:", currentUser);
-  const { setGlobalUserType } = useAuth();
   const [showAvatarMenu, setShowAvatarMenu] = useState(false);
+  const [isSwitching, setIsSwitching] = useState(false);
   const avatarMenuRef = useRef(null);
   const navigate = useNavigate();
   const { setIsLoading, isLoading, LoadingUI } = useLoading();
@@ -40,6 +42,15 @@ const Navigation = () => {
     return () => document.removeEventListener("mousedown", handleOutsideClick);
   }, []);
 
+  useEffect(() => {
+    // Add or remove 'switching' class on the body element
+    if (isSwitching) {
+      document.body.classList.add('switching');
+    } else {
+      document.body.classList.remove('switching');
+    }
+  }, [isSwitching]);
+
   // const checkProfileSetup = async () => {
   //   const response = await axios.get(
   //     `${import.meta.env.VITE_API_URL}/api/user/check-profile-setup/${
@@ -64,34 +75,38 @@ const Navigation = () => {
   const handleUserTypeSwitch = async (userType) => {
     setShowAvatarMenu(false);
     setIsLoading(true);
+    setIsSwitching(true);
 
     console.log("Switching user type to:", userType);
     try {
       const response = await axios.put(
-        `${import.meta.env.VITE_API_URL}/api/user/switch-userType/${
-          currentUser.id
-        }`,
+        `${import.meta.env.VITE_API_URL}/api/user/switch-userType/${currentUser.id}`,
         { userType: userType }
       );
+      console.log("Response:", response.data);
 
       currentUser.userType = response.data.user.userType;
-
       setGlobalUserType(response.data.user.userType);
 
       if (response.status === 200) {
-        if (response.data.user.userType === "supplier") {
-            navigate("/supplier/home");
+        // Add a slight delay to allow the transition to complete
+        setTimeout(() => {
+          if (response.data.user.userType === "supplier") {
+            navigate("/supplier-homepage");
           } else if (response.data.user.userType === "professional") {
             navigate(`/professional-profile/${currentUser.id}`);
           } else {
-          navigate("/");
-        }
+            navigate("/");
+          }
+        }, 300);
       }
-      
     } catch (error) {
       console.error("Error switching user type:", error);
     } finally {
-      setIsLoading(false);
+      setTimeout(() => {
+        setIsLoading(false);
+        setIsSwitching(false);
+      }, 600); // Delay the removal of loading state until after transition
     }
   };
 
@@ -118,7 +133,7 @@ const Navigation = () => {
                 ? `/homeowner-profile/${currentUser.id}`
                 : currentUser.userType === "professional"
                 ? `/professional-profile/${currentUser.id}`
-                : `/supplier-profile/${currentUser.id}`
+                : `/supplier-homepage`
             }
             className={styles.avatar_menu_item}
             onClick={() => setShowAvatarMenu(false)}
@@ -128,9 +143,9 @@ const Navigation = () => {
 
           {currentUser.userType !== "supplier" && (
             <button
-              disabled
-              className={styles.avatar_menu_item}
+              className={`${styles.avatar_menu_item} ${isSwitching ? styles.switching : ''}`}
               onClick={() => handleUserTypeSwitch("supplier")}
+              disabled={isSwitching}
             >
               <i className="fas fa-cog"></i> Switch to Supplier
             </button>
@@ -138,8 +153,9 @@ const Navigation = () => {
 
           {currentUser.userType !== "professional" && (
             <button
-              className={styles.avatar_menu_item}
+              className={`${styles.avatar_menu_item} ${isSwitching ? styles.switching : ''}`}
               onClick={() => handleUserTypeSwitch("professional")}
+              disabled={isSwitching}
             >
               <i className="fas fa-cog"></i> Switch to Professional
             </button>
@@ -147,8 +163,9 @@ const Navigation = () => {
 
           {currentUser.userType !== "homeowner" && (
             <button
-              className={styles.avatar_menu_item}
+              className={`${styles.avatar_menu_item} ${isSwitching ? styles.switching : ''}`}
               onClick={() => handleUserTypeSwitch("homeowner")}
+              disabled={isSwitching}
             >
               <i className="fas fa-home"></i> Switch to Homeowner
             </button>
@@ -505,7 +522,50 @@ const Navigation = () => {
   };
 
   const supplierNav = () => {
-    return <></>;
+    return (
+      <>
+        <header className={styles.header}>
+          <div className={styles.container}>
+            <Link to="/" className={styles.logo}>
+              Home Building Ecosystem
+            </Link>
+            <nav className={styles.nav}>
+              <Link to="/supplier-homepage" className={styles.navLink}>
+                Home
+              </Link>
+              <Link to="/supplier-profile" className={styles.navLink}>
+                Profile
+              </Link>
+              <Link to="/supplier-jobs" className={styles.navLink}>
+                Jobs
+              </Link>
+              <Link to="/supplier-analytics" className={styles.navLink}>
+                Analytics
+              </Link>
+              <Link to="/supplier-inbox" className={styles.navLink}>
+                Messages
+              </Link>
+
+              {currentUser && (
+                <div className={styles.avatar_container} ref={avatarMenuRef}>
+                  <button
+                    className={styles.avatar_button}
+                    onClick={toggleAvatarMenu}
+                  >
+                    <img
+                      src={currentUser.profilePictureUrl}
+                      alt={currentUser.username}
+                      className={styles.avatar_image}
+                    />
+                  </button>
+                  {showAvatarMenu && avatarMenu()}
+                </div>
+              )}
+            </nav>
+          </div>
+        </header>
+      </>
+    );
   };
 
   const handleLogout = () => {

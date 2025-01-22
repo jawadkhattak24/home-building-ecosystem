@@ -9,6 +9,14 @@ const userSchema = new mongoose.Schema(
       required: false,
       default: "homeowner",
     },
+    hasProfessionalProfile: {
+      type: Boolean,
+      default: false,
+    },
+    hasSupplierProfile: {
+      type: Boolean,
+      default: false,
+    },
     name: { type: String },
     username: { type: String, unique: true },
     email: { type: String, unique: true },
