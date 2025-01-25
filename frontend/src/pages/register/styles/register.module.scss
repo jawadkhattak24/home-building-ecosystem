@@ -196,7 +196,7 @@
 
   &:hover {
     gap: 30px;
-    background-color: darken(base.$primary, 10%);
+    background-color: base.$primary-dark;
   }
 }
 
@@ -234,7 +234,7 @@
   // margin-bottom: 50px;
 
   &:hover {
-    color: darken(base.$primary, 10%);
+    color: base.$primary-dark;
   }
 }
 
@@ -486,7 +486,7 @@
     }
 
     &:hover:not(:disabled) {
-      background-color: darken(base.$primary, 10%);
+      background-color: base.$primary-dark;
     }
   }
 }

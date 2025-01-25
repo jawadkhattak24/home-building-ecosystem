@@ -10,11 +10,10 @@ const cookieParser = require("cookie-parser");
 const authMiddleware = require("./middlewares/auth");
 const Message = require("./models/Message");
 const socketIO = require("socket.io");
+const supplierRoutes = require("./routes/supplier");
 
 const env = process.env.NODE_ENV || "development";
 dotenv.config({ path: `.env.${env}` });
-
-
 
 const http = require("http");
 
@@ -113,6 +112,7 @@ app.get("/", (req, res) => {
 app.use("/api/user", userRoutes);
 app.use("/auth", authRoutes);
 app.use("/api/service", serviceRoutes);
+app.use("/api/supplier", supplierRoutes);
 
 const messageRoutes = require("./routes/conversation");
 app.use("/api/conversations", cors(), messageRoutes);

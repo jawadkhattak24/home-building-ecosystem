@@ -28,46 +28,46 @@ const listingSchema = new mongoose.Schema(
         "finishes",
         "hardware",
       ],
-      required: true,
+      required: false,
       index: true,
+    },
+    brand: {
+      type: String,
+      required: false,
     },
     description: String,
     price: {
       value: {
         type: Number,
-        required: true,
+        required: false,
       },
       unit: {
         type: String,
-        enum: ["sqft", "kg", "ton", "piece", "box"],
-        required: true,
+        required: false,
       },
       currency: {
         type: String,
         default: "PKR",
       },
     },
+    brand: {
+      type: String,
+      required: false,
+    },
+    stock: {
+      type: Number,
+      default: 0,
+    },
     specifications: {
-      brand: String,
-      model: String,
-      dimensions: String,
-      weight: Number,
-      color: String,
-      materialType: String,
+      type: Map,
+      of: String,
+      required: false,
     },
     images: [
       {
-        url: String,
-        caption: String,
+        type: String,
       },
     ],
-    stock: {
-      quantity: {
-        type: Number,
-        default: 0,
-      },
-      updatedAt: Date,
-    },
     keywords: [String],
     // discounts: {
     //   type: Map,
@@ -86,7 +86,7 @@ const listingSchema = new mongoose.Schema(
     },
     reviews: [
       {
-        user: { type: Schema.Types.ObjectId, ref: "User" },
+        user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
         comment: String,
         rating: Number,
         createdAt: Date,
@@ -100,4 +100,3 @@ const listingSchema = new mongoose.Schema(
 );
 
 module.exports = mongoose.model("Listing", listingSchema);
-

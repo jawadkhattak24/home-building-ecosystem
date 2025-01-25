@@ -1,43 +1,45 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from "./styles/supplierHome.module.scss";
 import ListingForm from "../../components/listingForm/listingForm";
 import ListingCard from "../../components/listingCard/listingCard";
+import { useAuth } from "../../contexts/authContext";
+import axios from "axios";
 
 const SupplierHome = () => {
   const [showListingForm, setShowListingForm] = useState(false);
   // const [listings, setListings] = useState([]);
 
-  const listings = [
-    {
-      name: "Cement",
-      category: "Building Material",
-      price: {
-        value: 100,
-        unit: "kg",
-        currency: "PKR",
-      },
-      stock: {
-        quantity: 100,
-        availability: "In Stock",
-      },
-      availability: "In Stock",
-    },
+  // const listings = [
+  //   {
+  //     name: "Cement",
+  //     category: "Building Material",
+  //     price: {
+  //       value: 100,
+  //       unit: "kg",
+  //       currency: "PKR",
+  //     },
+  //     stock: {
+  //       quantity: 100,
+  //       availability: "In Stock",
+  //     },
+  //     availability: "In Stock",
+  //   },
 
-    {
-      name: "Tiles",
-      category: "Building Material",
-      price: {
-        value: 100,
-        unit: "kg",
-        currency: "PKR",
-      },
-      stock: {
-        quantity: 100,
-        availability: "In Stock",
-      },
-      availability: "In Stock",
-    },
-  ];
+  //   {
+  //     name: "Tiles",
+  //     category: "Building Material",
+  //     price: {
+  //       value: 100,
+  //       unit: "kg",
+  //       currency: "PKR",
+  //     },
+  //     stock: {
+  //       quantity: 100,
+  //       availability: "In Stock",
+  //     },
+  //     availability: "In Stock",
+  //   },
+  // ];
 
   const supplierData = {
     businessName: "BuildMaster Materials",
@@ -70,6 +72,39 @@ const SupplierHome = () => {
   const handleCreateListing = (newListing) => {
     // setListings([...listings, newListing]);
     setShowListingForm(false);
+  };
+
+  useEffect(() => {
+    document.title = "Supplier Home";
+  }, []);
+
+  const { currentUser } = useAuth();
+  const currentUserId = currentUser.id || currentUser._id;
+  const [listings, setListings] = useState([]);
+
+  useEffect(() => {
+    const fetchListings = async () => {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/supplier/listings/${currentUserId}`
+      );
+      setListings(response.data);
+    };
+    fetchListings();
+  }, [currentUserId]);
+
+  const handleListingSubmit = async (formData) => {
+    console.log(formData);
+    setIsFormOpen(false);
+
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/supplier/listing`,
+        { ...formData, userId: currentUserId }
+      );
+      console.log(response);
+    } catch (error) {
+      console.error("Error submitting listing:", error);
+    }
   };
 
   return (
@@ -138,14 +173,22 @@ const SupplierHome = () => {
           </div>
         </div>
 
+        <div className={styles.listingsContainer}>
+          <h3>Listings</h3>
+          <div className={styles.mainListingsContainer}>
+            {listings.length > 0 ? (
+              listings.map((listing) => (
+                <ListingCard key={listing._id} listing={listing} />
+              ))
+            ) : (
+              <p>No listings yet</p>
+            )}
+          </div>
+        </div>
+
         <div className={styles.reviewsContainer}>
           <h3>Reviews</h3>
           <p>No reviews yet</p>
-        </div>
-
-        <div className={styles.listingsContainer}>
-          <h3>Listings</h3>
-          <p>No listings yet</p>
         </div>
       </header>
 

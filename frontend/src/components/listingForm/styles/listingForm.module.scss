@@ -14,17 +14,19 @@
 
 .listingForm {
   background: white;
-  padding: 2rem;
-  border-radius: 8px;
+  padding: 1.5rem;
+  border-radius: 5px;
+  margin-top: 1.5rem;
   width: 90%;
   max-width: 600px;
+  // height: 80%;
 }
 
 .formHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 0.5rem;
 
   h2 {
     margin: 0;
@@ -45,7 +47,7 @@
 }
 
 .formRow {
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.5rem;
 
   label {
     display: block;
@@ -57,8 +59,14 @@
   select {
     width: 100%;
     padding: 0.8rem;
+    cursor: pointer;
     border: 1px solid #ddd;
     border-radius: 4px;
+    &:focus {
+      outline: none;
+      
+      border-color: base.$primary;
+    }
   }
 }
 
@@ -93,4 +101,94 @@
   &:hover {
     background: #ddd;
   }
+}
+
+.stepIndicator {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+  gap: 1rem;
+}
+
+.step {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #eee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: #666;
+  
+  &.active {
+    background: base.$primary;
+    color: white;
+  }
+  
+  &.completed {
+    background: #4CAF50;
+    color: white;
+  }
+}
+
+.imagePreview {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.previewItem {
+  position: relative;
+  
+  img {
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+}
+
+.removeImage {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: red;
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  
+  &:hover {
+    background: darkred;
+  }
+}
+
+
+
+.fileInput {
+  border: 2px dashed #ddd;
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  
+  &:hover {
+    border-color: base.$primary;
+  }
+}
+
+textarea {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  min-height: 100px;
+  resize: vertical;
 }

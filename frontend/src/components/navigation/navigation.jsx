@@ -531,13 +531,11 @@ const Navigation = () => {
             </Link>
             <nav className={styles.nav}>
               <Link to="/supplier-homepage" className={styles.navLink}>
-                Home
-              </Link>
-              <Link to="/supplier-profile" className={styles.navLink}>
                 Profile
               </Link>
-              <Link to="/supplier-jobs" className={styles.navLink}>
-                Jobs
+             
+              <Link to="/supplier-listings" className={styles.navLink}>
+                Listings
               </Link>
               <Link to="/supplier-analytics" className={styles.navLink}>
                 Analytics

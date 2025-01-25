@@ -1,6 +1,7 @@
+@use "../../../globalStyles/base" as base;
 
 .viewProfessionalProfile {
-  background-color: #eef0ff;
+  background-color: base.$background;
   min-height: 100vh;
 }
 
@@ -127,7 +128,7 @@
   transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: darken(#fb5012, 10%);
+    background-color: base.$primary-dark;
   }
 }
 

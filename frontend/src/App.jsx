@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
 import "./App.css";
 import Home from "./pages/home/home";
 import HomeNew from "./pages/homeNew/home";
@@ -27,16 +32,15 @@ import HomeownerProfile from "./pages/homeowner/homeownerProfile/homeownerProfil
 import SavedItemsPage from "./pages/homeowner/savedItemsPage/savedItemsPage";
 import ProfessionalAnalytics from "./pages/professionalAnalytics/professionalAnalytics";
 import ListingCard from "./components/listingCard/listingCard";
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import { CSSTransition, TransitionGroup } from "react-transition-group";
+import SupplierListings from "./pages/supplierListings/supplierListings";
 
 function AppContent() {
   const location = useLocation();
 
-  const showNavigation = [
-    "/login",
-    "/register",
-    "/auth/success",
-  ].includes(location.pathname);
+  const showNavigation = ["/login", "/register", "/auth/success"].includes(
+    location.pathname
+  );
 
   const { currentUser } = useAuth();
   console.log("currentUser from App.jsx", currentUser);
@@ -47,7 +51,6 @@ function AppContent() {
     "/register",
     "/auth/success",
   ].includes(location.pathname);
-
 
   return (
     <>
@@ -70,7 +73,19 @@ function AppContent() {
                 />
               }
             />
-            <Route path="/login" element={<PublicRoute element={LoginPage} />} />
+            <Route
+              path="/supplier-listings"
+              element={
+                <ProtectedRoute
+                  allowedRoles={["supplier"]}
+                  element={SupplierListings}
+                />
+              }
+            />
+            <Route
+              path="/login"
+              element={<PublicRoute element={LoginPage} />}
+            />
             <Route
               path="/register"
               element={<PublicRoute element={RegisterPage} />}
@@ -78,7 +93,10 @@ function AppContent() {
             <Route
               path="/homeNew"
               element={
-                <ProtectedRoute allowedRoles={["homeowner"]} element={HomeNew} />
+                <ProtectedRoute
+                  allowedRoles={["homeowner"]}
+                  element={HomeNew}
+                />
               }
             />
             <Route path="/auth/success" element={<AuthSuccess />} />
@@ -123,7 +141,10 @@ function AppContent() {
             <Route
               path="/search"
               element={
-                <ProtectedRoute allowedRoles={["homeowner"]} element={SearchPage} />
+                <ProtectedRoute
+                  allowedRoles={["homeowner"]}
+                  element={SearchPage}
+                />
               }
             />
             <Route

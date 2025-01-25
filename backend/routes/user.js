@@ -37,6 +37,7 @@ const upload = multer({
   }),
 });
 
+
 router.get("/:userId/profile-picture", async (req, res) => {
   const user = await User.findById(req.params.userId);
   res.json(user.profilePictureUrl);

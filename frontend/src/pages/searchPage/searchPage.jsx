@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import styles from "./styles/searchPage.module.scss";
 import ProfessionalCard from "../../components/service-card/service-card";
+import ListingCard from "../../components/listingCard/listingCard";
 import { ChevronDown } from "lucide-react";
 import { BiSort } from "react-icons/bi";
 import axios from "axios";
@@ -18,17 +19,17 @@ function SearchPage() {
 
   const [professionals, setProfessionals] = useState([]);
   const [materials, setMaterials] = useState([]);
+  const [listings, setListings] = useState([]);
 
-  // Add useEffect to fetch results when component mounts or query changes
   useEffect(() => {
     if (query) {
       fetchProfessionals();
     }
-  }, [query]); // Dependency array includes query
+  }, [query]);
 
   const fetchProfessionals = async () => {
     try {
-      setProfessionals([]); // Clear existing results
+      setProfessionals([]);
       console.log("Triggering fetch");
       console.log("Fetching professionals...");
       const response = await axios.get(
@@ -43,10 +44,28 @@ function SearchPage() {
     }
   };
 
-  // Modify the input to trigger search on Enter key
+  const fetchListings = async () => {
+    try {
+      setListings([]);
+      const response = await axios.get(
+        `${
+          import.meta.env.VITE_API_URL
+        }/api/supplier/search?query=${searchQuery}`
+      );
+      console.log("Response:", response.data);
+      setListings(response.data);
+    } catch (error) {
+      console.error("Error fetching listings:", error);
+    }
+  };
+
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
-      fetchProfessionals();
+      if (searchType === "professionals") {
+        fetchProfessionals();
+      } else {
+        fetchListings();
+      }
     }
   };
 
@@ -222,12 +241,17 @@ function SearchPage() {
         </div>
 
         <div className={styles.resultsGrid}>
-          {professionals.map((professional) => (
-            <ProfessionalCard
-              professional={professional}
-              key={professional._id}
-            />
-          ))}
+          {searchType === "professionals" &&
+            professionals.map((professional) => (
+              <ProfessionalCard
+                professional={professional}
+                key={professional._id}
+              />
+            ))}
+          {searchType === "materials" &&
+            listings.map((listing) => (
+              <ListingCard listing={listing} key={listing._id} />
+            ))}
         </div>
       </main>
     </div>

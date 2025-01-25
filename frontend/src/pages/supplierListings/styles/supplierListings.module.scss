@@ -1,0 +1,124 @@
+@use "../../../globalStyles/base.scss" as base;
+
+.supplierListingsContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 1rem;
+  margin: 30px;
+  padding: 20px;
+  background-color: base.$background;
+  border-radius: 5px;
+}
+
+.sidebarAndListingsContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  gap: 1.5rem;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 1rem;
+  width: 25%;
+  padding: 20px;
+  border-radius: 5px;
+  border: 1px solid base.$border-color;
+  position: sticky;
+  top: 100px;
+}
+
+.filterItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.filterItemTitle {
+  color: base.$text-light;
+}
+
+.filterContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 1rem;
+  width: 100%;
+  padding-top: 1rem;
+  border-top: 1px solid base.$border-color;
+}
+
+.filterCheckbox {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid base.$black;
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+
+  &:checked {
+    background-color: base.$primary;
+    border: 2px solid base.$primary;
+
+    &::after {
+      content: "";
+      position: absolute;
+      left: 4px;
+      top: 1px;
+      width: 5px;
+      height: 10px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+  }
+}
+
+label {
+  cursor: pointer;
+}
+
+.filterApplied {
+  border: 1px solid base.$primary;
+}
+
+.categoryItem,
+.stockItem {
+  display: flex;
+//   align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0;
+  transition: all 0.2s ease;
+  cursor: pointer;
+
+  &:hover {
+    transform: translateX(3px);
+    cursor: pointer;
+  }
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: base.$black;
+  font-family: "AcuminPro";
+}
+
+.listingsContainer {
+  display: flex;
+  width: 80%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
