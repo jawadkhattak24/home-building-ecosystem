@@ -61,7 +61,9 @@ export const ChatProvider = ({ children }) => {
     try {
       // setIsLoading(true);
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/conversations`,
+        `${import.meta.env.VITE_API_URL}/api/conversations/${
+          currentUser?.userType
+        }`,
         {
           method: "GET",
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },

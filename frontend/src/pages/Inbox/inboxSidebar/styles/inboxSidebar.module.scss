@@ -75,11 +75,18 @@
   color: #ffffff;
 }
 
-.avatarImg {
+.avatarContainer {
   width: 50px;
-  object-fit: cover;
   height: 50px;
   border-radius: 50%;
+  overflow: hidden;
+
+  .avatarImg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
 }
 
 .converationsDetailsContainer {

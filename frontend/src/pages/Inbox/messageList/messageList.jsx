@@ -57,6 +57,8 @@ function MessageList({
         (convo) => convo._id === activeConversation
       );
 
+      console.log("activeConvo", activeConvo);
+
       if (activeConvo) {
         const other = activeConvo.participants.find(
           (participant) => participant._id !== currentUserId
@@ -82,6 +84,8 @@ function MessageList({
     return placeholderUI();
   }
 
+  console.log("otherUser", otherUser);
+
   return (
     otherUser && (
       <div className={styles.leftSideContainer}>
@@ -90,11 +94,11 @@ function MessageList({
             <Link
               to={`/${
                 otherUser.userType === "homeowner"
-                  ? "homeowner-profile"
+                  ? `homeowner-profile/${otherUser._id}`
                   : otherUser.userType === "professional"
-                  ? "professional-profile"
-                  : "supplier-profile"
-              }/${otherUser._id}`}
+                  ? `professional-profile/${otherUser.userId}`
+                  : `supplier-profile/${otherUser._id}`
+              }`}
             >
               <h2 className={styles.receiptName}>{otherUser.name}</h2>
             </Link>

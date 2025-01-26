@@ -13,9 +13,19 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    professionalProfileId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Professional",
+      default: null,
+    },
     hasSupplierProfile: {
       type: Boolean,
       default: false,
+    },
+    supplierProfileId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Supplier",
+      default: null,
     },
     name: { type: String },
     username: { type: String, unique: true },

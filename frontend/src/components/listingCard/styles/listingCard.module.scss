@@ -22,6 +22,7 @@
 }
 
 .imageContainer {
+  position: relative;
   width: 30%;
   border-radius: 5px;
   height: 200px;
@@ -34,72 +35,120 @@
   }
 }
 
+.ratingBadge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.75);
+  color: #FFD700;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
 .cardBody {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  gap: 1rem;
   width: 70%;
 }
 
-.cardHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-
+.titleSection {
   h3 {
     margin: 0;
     color: base.$black;
+    font-size: 1.4rem;
   }
 }
 
-.categoryTag {
-  background: base.$background;
-  color: base.$black;
-  padding: 0.3rem 0.8rem;
-  border-radius: 20px;
-  font-size: 0.8rem;
+.brandName {
+  color: base.$primary;
+  font-size: 0.9rem;
+  margin-top: 0.2rem;
+  display: block;
 }
 
-.priceSection {
-  margin-bottom: 1rem;
-
-  .priceValue {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: base.$black;
-  }
-
-  .priceUnit {
-    color: #666;
-    margin-left: 0.5rem;
-  }
-}
-
-.stockInfo {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+.description {
   color: #666;
   font-size: 0.9rem;
+  margin: 0;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 
-  progress {
-    flex: 1;
-    height: 8px;
+.mainPrice {
+  display: flex;
+  align-items: baseline;
+}
+
+.priceValue {
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: base.$black;
+}
+
+.priceUnit {
+  color: #666;
+  margin-left: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.stockCount {
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 0.3rem;
+  display: block;
+}
+
+.statusSection {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.availabilityTag {
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 500;
+
+  &.in_stock {
+    background: #e8f5e9;
+    color: #2e7d32;
   }
+
+  &.out_of_stock {
+    background: #ffebee;
+    color: #c62828;
+  }
+
+  &.pre_order {
+    background: #fff3e0;
+    color: #ef6c00;
+  }
+}
+
+.certifications {
+  font-size: 0.85rem;
+  color: #666;
 }
 
 .editButton {
   width: 100%;
-  margin-top: 1rem;
-  padding: 0.5rem;
+  padding: 0.7rem;
   background: base.$background;
   color: base.$black;
-  border: none;
+  border: 1px solid base.$border-color;
   border-radius: 4px;
   cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
 
   &:hover {
     background: base.$black;
+    color: white;
   }
 }

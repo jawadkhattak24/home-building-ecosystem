@@ -37,7 +37,6 @@ const upload = multer({
   }),
 });
 
-
 router.get("/:userId/profile-picture", async (req, res) => {
   const user = await User.findById(req.params.userId);
   res.json(user.profilePictureUrl);
@@ -271,16 +270,20 @@ router.put("/switch-userType/:userId", async (req, res) => {
       const existingProfessional = await Professional.findOne({ userId });
       console.log("Existing professional:", existingProfessional);
       if (!existingProfessional && !user.hasProfessionalProfile) {
-        await Professional.create({ userId });
+        const professional = await Professional.create({ userId });
         user.hasProfessionalProfile = true;
+        user.professionalProfileId = professional._id;
+        await user.save();
       }
     }
 
     if (userType === "supplier") {
       const existingSupplier = await Supplier.findOne({ userId });
       if (!existingSupplier && !user.hasSupplierProfile) {
-        await Supplier.create({ userId });
+        const supplier = await Supplier.create({ userId });
         user.hasSupplierProfile = true;
+        user.supplierProfileId = supplier._id;
+        await user.save();
       }
     }
 
@@ -635,11 +638,13 @@ router.post("/professional/:professionalId/click", async (req, res) => {
 
 router.get("/professional/:userId", async (req, res) => {
   try {
+    console.log("Fetching professional data for: ", req.params.userId);
     const { userId } = req.params;
     const professional = await Professional.findOne({ userId }).populate(
       "userId",
       "name email profilePictureUrl"
     );
+    console.log("Professional found:", professional);
 
     if (!professional) {
       return res.status(400).json("Professional does not exist");

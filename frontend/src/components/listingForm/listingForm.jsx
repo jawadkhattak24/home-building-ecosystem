@@ -47,13 +47,11 @@ const ListingForm = ({ onClose, onSubmit }) => {
   const [formData, setFormData] = useState(() => {
     const initialCategory = "cement";
     return {
-      // Basic Information (Step 1)
       name: "",
       category: initialCategory,
       brand: "",
       description: "",
 
-      // Pricing & Stock (Step 2)
       price: {
         value: "",
         unit: materialConfig.categories[initialCategory].units[0],
@@ -62,14 +60,12 @@ const ListingForm = ({ onClose, onSubmit }) => {
       stock: 0,
       availability: "in_stock",
 
-      // Specifications (Step 3)
       specifications: materialConfig.categories[
         initialCategory
       ].specifications.reduce((acc, spec) => ({ ...acc, [spec]: "" }), {}),
 
-      // Images (Step 4)
       images: [],
-      imageFiles: [], // For handling file uploads
+      imageFiles: [],
     };
   });
 
@@ -81,10 +77,8 @@ const ListingForm = ({ onClose, onSubmit }) => {
       return;
     }
 
-    // Upload images first
     const imageUrls = await uploadImages();
 
-    // Submit the complete form data
     const finalFormData = {
       ...formData,
       images: imageUrls,
@@ -151,6 +145,53 @@ const ListingForm = ({ onClose, onSubmit }) => {
     return uploadedUrls;
   };
 
+  const getSpecificationPlaceholder = (spec, category) => {
+    const placeholders = {
+      cement: {
+        type: "e.g., Ordinary Portland Cement, White Cement",
+        strength: "e.g., 42.5 MPa, 52.5 MPa",
+        settingTime: "e.g., 45 minutes initial set",
+      },
+      tiles: {
+        size: "e.g., 60x60 cm, 30x30 cm",
+        material: "e.g., Ceramic, Porcelain, Natural Stone",
+        finish: "e.g., Glossy, Matt, Rustic",
+        thickness: "e.g., 8mm, 10mm",
+      },
+      sanitary: {
+        type: "e.g., Water Closet, Basin, Bathtub",
+        color: "e.g., White, Bone, Black",
+        material: "e.g., Vitreous China, Ceramic",
+        installationType: "e.g., Floor Mounted, Wall Hung",
+      },
+      steel: {
+        grade: "e.g., Grade 60, Grade 40",
+        diameter: "e.g., 10mm, 12mm, 16mm",
+        length: "e.g., 40 feet, 20 feet",
+        type: "e.g., Deformed Bar, Plain Bar",
+      },
+      bricks: {
+        type: "e.g., Clay Brick, Cement Brick",
+        size: "e.g., 9x4.5x3 inches",
+        compressiveStrength: "e.g., 2000 PSI, 3000 PSI",
+        absorption: "e.g., 12%, 15%",
+      },
+      paint: {
+        type: "e.g., Emulsion, Enamel, Weather Coat",
+        finish: "e.g., Matt, Semi-gloss, Gloss",
+        coverage: "e.g., 350 sq ft/gallon",
+        dryTime: "e.g., 2-3 hours",
+      },
+      electrical: {
+        voltage: "e.g., 220V, 110V",
+        currentRating: "e.g., 13A, 15A, 20A",
+        certification: "e.g., ISO, CE, UL",
+      },
+    };
+
+    return placeholders[category]?.[spec] || `Enter ${spec}`;
+  };
+
   const renderStepContent = () => {
     switch (currentStep) {
       case 1:
@@ -163,6 +204,7 @@ const ListingForm = ({ onClose, onSubmit }) => {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
+                placeholder="Enter material name (e.g., Portland Cement Type-1)"
                 required
               />
             </div>
@@ -207,6 +249,7 @@ const ListingForm = ({ onClose, onSubmit }) => {
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
+                placeholder="Describe your material's key features, quality, and usage. Include any special characteristics or applications."
                 required
               />
             </div>
@@ -228,6 +271,7 @@ const ListingForm = ({ onClose, onSubmit }) => {
                       price: { ...formData.price, value: e.target.value },
                     })
                   }
+                  placeholder="Enter price (e.g., 1200)"
                   required
                 />
                 <select
@@ -257,6 +301,7 @@ const ListingForm = ({ onClose, onSubmit }) => {
                 name="stock"
                 value={formData.stock}
                 onChange={handleChange}
+                placeholder="Enter available quantity"
                 required
               />
             </div>
@@ -322,6 +367,7 @@ const ListingForm = ({ onClose, onSubmit }) => {
                         },
                       })
                     }
+                    placeholder={getSpecificationPlaceholder(spec, formData.category)}
                     required
                   />
                 )}
@@ -340,6 +386,7 @@ const ListingForm = ({ onClose, onSubmit }) => {
               accept="image/*"
               onChange={handleImageUpload}
               className={styles.fileInput}
+              placeholder="Upload clear, well-lit images of your product. Include multiple angles if possible."
             />
             <div className={styles.imagePreview}>
               {formData.imageFiles.map((file, index) => (
@@ -383,18 +430,7 @@ const ListingForm = ({ onClose, onSubmit }) => {
           </button>
         </div>
 
-        {/* <div className={styles.stepIndicator}>
-          {[1, 2, 3, 4].map((step) => (
-            <div
-              key={step}
-              className={`${styles.step} ${
-                step === currentStep ? styles.active : ""
-              } ${step < currentStep ? styles.completed : ""}`}
-            >
-              {step}
-            </div>
-          ))}
-        </div> */}
+        
 
         <form onSubmit={handleSubmit}>
           {renderStepContent()}

@@ -8,33 +8,58 @@ const ListingCard = ({ listing }) => {
   };
 
   return (
-    <>
-      <div className={styles.listingCard}>
-        <div className={styles.imageContainer}>
-          <img src={listing.images[0]} alt={listing.name} />
-        </div>
-        <div className={styles.cardBody}>
-          <div className={styles.cardHeader}>
-            <h3>{listing.name}</h3>
-            <span className={styles.categoryTag}>
-              {toCapitalize(listing.category)}
-            </span>
+    <div className={styles.listingCard}>
+      <div className={styles.imageContainer}>
+        <img src={listing.images[0]} alt={listing.name} />
+        {listing.rating > 0 && (
+          <div className={styles.ratingBadge}>
+            ⭐ {listing.rating.toFixed(1)}
           </div>
+        )}
+      </div>
+      <div className={styles.cardBody}>
+        <div className={styles.cardHeader}>
+          <div className={styles.titleSection}>
+            <h3>{listing.name}</h3>
+            {listing.brand && <span className={styles.brandName}>{listing.brand}</span>}
+          </div>
+          <span className={styles.categoryTag}>
+            {toCapitalize(listing.category)}
+          </span>
+        </div>
 
-          <div className={styles.priceSection}>
-            <span className={styles.priceValue}>PKR {listing.price.value}</span>
+        {listing.description && (
+          <p className={styles.description}>{listing.description}</p>
+        )}
+
+        <div className={styles.priceSection}>
+          <div className={styles.mainPrice}>
+            <span className={styles.priceValue}>
+              {listing.price.currency} {listing.price.value.toLocaleString()}
+            </span>
             <span className={styles.priceUnit}>/{listing.price.unit}</span>
           </div>
-
-          <div className={styles.stockInfo}>
-            <span>Stock:</span>
-            <span>{listing.availability}</span>
-          </div>
-
-          <button className={styles.editButton}>Edit Listing</button>
+          {listing.stock > 0 && (
+            <span className={styles.stockCount}>
+              {listing.stock} units available
+            </span>
+          )}
         </div>
+
+        <div className={styles.statusSection}>
+          <span className={`${styles.availabilityTag} ${styles[listing.availability]}`}>
+            {toCapitalize(listing.availability.replace(/_/g, ' '))}
+          </span>
+          {listing.certifications?.length > 0 && (
+            <div className={styles.certifications}>
+              🏅 {listing.certifications.join(', ')}
+            </div>
+          )}
+        </div>
+
+        <button className={styles.editButton}>Edit Listing</button>
       </div>
-    </>
+    </div>
   );
 };
 

@@ -115,7 +115,7 @@ const ViewProfessionalProfile = () => {
       try {
         setIsLoading(true);
         const token = localStorage.getItem("token");
-        // console.log("fetching professional data");
+        console.log("fetching professional data for: ", userId);
 
         const professionalResponse = await axios.get(
           `${import.meta.env.VITE_API_URL}/api/user/professional/${userId}`,
@@ -246,7 +246,7 @@ const ViewProfessionalProfile = () => {
   };
 
   const handleContact = async () => {
-    // console.log("Contacting user: ", userData);
+    console.log("Contacting user: ", professionalData);
     let conversationId;
 
     const conversationExists = await checkConversationExists(
@@ -259,10 +259,12 @@ const ViewProfessionalProfile = () => {
       localStorage.setItem("activeConversation", conversationId);
       navigate("/inbox");
     } else {
+      console.log("Creating a new conversation with: ", professionalData?._id);
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/conversations`,
         {
-          participant: professionalData?.userId?._id,
+          participant: professionalData?._id,
+          userType: "professional",
         },
         {
           headers: {
@@ -270,8 +272,10 @@ const ViewProfessionalProfile = () => {
           },
         }
       );
+      console.log("Conversation Response: ", response.data);
       const data = response.data;
       await new Promise((resolve) => {
+        console.log("Setting active conversation to:", data._id);
         setActiveConversation(data._id);
         resolve();
       });

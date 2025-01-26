@@ -11,10 +11,14 @@ function Sidebar({
   onSelectConversation,
   isLoading,
 }) {
+  console.log("Conversations in Sidebar Component: ", conversations);
   useEffect(() => {
     console.log("Conversations in Sidebar Component: ", conversations);
   }, [conversations, messages]);
 
+  // if (conversations.length === 0) {
+  //   return <div>No conversations yet</div>;
+  // }
   const sortedConversations = [...conversations].sort((a, b) => {
     const timeA = a.lastMessage?.timestamp
       ? new Date(a.lastMessage.timestamp)
@@ -50,7 +54,7 @@ function Sidebar({
       return messageDate.toLocaleTimeString([], {
         hour: "2-digit",
         minute: "2-digit",
-        hour12: true
+        hour12: true,
       });
     } else if (isYesterday) {
       return "Yesterday";
@@ -80,7 +84,6 @@ function Sidebar({
                 participant._id !== (currentUser?._id || currentUser?.id)
             );
 
-           
             if (!otherUser) {
               console.error("Other user not found in conversation:", convo);
               return null;
@@ -98,18 +101,20 @@ function Sidebar({
                 key={convo._id}
                 onClick={() => onSelectConversation(convo._id)}
               >
-                <img
-                  className={styles.avatarImg}
-                  src={
-                    otherUser.profilePictureUrl ||
-                    "https://servicesthumbnailbucket.s3.ap-south-1.amazonaws.com/profile_avatar.jpg"
-                  }
-                  alt={`${otherUser.name || "User"}'s avatar`}
-                  onError={(e) => {
-                    e.target.src =
-                      "https://servicesthumbnailbucket.s3.ap-south-1.amazonaws.com/profile_avatar.jpg";
-                  }}
-                />
+                <div className={styles.avatarContainer}>
+                  <img
+                    className={styles.avatarImg}
+                    src={
+                      otherUser.profilePictureUrl ||
+                      "https://servicesthumbnailbucket.s3.ap-south-1.amazonaws.com/profile_avatar.jpg"
+                    }
+                    alt={`${otherUser.name || "User"}'s avatar`}
+                    onError={(e) => {
+                      e.target.src =
+                        "https://servicesthumbnailbucket.s3.ap-south-1.amazonaws.com/profile_avatar.jpg";
+                    }}
+                  />
+                </div>
                 <div className={styles.converationsDetailsContainer}>
                   <h3
                     className={`${styles.receipt} ${

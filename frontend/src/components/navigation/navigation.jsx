@@ -8,8 +8,6 @@ import axios from "axios";
 import { useLoading } from "../../contexts/loadingContext";
 import { FaEnvelope, FaHeart } from "react-icons/fa";
 
-
-
 const Navigation = () => {
   const { currentUser, logout, globalUserType, setGlobalUserType } = useAuth();
   console.log("Current user in navigation:", currentUser);
@@ -43,11 +41,10 @@ const Navigation = () => {
   }, []);
 
   useEffect(() => {
-    // Add or remove 'switching' class on the body element
     if (isSwitching) {
-      document.body.classList.add('switching');
+      document.body.classList.add("switching");
     } else {
-      document.body.classList.remove('switching');
+      document.body.classList.remove("switching");
     }
   }, [isSwitching]);
 
@@ -80,7 +77,9 @@ const Navigation = () => {
     console.log("Switching user type to:", userType);
     try {
       const response = await axios.put(
-        `${import.meta.env.VITE_API_URL}/api/user/switch-userType/${currentUser.id}`,
+        `${import.meta.env.VITE_API_URL}/api/user/switch-userType/${
+          currentUser.id
+        }`,
         { userType: userType }
       );
       console.log("Response:", response.data);
@@ -89,7 +88,6 @@ const Navigation = () => {
       setGlobalUserType(response.data.user.userType);
 
       if (response.status === 200) {
-        // Add a slight delay to allow the transition to complete
         setTimeout(() => {
           if (response.data.user.userType === "supplier") {
             navigate("/supplier-homepage");
@@ -143,7 +141,9 @@ const Navigation = () => {
 
           {currentUser.userType !== "supplier" && (
             <button
-              className={`${styles.avatar_menu_item} ${isSwitching ? styles.switching : ''}`}
+              className={`${styles.avatar_menu_item} ${
+                isSwitching ? styles.switching : ""
+              }`}
               onClick={() => handleUserTypeSwitch("supplier")}
               disabled={isSwitching}
             >
@@ -153,7 +153,9 @@ const Navigation = () => {
 
           {currentUser.userType !== "professional" && (
             <button
-              className={`${styles.avatar_menu_item} ${isSwitching ? styles.switching : ''}`}
+              className={`${styles.avatar_menu_item} ${
+                isSwitching ? styles.switching : ""
+              }`}
               onClick={() => handleUserTypeSwitch("professional")}
               disabled={isSwitching}
             >
@@ -163,7 +165,9 @@ const Navigation = () => {
 
           {currentUser.userType !== "homeowner" && (
             <button
-              className={`${styles.avatar_menu_item} ${isSwitching ? styles.switching : ''}`}
+              className={`${styles.avatar_menu_item} ${
+                isSwitching ? styles.switching : ""
+              }`}
               onClick={() => handleUserTypeSwitch("homeowner")}
               disabled={isSwitching}
             >
@@ -533,7 +537,7 @@ const Navigation = () => {
               <Link to="/supplier-homepage" className={styles.navLink}>
                 Profile
               </Link>
-             
+
               <Link to="/supplier-listings" className={styles.navLink}>
                 Listings
               </Link>

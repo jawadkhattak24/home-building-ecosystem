@@ -3,23 +3,18 @@ const mongoose = require("mongoose");
 const conversationSchema = new mongoose.Schema({
   participants: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
+      user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+      },
+      userType: {
+        type: String,
+        enum: ["homeowner", "professional", "supplier"],
+        required: true
+      }
     },
   ],
-
-  //   serviceId: {
-  //     type: mongoose.Schema.Types.ObjectId,
-  //     ref: "Service",
-  //     required: false,
-  //   },
-
-  //   projectId: {
-  //     type: mongoose.Schema.Types.ObjectId,
-  //     ref: "Project",
-  //     default: null,
-  //   },
 
   createdAt: {
     type: Date,

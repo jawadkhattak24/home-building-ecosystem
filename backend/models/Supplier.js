@@ -18,7 +18,7 @@ const supplierSchema = new mongoose.Schema(
     },
     businessName: {
       type: String,
-      required: true,
+      required: false,
       index: true,
     },
     businessDescription: {
@@ -28,7 +28,7 @@ const supplierSchema = new mongoose.Schema(
     businessType: {
       type: String,
       enum: ["manufacturer", "distributor", "retailer", "wholesaler"],
-      required: true,
+      required: false,
     },
     businessRegistration: {
       number: String,
