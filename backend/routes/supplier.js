@@ -125,6 +125,38 @@ router.get("/search", async (req, res) => {
   }
 });
 
+router.get("/listing/:id", async (req, res) => {
+  const { listingId } = req.params.listingId;
+  try {
+    const listing = await Listing.findById(listingId).populate(
+      "supplier",
+      "businessName logo contact"
+    );
+    if (!listing) {
+      return res.status(404).json({ message: "Listing not found" });
+    }
+    res.json(listing);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+});
+
+router.get("/listings/category/:category", async (req, res) => {
+  const { category } = req.params;
+
+  try {
+    const listings = await Listing.find({ category: category });
+    if (listings.length === 0) {
+      return res.json("No listings found bro");
+    }
+
+    res.status(200).json(listings);
+  } catch (err) {
+    console.log("Error occured: ", err);
+  }
+});
+
 router.get("/test", async (req, res) => {
   res.json({ message: "Hello World" });
 });

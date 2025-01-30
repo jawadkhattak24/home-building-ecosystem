@@ -69,10 +69,7 @@ const listingSchema = new mongoose.Schema(
       },
     ],
     keywords: [String],
-    // discounts: {
-    //   type: Map,
-    //   of: Number,
-    // },
+  
     availability: {
       type: String,
       enum: ["in_stock", "out_of_stock", "pre_order"],

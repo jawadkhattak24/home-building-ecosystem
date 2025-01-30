@@ -111,9 +111,22 @@ function HomePage() {
           </div>
         ) : (
           <div className={styles.featuredServicesContainer}>
-            <FeaturedServicesSection serviceType={"Architect"} />
-            <FeaturedServicesSection serviceType={"Interior Designer"} />
-            <FeaturedServicesSection serviceType={"Electrician"} />
+            <FeaturedServicesSection
+              featuredSectionType={"service"}
+              serviceType={"Architect"}
+            />
+            <FeaturedServicesSection
+              featuredSectionType={"service"}
+              serviceType={"Interior Designer"}
+            />
+            <FeaturedServicesSection
+              featuredSectionType={"service"}
+              serviceType={"Electrician"}
+            />
+            <FeaturedServicesSection
+              featuredSectionType={"listing"}
+              listingType={"cement"}
+            />
           </div>
         )}
       </div>

@@ -14,7 +14,6 @@
 .featuredServices_main_container {
   padding: 20px;
   background-color: #f9f9f9;
-  
 
   :global {
     .slick-prev,
@@ -22,12 +21,24 @@
       width: 35px;
       height: 35px;
       z-index: 1;
-      
+
       &::before {
         color: #333;
         font-size: 35px;
-        
       }
+    }
+
+    .slick-track {
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-start;
+      width: 100% !important;
+      // gap: 20px;
+    }
+
+    .slick-slide,
+    slick-active {
+      width: auto !important;
     }
 
     .slick-prev {

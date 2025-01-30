@@ -250,7 +250,7 @@ const ViewProfessionalProfile = () => {
     let conversationId;
 
     const conversationExists = await checkConversationExists(
-      professionalData?.userId?._id,
+      professionalData?._id,
       currentUser.id
     );
     if (conversationExists) {

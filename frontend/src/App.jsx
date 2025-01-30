@@ -34,6 +34,7 @@ import ProfessionalAnalytics from "./pages/professionalAnalytics/professionalAna
 import ListingCard from "./components/listingCard/listingCard";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import SupplierListings from "./pages/supplierListings/supplierListings";
+import ListingDetailsPage from "./pages/listingDetailsPage/listingDetailsPage";
 
 function AppContent() {
   const location = useLocation();
@@ -85,6 +86,15 @@ function AppContent() {
             <Route
               path="/login"
               element={<PublicRoute element={LoginPage} />}
+            />
+            <Route
+              path="/listing/:listingId"
+              element={
+                <ProtectedRoute
+                  allowedRoles={["supplier", "homeowner"]}
+                  element={ListingDetailsPage}
+                />
+              }
             />
             <Route
               path="/register"
