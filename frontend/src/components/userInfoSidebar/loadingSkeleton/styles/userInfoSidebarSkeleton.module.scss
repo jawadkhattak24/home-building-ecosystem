@@ -1,0 +1,110 @@
+.skeletonContainer {
+    background: #f5f5f5;
+    border-radius: 5px;
+    padding: 30px;
+    width: 100%;
+    height: 95%;
+    max-height: 100%;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid #e0e0e0;
+  }
+  
+  .skeletonHeader {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .skeletonPhoto {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: linear-gradient(90deg, #e8e8e8, #f5f5f5, #e8e8e8);
+    background-size: 400% 100%;
+    animation: shimmerAnimation 1.5s infinite;
+  }
+  
+  .skeletonUserInfo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .skeletonName {
+    width: 120px;
+    height: 20px;
+    background: linear-gradient(90deg, #e8e8e8, #f5f5f5, #e8e8e8);
+    background-size: 400% 100%;
+    animation: shimmerAnimation 1.5s infinite;
+    border-radius: 4px;
+  }
+  
+  .skeletonServiceType {
+    width: 80px;
+    height: 16px;
+    background: linear-gradient(90deg, #e8e8e8, #f5f5f5, #e8e8e8);
+    background-size: 400% 100%;
+    animation: shimmerAnimation 1.5s infinite;
+    border-radius: 4px;
+  }
+  
+  .skeletonDetails {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  
+  .skeletonRating {
+    width: 100px;
+    height: 16px;
+    background: linear-gradient(90deg, #e8e8e8, #f5f5f5, #e8e8e8);
+    background-size: 400% 100%;
+    animation: shimmerAnimation 1.5s infinite;
+    border-radius: 4px;
+  }
+  
+  .skeletonRate {
+    width: 80px;
+    height: 16px;
+    background: linear-gradient(90deg, #e8e8e8, #f5f5f5, #e8e8e8);
+    background-size: 400% 100%;
+    animation: shimmerAnimation 1.5s infinite;
+    border-radius: 4px;
+  }
+  
+  .skeletonBio {
+    width: 200px;
+    height: 40px;
+    background: linear-gradient(90deg, #e8e8e8, #f5f5f5, #e8e8e8);
+    background-size: 400% 100%;
+    animation: shimmerAnimation 1.5s infinite;
+    border-radius: 4px;
+    margin-top: 20px;
+  }
+  
+  .skeletonButton {
+    width: 150px;
+    height: 40px;
+    background: linear-gradient(90deg, #e8e8e8, #f5f5f5, #e8e8e8);
+    background-size: 400% 100%;
+    animation: shimmerAnimation 1.5s infinite;
+    border-radius: 5px;
+    margin-top: 24px;
+  }
+  
+  @keyframes shimmerAnimation {
+    0% {
+      background-position: -200px 0;
+    }
+    100% {
+      background-position: 200px 0;
+    }
+  }

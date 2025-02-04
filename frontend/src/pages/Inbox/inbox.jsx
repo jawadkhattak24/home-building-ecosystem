@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import styles from "./styles/inbox.module.scss";
 import UserSearch from "../../components/userSearch/userSearch";
@@ -6,7 +6,7 @@ import Sidebar from "./inboxSidebar/inboxSidebar";
 import MessageList from "./messageList/messageList";
 import MessageInput from "./messageInput/messageInput";
 import { ChatContext } from "../../contexts/chatContext";
-// import ProjectInfoSidebar from "./ProjectDetailsSidebar/projectInfoSidebar";
+import UserInfoSidebar from "../../components/userInfoSidebar/userInfoSidebar";
 
 const PlaceholderUI = () => {
   return (
@@ -17,7 +17,6 @@ const PlaceholderUI = () => {
 };
 
 function Inbox() {
-  console.log("Chat context: ", ChatContext);
   const {
     conversations,
     activeConversation,
@@ -30,6 +29,11 @@ function Inbox() {
     setInitialActiveConversation,
     isLoading,
   } = useContext(ChatContext);
+
+  const [otherUser, setOtherUser] = useState(null);
+  const [activeConvo, setActiveConvo] = useState(null);
+
+
 
   console.log("Currently active conversation: ", activeConversation);
 
@@ -75,18 +79,18 @@ function Inbox() {
                 messages={messages}
                 conversationId={activeConversation}
                 placeholderUI={PlaceholderUI}
+                setActiveConvo={setActiveConvo}
+                activeConvo={activeConvo}
+
+                otherUser={otherUser}
+                setOtherUser={setOtherUser}
               />
               <MessageInput onSendMessage={handleSendMessage} />
             </div>
-            {/* <div className={styles.aboutUserContainer}>
-              <ProjectInfoSidebar
-                currentUser={currentUser}
-                conversationId={activeConversation}
-                handleProposalChanges={handleProposalChanges}
-              />
-            </div> */}
           </>
         )}
+
+        {activeConvo && <UserInfoSidebar otherUser={otherUser} />}
       </div>
       {/* </>
       ) : (

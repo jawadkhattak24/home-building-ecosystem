@@ -5,14 +5,118 @@ const Message = require("../models/Message");
 const authMiddleware = require("../middlewares/auth");
 const User = require("../models/User");
 const Professional = require("../models/Professional");
-// const Proposal = require("../models/Proposal");
 
 router.use(authMiddleware);
+
+router.get("/anotherTestEndpoint", (req, res) => {
+  res.json({ messag: "Well, so, here is another one" });
+});
+
+router.get("/check-conversation/:userId", async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    const conversation = await Conversation.exists({
+      participants: { $in: [userId] },
+    });
+
+    res.json({
+      exists: !!conversation,
+    });
+  } catch (error) {
+    console.error("Error checking conversation:", error);
+    res.status(500).json({
+      error: "Internal server error",
+    });
+  }
+});
+
+router.get("/test", async (req, res) => {
+  console.log("Test route called");
+  res.status(200).json({ message: "Test route" });
+});
+
+router.post("/", async (req, res) => {
+  try {
+    const { participant, userType } = req.body;
+    // console.log("User ID coming from conversations api route: ", req.user);
+
+    const conversation = new Conversation({
+      participants: [
+        { user: req.user._id, userType: "homeowner" },
+        { user: participant, userType: userType },
+      ],
+    });
+    await conversation.save();
+
+    // const { budget, deadline } = req.body.proposal;
+
+    // const proposal = new Proposal({
+    //   conversationId: conversation._id,
+    //   budget: budget,
+    //   deadline: deadline,
+    // });
+    // await proposal.save();
+
+    res.status(201).json(conversation);
+  } catch (error) {
+    console.error("Error creating conversation:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+router.get("/getConversation/:conversationId", async (req, res) => {
+  try {
+    const conversationId = req.params.conversationId;
+    console.log(
+      "Fetching conversation in conversation api route",
+      conversationId
+    );
+    const conversation = await Conversation.findById(conversationId).populate({
+      path: "participants.user",
+      select: "name",
+    });
+    if (!conversation) {
+      return res.status(404).json({ error: "Conversation not found" });
+    }
+    res.json(conversation);
+  } catch (error) {
+    console.error("Error fetching conversation:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+router.get("/:conversationId/proposal", async (req, res) => {
+  try {
+    const conversationId = req.params.conversationId;
+    const proposal = await Proposal.findOne({ conversationId });
+    res.json(proposal);
+  } catch (error) {
+    console.error("Error fetching proposal:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+router.get("/:conversationId/messages", async (req, res) => {
+  try {
+    const { conversationId } = req.params;
+    console.log(
+      "Conversation ID in messages api endpoint(New): ",
+      conversationId
+    );
+    const messages = await Message.find({ conversationId });
+    // console.log("Messages in messages api endpoint(New): ", messages);
+    res.json(messages);
+  } catch (error) {
+    console.error("Error fetching messages:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
 router.get("/:userType", authMiddleware, async (req, res) => {
   try {
     const userType = req.params.userType;
-    console.log("Request user: ", req.user);
+    // console.log("Request user: ", req.user);
 
     let userId;
 
@@ -161,6 +265,7 @@ router.get("/:userType", authMiddleware, async (req, res) => {
                         serviceType: "$$professional.serviceType",
                         yearsExperience: "$$professional.yearsExperience",
                         rating: "$$professional.rating",
+                        ratePerHour: "$$professional.ratePerHour",
                         bio: "$$professional.bio",
                       },
                     ],
@@ -172,111 +277,12 @@ router.get("/:userType", authMiddleware, async (req, res) => {
         },
       },
     ]);
-    console.log("Conversations in Conversation API: ", conversations);
+    // console.log("Conversations in Conversation API: ", conversations);
     res.json(conversations);
   } catch (error) {
     console.error("Error fetching conversations:", error);
     res.status(500).json({ error: "Internal server error" });
   }
-});
-
-router.get("/check-conversation/:userId", async (req, res) => {
-  try {
-    const userId = req.params.userId;
-
-    const conversation = await Conversation.exists({
-      participants: { $in: [userId] },
-    });
-
-    res.json({
-      exists: !!conversation,
-    });
-  } catch (error) {
-    console.error("Error checking conversation:", error);
-    res.status(500).json({
-      error: "Internal server error",
-    });
-  }
-});
-
-router.get("/:conversationId", async (req, res) => {
-  try {
-    const conversationId = req.params.conversationId;
-    const conversation = await Conversation.findById(conversationId)
-      .populate({
-        path: "serviceId",
-        select: "title",
-      })
-      .populate({
-        path: "participants",
-        select: "firstName lastName profilePictureUrl",
-      })
-      .exec();
-    res.json(conversation);
-  } catch (error) {
-    console.error("Error fetching conversation:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-
-router.post("/", async (req, res) => {
-  try {
-    const { participant, userType } = req.body;
-    console.log("User ID coming from conversations api route: ", req.user);
-
-    const conversation = new Conversation({
-      participants: [
-        { user: req.user._id, userType: "homeowner" },
-        { user: participant, userType: userType },
-      ],
-    });
-    await conversation.save();
-
-    // const { budget, deadline } = req.body.proposal;
-
-    // const proposal = new Proposal({
-    //   conversationId: conversation._id,
-    //   budget: budget,
-    //   deadline: deadline,
-    // });
-    // await proposal.save();
-
-    res.status(201).json(conversation);
-  } catch (error) {
-    console.error("Error creating conversation:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-
-router.get("/:conversationId/proposal", async (req, res) => {
-  try {
-    const conversationId = req.params.conversationId;
-    const proposal = await Proposal.findOne({ conversationId });
-    res.json(proposal);
-  } catch (error) {
-    console.error("Error fetching proposal:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-
-router.get("/:conversationId/messages", async (req, res) => {
-  try {
-    const { conversationId } = req.params;
-    console.log(
-      "Conversation ID in messages api endpoint(New): ",
-      conversationId
-    );
-    const messages = await Message.find({ conversationId });
-    console.log("Messages in messages api endpoint(New): ", messages);
-    res.json(messages);
-  } catch (error) {
-    console.error("Error fetching messages:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-
-router.get("/test", async (req, res) => {
-  res.json({ message: "Test route" });
 });
 
 module.exports = router;

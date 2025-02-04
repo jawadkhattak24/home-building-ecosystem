@@ -9,6 +9,7 @@ import { ChatContext } from "../../../contexts/chatContext";
 // import { NegotiationButton } from "../Negotiation/negotiationButton/negotiationButton";
 // import { NegotiationMessage } from "../Negotiation/negotiationMessage/negotiationMessage";
 
+
 function MessageList({
   currentUser,
   conversations,
@@ -17,9 +18,12 @@ function MessageList({
   //   handleNegotiation,
   messages,
   placeholderUI,
+  setActiveConvo,
+  activeConvo,
+  otherUser,
+  setOtherUser,
 }) {
   //   const { handleProposalChanges } = useContext(ChatContext);
-  const [otherUser, setOtherUser] = useState({});
   const messageListRef = useRef(null);
   const [error, setError] = useState(null);
 
@@ -59,6 +63,8 @@ function MessageList({
 
       console.log("activeConvo", activeConvo);
 
+      setActiveConvo(activeConvo);
+
       if (activeConvo) {
         const other = activeConvo.participants.find(
           (participant) => participant._id !== currentUserId
@@ -73,6 +79,16 @@ function MessageList({
   }, [conversations, currentUserId, activeConversation]);
 
   useEffect(() => {
+    if (activeConversation && currentUserId) {
+      // Find the other user in the conversation
+      const other = activeConversation?.participants?.find(
+        participant => participant._id !== currentUserId
+      );
+      setOtherUser(other || null);
+    }
+  }, [activeConversation, currentUserId]);
+
+  useEffect(() => {
     if (messageListRef.current) {
       messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
     }
@@ -84,7 +100,7 @@ function MessageList({
     return placeholderUI();
   }
 
-  console.log("otherUser", otherUser);
+  console.log("otherUser in MessageList", otherUser);
 
   return (
     otherUser && (
@@ -92,13 +108,12 @@ function MessageList({
         <div className={styles.messagesWrapper}>
           <div className={styles.receiptNameBar}>
             <Link
-              to={`/${
-                otherUser.userType === "homeowner"
-                  ? `homeowner-profile/${otherUser._id}`
-                  : otherUser.userType === "professional"
+              to={`/${otherUser.userType === "homeowner"
+                ? `homeowner-profile/${otherUser._id}`
+                : otherUser.userType === "professional"
                   ? `professional-profile/${otherUser.userId}`
                   : `supplier-profile/${otherUser._id}`
-              }`}
+                }`}
             >
               <h2 className={styles.receiptName}>{otherUser.name}</h2>
             </Link>
@@ -150,23 +165,21 @@ function MessageList({
                 return (
                   <div className={styles.main_cont_msg} key={message._id}>
                     <div
-                      className={` ${styles.chatBubble} ${
-                        message.sender === currentUserId
-                          ? styles.sent
-                          : styles.received
-                      }`}
+                      className={` ${styles.chatBubble} ${message.sender === currentUserId
+                        ? styles.sent
+                        : styles.received
+                        }`}
                     >
                       {message.content}
-                    </div>
-                    <p
-                      className={`${
-                        message.sender === currentUserId
+                      <p
+                        className={`${message.sender === currentUserId
                           ? styles.sentTimestamp
                           : styles.receivedTimestamp
-                      }`}
-                    >
-                      {displayDateTime}
-                    </p>
+                          }`}
+                      >
+                        {displayDateTime}
+                      </p>
+                    </div>
                   </div>
                 );
               })}

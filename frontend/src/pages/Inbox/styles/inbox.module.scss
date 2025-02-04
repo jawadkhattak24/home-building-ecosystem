@@ -1,4 +1,5 @@
 @use "../../../globalStyles/base.scss" as base;
+
 .loadingWrapper {
   display: flex;
   flex-direction: column;
@@ -10,8 +11,8 @@
 }
 
 .messageParentContainer {
-  
-  width: 1000px;
+
+  width: 100%;
 }
 
 .loader {
@@ -27,6 +28,7 @@
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }
@@ -40,11 +42,12 @@
 
 .inboxParentContainer {
   min-height: 90vh;
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
+  display: grid;
+  grid-template-columns: 1fr 2.5fr 1.2fr;
+  // flex-direction: row;
+  // justify-content: flex-start;
   align-items: flex-start;
-  gap: 70px;
+  gap: 50px;
   background-color: base.$background;
   height: 100%;
   padding: 20px 50px;

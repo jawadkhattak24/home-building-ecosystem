@@ -1,4 +1,5 @@
 @use "../../../../globalStyles/base.scss" as base;
+
 .sidebar {
   overflow-y: auto;
   max-height: 480px;
@@ -10,27 +11,33 @@
   border-radius: 5px;
   flex-direction: column;
   justify-content: space-between;
-  border-right: 1px solid #e0e0e0;
+  // border-right: 1px solid #e0e0e0;
   overflow-y: auto;
   overflow-x: hidden;
   z-index: 1;
   position: relative;
 
   &::-webkit-scrollbar {
-    width: 10px; /* Adjust the width of the scrollbar */
-    background-color: #f9f9f9; /* Color of the scrollbar track */
+    width: 10px;
+    /* Adjust the width of the scrollbar */
+    background-color: #f9f9f9;
+    /* Color of the scrollbar track */
   }
 
   /* Scrollbar handle */
   &::-webkit-scrollbar-thumb {
-    background-color: #646464; /* Color of the scrollbar thumb */
-    border-radius: 5px; /* Rounded corners on the scrollbar thumb */
-    border: 2px solid #f9f9f9; /* Creates a border around the scrollbar thumb */
+    background-color: #646464;
+    /* Color of the scrollbar thumb */
+    border-radius: 5px;
+    /* Rounded corners on the scrollbar thumb */
+    border: 2px solid #f9f9f9;
+    /* Creates a border around the scrollbar thumb */
   }
 
   /* Scrollbar handle on hover */
   &::-webkit-scrollbar-thumb:hover {
-    background-color: #555; /* Darker shade when hovering over the scrollbar thumb */
+    background-color: #555;
+    /* Darker shade when hovering over the scrollbar thumb */
   }
 
   .message_list {
@@ -58,17 +65,21 @@
       // color:#330A4D;
     }
   }
+
   .active {
     background-color: base.$primary;
   }
+
   .inActive {
     background-color: base.$white;
   }
+
   .conversationContainer {
     display: flex;
     background-color: coral;
   }
 }
+
 .activeReciept {
   font: base.$p_reg;
   // font-weight: normal;
@@ -76,14 +87,14 @@
 }
 
 .avatarContainer {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  overflow: hidden;
+  // width: 50px;
+  // height: 50px;
+  // border-radius: 50%;
+  // overflow: hidden;
 
   .avatarImg {
-    width: 100%;
-    height: 100%;
+    width: 50px;
+    height: 50px;
     object-fit: cover;
     border-radius: 50%;
   }
@@ -116,6 +127,7 @@
     color: #330a4d;
   }
 }
+
 .lastMessage {
   grid-area: message;
   grid-column-start: 1;
@@ -123,6 +135,7 @@
   font-size: 14px;
   color: #330a4d;
 }
+
 .conversationDate {
   grid-area: date;
   font-size: 13px;
@@ -133,10 +146,12 @@
   font: base.$p_reg;
   color: #330a4d;
 }
+
 .activeMessage {
   // font-weight: normal;
   color: #ffffff;
 }
+
 .inActiveMessage {
   // font-weight: normal;
   color: #330a4d;
@@ -147,6 +162,7 @@
   // text-align: right;
   color: #ffffff;
 }
+
 .inActiveDate {
   // font-size: 13px;
   // text-align: right;

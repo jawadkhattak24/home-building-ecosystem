@@ -47,6 +47,7 @@ function FeaturedServicesSection({
       }
 
       fetchServicesByCategory(serviceType);
+      
     } else {
       async function fetchListings(category) {
         setLoading(true);
@@ -98,6 +99,7 @@ function FeaturedServicesSection({
           slidesToShow: 2,
         },
       },
+
       {
         breakpoint: 480,
         settings: {
