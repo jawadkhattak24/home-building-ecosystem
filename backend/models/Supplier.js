@@ -47,7 +47,6 @@ const supplierSchema = new mongoose.Schema(
       },
     },
     address: {
-      default: "Your address",
       street: { type: String, default: "Your street address" },
       city: { type: String, default: "Your city" },
       state: { type: String, default: "Your state" },
