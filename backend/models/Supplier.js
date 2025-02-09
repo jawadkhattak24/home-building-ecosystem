@@ -20,23 +20,26 @@ const supplierSchema = new mongoose.Schema(
       type: String,
       required: false,
       index: true,
+      default: "Your business name"
     },
     businessDescription: {
       type: String,
-      default: "",
+      default: "Your business description",
+
     },
     businessType: {
       type: String,
       enum: ["manufacturer", "distributor", "retailer", "wholesaler"],
       required: false,
+      default: "Your business type"
     },
     businessRegistration: {
       number: String,
       document: String,
     },
     contact: {
-      phone: String,
-      website: String,
+      phone: { type: String, default: "Your phone number" },
+      website: { type: String, default: "Your website address" },
       socialMedia: {
         facebook: String,
         linkedin: String,
@@ -44,10 +47,11 @@ const supplierSchema = new mongoose.Schema(
       },
     },
     address: {
-      street: String,
-      city: String,
-      state: String,
-      country: String,
+      default: "Your address",
+      street: { type: String, default: "Your street address" },
+      city: { type: String, default: "Your city" },
+      state: { type: String, default: "Your state" },
+      country: { type: String, default: "Your country" },
       coordinates: {
         type: [Number],
         index: "2dsphere",

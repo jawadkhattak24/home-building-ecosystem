@@ -1,45 +1,15 @@
 import { useState, useEffect } from "react";
 import styles from "./styles/supplierHome.module.scss";
-import ListingForm from "../../components/listingForm/listingForm";
 import ListingCard from "../../components/listingCard/listingCard";
 import { useAuth } from "../../contexts/authContext";
 import axios from "axios";
 
 const SupplierHome = () => {
-  const [showListingForm, setShowListingForm] = useState(false);
-  // const [listings, setListings] = useState([]);
 
-  // const listings = [
-  //   {
-  //     name: "Cement",
-  //     category: "Building Material",
-  //     price: {
-  //       value: 100,
-  //       unit: "kg",
-  //       currency: "PKR",
-  //     },
-  //     stock: {
-  //       quantity: 100,
-  //       availability: "In Stock",
-  //     },
-  //     availability: "In Stock",
-  //   },
+  const { currentUser } = useAuth();
+  const currentUserId = currentUser.id || currentUser._id;
+  const [listings, setListings] = useState([]);
 
-  //   {
-  //     name: "Tiles",
-  //     category: "Building Material",
-  //     price: {
-  //       value: 100,
-  //       unit: "kg",
-  //       currency: "PKR",
-  //     },
-  //     stock: {
-  //       quantity: 100,
-  //       availability: "In Stock",
-  //     },
-  //     availability: "In Stock",
-  //   },
-  // ];
 
   const supplierData = {
     businessName: "BuildMaster Materials",
@@ -69,18 +39,9 @@ const SupplierHome = () => {
     },
   };
 
-  const handleCreateListing = (newListing) => {
-    // setListings([...listings, newListing]);
-    setShowListingForm(false);
-  };
-
   useEffect(() => {
     document.title = "Supplier Home";
   }, []);
-
-  const { currentUser } = useAuth();
-  const currentUserId = currentUser.id || currentUser._id;
-  const [listings, setListings] = useState([]);
 
   useEffect(() => {
     const fetchListings = async () => {
@@ -92,20 +53,13 @@ const SupplierHome = () => {
     fetchListings();
   }, [currentUserId]);
 
-  const handleListingSubmit = async (formData) => {
-    console.log(formData);
-    setIsFormOpen(false);
+  const [editMode, setEditMode] = useState(false);
 
-    try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/supplier/listing`,
-        { ...formData, userId: currentUserId }
-      );
-      console.log(response);
-    } catch (error) {
-      console.error("Error submitting listing:", error);
-    }
-  };
+  const handleEditToggle = () => {
+    setEditMode(!editMode);
+  }
+
+
 
   return (
     <div className={styles.supplierHomepage}>
@@ -129,18 +83,13 @@ const SupplierHome = () => {
                   {supplierData.businessType}
                 </span>
                 <span className={styles.rating}>★ {supplierData.rating}</span>
+
+                <button onClick={handleEditToggle}>Edit Profile</button>
               </div>
             </div>
           </div>
         </div>
-        {/* <div className={styles.actions}>
-          <button
-            className={styles.primaryButton}
-            onClick={() => setShowListingForm(true)}
-          >
-            + New Listing
-          </button>
-        </div> */}
+
 
         <div className={styles.businessInfoGrid}>
           <div className={styles.businessDescriptionContainer}>
@@ -154,13 +103,13 @@ const SupplierHome = () => {
                 <h3>Contact</h3>
                 <p>Phone: {supplierData.contact.phone}</p>
                 <p>Email: {supplierData.contact.email}</p>
-                {/* <div className={styles.socialMedia}>
-                <a href={supplierData.contact.socialMedia.facebook}>Facebook</a>
-                <a href={supplierData.contact.socialMedia.linkedin}>LinkedIn</a>
-                <a href={supplierData.contact.socialMedia.instagram}>
-                  Instagram
-                </a>
-                </div> */}
+                <div className={styles.socialMedia}>
+                  <a href={supplierData.contact.socialMedia.facebook}>Facebook</a>
+                  <a href={supplierData.contact.socialMedia.linkedin}>LinkedIn</a>
+                  <a href={supplierData.contact.socialMedia.instagram}>
+                    Instagram
+                  </a>
+                </div>
               </div>
             </div>
             <div className={styles.addressContainer}>
@@ -192,33 +141,7 @@ const SupplierHome = () => {
         </div>
       </header>
 
-      {/* <div className={styles.statsGrid}>
-        <div className={styles.statCard}>
-          <h3>Total Listings</h3>
-          <p>{supplierData.totalListings}</p>
-        </div>
-        <div className={styles.statCard}>
-          <h3>Available Stock</h3>
-          <p>{supplierData.availableStock}</p>
-        </div>
-        <div className={styles.statCard}>
-          <h3>New Messages</h3>
-          <p>3</p>
-        </div>
-      </div>
 
-      <div className={styles.listingsGrid}>
-        {listings.map((listing, index) => (
-          <ListingCard key={index} listing={listing} />
-        ))}
-      </div>
-
-      {showListingForm && (
-        <ListingForm
-          onClose={() => setShowListingForm(false)}
-          onSubmit={handleCreateListing}
-        />
-      )} */}
     </div>
   );
 };

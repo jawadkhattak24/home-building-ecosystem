@@ -75,6 +75,24 @@ router.get("/listing/:listingId", async (req, res) => {
   }
 });
 
+
+
+router.get("/supplier/:supplierId", (req, res) => {
+  const {supplierId} = req.params;
+  
+  Supplier.findById(supplierId).then((supplier) => {
+    if (!supplier) {
+      return res.status(404).json({ message: "Supplier not found" });
+    }
+    res.json(supplier);
+  }).catch((err) => {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  });
+
+})
+
+
 router.get("/listings/:userId", async (req, res) => {
   try {
     const supplier = await Supplier.findOne({ userId: req.params.userId });

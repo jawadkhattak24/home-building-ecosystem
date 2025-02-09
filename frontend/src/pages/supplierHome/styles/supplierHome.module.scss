@@ -10,7 +10,6 @@
 
 .header {
   padding: 20px;
-  // margin-top: -220px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -20,15 +19,12 @@
 
   .headerContainer {
     display: flex;
-    // flex-direction: column;
     justify-content: flex-start;
     align-items: flex-end;
     width: 100%;
     height: 300px;
     padding: 20px;
-    // width: 100%;
     position: relative;
-    // height: 300px;
 
     .coverImageContainer {
       width: 100%;
@@ -54,7 +50,6 @@
       align-items: flex-start;
       margin-top: 100px;
       gap: 1rem;
-      // width: 100%;
       background-color: #f9f9f9;
       padding: 1rem 1.5rem 1rem 1rem;
       border-radius: 5px;
@@ -78,8 +73,7 @@
       }
 
       .branding {
-        // background-color: #f9f9f9;
-        // width: 100%;
+      
         padding: 0.5rem;
 
         h1 {
@@ -176,10 +170,7 @@
       }
 
       .addressContainer {
-        // display: flex;
-        // flex-direction: column;
-        // align-items: flex-start;
-        // gap: 0.5rem;
+      
 
         h3 {
           margin: 0 0 0.5rem 0;
@@ -286,9 +277,4 @@
   }
 }
 
-.roleSelect {
-  padding: 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  margin-left: 0.5rem;
-}
+
