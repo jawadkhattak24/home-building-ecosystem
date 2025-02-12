@@ -140,6 +140,7 @@ router.put("/professional-profile/update/:field/:userId", async (req, res) => {
     const userId = req.params.userId;
     const field = req.params.field;
 
+
     console.log("Update info: ", userId, field, req.body);
 
     const { dataToSend } = req.body;
