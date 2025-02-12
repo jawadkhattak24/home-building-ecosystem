@@ -9,105 +9,167 @@
 }
 
 .header {
-  padding: 20px;
+  //padding: 20px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  //background-color: #f9f9f9;
+
   align-items: flex-start;
   margin-bottom: 2rem;
   gap: 20px;
+  position: relative;
 
-  .headerContainer {
-    display: flex;
-    justify-content: flex-start;
-    align-items: flex-end;
+  .coverImageContainer {
     width: 100%;
+    //margin-top: -200px;
     height: 300px;
-    padding: 20px;
+    overflow: hidden;
+    border-radius: 5px;
     position: relative;
 
-    .coverImageContainer {
+    .coverImage {
       width: 100%;
-      height: 300px;
-      overflow: hidden;
-      border-radius: 5px;
+      height: 100%;
       position: absolute;
       top: 0;
       left: 0;
       z-index: -1;
+      height: 100%;
+      object-fit: cover;
+    }
 
-      .coverImage {
+    .editCoverImageIcon {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 8px;
+      border-radius: 50%;
+      cursor: pointer;
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      //z-index: 999;
+      transition: background 0.3s ease;
+
+      &:hover {
+        background: white;
+      }
+
+
+    }
+
+
+    .coverImageInput {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      z-index: 999;
+
+    }
+  }
+
+  .logoAndBrandingContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+    // margin-top: 100px;
+    gap: 1rem;
+    background-color: #f9f9f9;
+    padding: 1rem 1.5rem 1rem 1rem;
+    border-radius: 5px;
+    //border: 1px solid transparent;
+    //background-image: linear-gradient(white, white),
+    //linear-gradient(to right, #ff5005, #dbba95, #9011ff);
+    //background-origin: border-box;
+    //background-clip: padding-box, border-box;
+
+    .brandingWrapper {
+      display: flex;
+      flex-direction: row;
+
+      gap: 1em;
+    }
+
+    .logoContainer {
+      width: 150px;
+      height: 150px;
+      overflow: hidden;
+      border-radius: 5px;
+
+      img {
         width: 100%;
         height: 100%;
         object-fit: cover;
       }
     }
 
-    .logoAndBrandingContainer {
-      display: flex;
-      flex-direction: row;
-      justify-content: flex-start;
-      align-items: flex-start;
-      margin-top: 100px;
-      gap: 1rem;
-      background-color: #f9f9f9;
-      padding: 1rem 1.5rem 1rem 1rem;
-      border-radius: 5px;
-      border: 1px solid transparent;
-      background-image: linear-gradient(white, white),
-        linear-gradient(to right, #ff5005, #dbba95, #9011ff);
-      background-origin: border-box;
-      background-clip: padding-box, border-box;
+    .actionButtonsContainer {
+      align-self: flex-end;
+      justify-self: flex-end;
+    }
 
-      .logoContainer {
-        width: 150px;
-        height: 150px;
-        overflow: hidden;
-        border-radius: 5px;
+    .branding {
 
-        img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
+      padding: 0.5rem;
+
+      .businessTypeSelector {
+        appearance: none;
+        background-color: white;
+        border: 2px solid #333;
+        padding: 8px 12px;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 6px;
+        width: 200px;
+
       }
 
-      .branding {
-      
-        padding: 0.5rem;
+      select:hover {
+        border-color: #555;
+        outline: none;
 
-        h1 {
-          color: base.$black;
+      }
+
+      select:focus {
+        outline: none;
+        border-color: base.$primary;
+      }
+
+
+      h1 {
+        color: base.$black;
+        font-size: 38px;
+        margin: 0;
+      }
+
+      .businessTypeAndRating {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 1rem;
+
+        .businessType {
+          color: base.$primary;
           margin: 0;
+          padding: 0.2rem 0.5rem;
+          border-radius: 4px;
+          font-weight: bold;
+          background: base.$background;
         }
 
-        .businessTypeAndRating {
-          display: flex;
-          flex-direction: row;
-          justify-content: flex-start;
-          align-items: center;
-          gap: 1rem;
-
-          .businessType {
-            color: base.$primary;
-            margin: 0;
-            padding: 0.2rem 0.5rem;
-            border-radius: 4px;
-            font-weight: bold;
-            background: base.$background;
-          }
-
-          .rating {
-            background: base.$background;
-            color: base.$primary;
-            padding: 0.2rem 0.5rem;
-            border-radius: 4px;
-            font-weight: bold;
-          }
+        .rating {
+          background: base.$background;
+          color: base.$primary;
+          padding: 0.2rem 0.5rem;
+          border-radius: 4px;
+          font-weight: bold;
         }
       }
     }
   }
+
 
   .actions {
     display: flex;
@@ -120,6 +182,7 @@
     grid-template-columns: 2fr auto;
     grid-template-rows: 1fr;
     gap: 2rem;
+    padding: 0 20px;
 
     .addressAndContactContainer {
       display: flex;
@@ -141,6 +204,12 @@
           flex-direction: column;
           align-items: flex-start;
           gap: 0.5rem;
+
+          .contactItemWrapper {
+            display: flex;
+            flex-direction: row;
+            gap: 1em;
+          }
 
           h3 {
             margin: 0 0 0.5rem 0;
@@ -170,7 +239,7 @@
       }
 
       .addressContainer {
-      
+
 
         h3 {
           margin: 0 0 0.5rem 0;
@@ -197,6 +266,16 @@
         font-size: 1.2rem;
       }
 
+      .businessDescriptionTextarea {
+        font-size: 18px;
+        font-weight: 500;
+        max-width: 1000px;
+        width: 889px;
+        line-height: 1.5;
+        min-height: 200px;
+        //border: none;
+      }
+
       p {
         margin: 0;
         font-size: 18px;
@@ -215,7 +294,7 @@
   }
 
   .listingsContainer {
-    padding-top: 20px;
+    padding: 20px 20px 0 20px;
     width: 100%;
     // height: 300px;
     border-top: 1px solid #e0e0e0;
@@ -261,6 +340,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1.5rem;
+
 }
 
 .primaryButton {
@@ -277,4 +357,12 @@
   }
 }
 
+.businessNameInput {
+  font-size: 38px;
+  font-weight: bold;
+  line-height: 1.1;
+  font-family: "AcuminPro";
+  border: none;
+  text-decoration: underline;
 
+}
