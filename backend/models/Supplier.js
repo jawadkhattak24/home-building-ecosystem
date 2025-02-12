@@ -85,8 +85,9 @@ const supplierSchema = new mongoose.Schema(
             type: [String],
             enum: ["pickup", "local_delivery", "national_shipping"],
         },
-    },
+  
     {timestamps: true}
+
 );
 
 module.exports =
