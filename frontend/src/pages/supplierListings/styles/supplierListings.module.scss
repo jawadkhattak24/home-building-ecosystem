@@ -20,6 +20,13 @@
   gap: 1.5rem;
 }
 
+.titleContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+}
+
 .sidebar {
   display: flex;
   flex-direction: column;
@@ -95,7 +102,7 @@ label {
 .categoryItem,
 .stockItem {
   display: flex;
-//   align-items: center;
+  //   align-items: center;
   gap: 0.5rem;
   padding: 0.4rem 0;
   transition: all 0.2s ease;
@@ -108,7 +115,7 @@ label {
 }
 
 .title {
-  font-size: 2rem;
+  font-size: 1.2rem;
   font-weight: 700;
   color: base.$black;
   font-family: "AcuminPro";
