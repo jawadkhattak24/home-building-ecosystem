@@ -10,7 +10,7 @@ const supplierSchema = new mongoose.Schema(
         },
         logo: {
             type: String,
-            default: "",
+            default: "https://images.unsplash.com/photo-1507089947368-19c1da9775ae?q=80&w=1476&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
         },
         coverImage: {
             type: String,
@@ -20,26 +20,26 @@ const supplierSchema = new mongoose.Schema(
             type: String,
             required: false,
             index: true,
-            default: "Your business name"
+            default: "Business name"
         },
         businessDescription: {
             type: String,
-            default: "Your business description",
+            default: "Business description",
 
         },
         businessType: {
             type: String,
             enum: ["manufacturer", "distributor", "retailer", "wholesaler"],
             required: false,
-            default: "Your business type"
+            default: "retailer"
         },
         businessRegistration: {
             number: String,
             document: String,
         },
         contact: {
-            phone: {type: String, default: "Your phone number"},
-            website: {type: String, default: "Your website address"},
+            phone: {type: String},
+            website: {type: String},
             socialMedia: {
                 facebook: String,
                 linkedin: String,
@@ -47,14 +47,8 @@ const supplierSchema = new mongoose.Schema(
             },
         },
         address: {
-            street: {type: String, default: "Your street address"},
-            city: {type: String, default: "Your city"},
-            state: {type: String, default: "Your state"},
-            country: {type: String, default: "Your country"},
-            coordinates: {
-                type: [Number],
-                index: "2dsphere",
-            },
+            type: String,
+            required: false
         },
         listings: [{type: mongoose.Schema.Types.ObjectId, ref: "Listing"}],
         certifications: [String],

@@ -209,6 +209,13 @@
             display: flex;
             flex-direction: row;
             gap: 1em;
+
+
+            .contactInput, .emailInput {
+              width: 200px;
+              height: 30px;
+              font-size: 1.2rem;
+            }
           }
 
           h3 {
@@ -239,6 +246,12 @@
       }
 
       .addressContainer {
+
+        .addressInput {
+          width: 250px;
+          height: 40px;
+          font-size: 1.2rem;
+        }
 
 
         h3 {

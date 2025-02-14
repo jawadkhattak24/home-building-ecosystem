@@ -60,10 +60,10 @@ function AppContent() {
                     <Routes location={location}>
                         <Route path="/" element={<PublicRoute element={HomeNew}/>}/>
                         <Route
-                            path="/supplier-homepage"
+                            path="/supplier-homepage/:supplierId"
                             element={
                                 <ProtectedRoute
-                                    allowedRoles={["supplier"]}
+                                    allowedRoles={["supplier", "homeowner"]}
                                     element={SupplierHome}
                                 />
                             }

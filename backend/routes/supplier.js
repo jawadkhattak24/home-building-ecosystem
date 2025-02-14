@@ -30,19 +30,23 @@ const upload = multer({
     }),
 });
 
-router.put("/update-profile/:professionalId", async (req, res) => {
+router.put("/update-profile/:supplierId", async (req, res) => {
     const {formData} = req.body;
-    const {professionalId} = req.params;
-    console.log("Form data: ", formData, professionalId);
+    const {supplierId} = req.params;
+    console.log("Form data: ", formData, supplierId);
 
     try {
-        const supplier = await Supplier.findById(professionalId);
+        const supplier = await Supplier.findById(supplierId);
 
         if (!supplier) {
             res.json({message: "Supplier not found"})
         }
 
         supplier.businessName = formData.businessName;
+        supplier.businessDescription = formData.businessDescription;
+        supplier.phone = formData.phone;
+        supplier.address = formData.address;
+        supplier.email = formData.email;
         supplier.save();
 
         res.status(201).json({message: "Supplier updated successfully", supplier})
