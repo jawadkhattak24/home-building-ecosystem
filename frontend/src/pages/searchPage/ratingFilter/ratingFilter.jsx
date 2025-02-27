@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import styles from './styles/RatingFilter.module.scss';
+import { useState } from "react";
+import styles from "./styles/ratingFilter.module.scss";
 
 const RatingFilter = ({ onRatingChange, initialRating = 0 }) => {
   const [rating, setRating] = useState(initialRating);
@@ -13,8 +13,8 @@ const RatingFilter = ({ onRatingChange, initialRating = 0 }) => {
 
   const StarIcon = ({ filled, partial }) => (
     <svg
-      className={`${styles.star} ${filled ? styles.filled : ''} ${
-        partial ? styles.partial : ''
+      className={`${styles.star} ${filled ? styles.filled : ""} ${
+        partial ? styles.partial : ""
       }`}
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
@@ -42,9 +42,9 @@ const RatingFilter = ({ onRatingChange, initialRating = 0 }) => {
             />
           </button>
         ))}
-        
+
         {rating > 0 && (
-          <button 
+          <button
             className={styles.clearButton}
             onClick={() => handleRatingClick(0)}
             type="button"
@@ -54,10 +54,10 @@ const RatingFilter = ({ onRatingChange, initialRating = 0 }) => {
           </button>
         )}
       </div>
-      
+
       {rating > 0 && (
         <div className={styles.ratingText}>
-          {rating} star{rating !== 1 ? 's' : ''} & up
+          {rating} star{rating !== 1 ? "s" : ""} & up
         </div>
       )}
     </div>

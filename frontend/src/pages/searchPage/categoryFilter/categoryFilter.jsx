@@ -1,5 +1,5 @@
 import { useState } from "react";
-import styles from "./styles/CategoryFilter.module.scss";
+import styles from "./styles/categoryFilter.module.scss";
 
 const serviceCategories = [
   "All Categories",

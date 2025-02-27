@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import styles from "./styles/PriceRangeFilter.module.scss";
+import styles from "./styles/priceRangeFilter.module.scss";
 
 const PriceRangeFilter = ({
   minPrice = 0,
