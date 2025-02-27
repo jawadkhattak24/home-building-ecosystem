@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
-import styles from './styles/LocationFilter.module.scss';
+import { useState, useEffect, useRef } from "react";
+import styles from "./styles/locationFilter.module.scss";
 
 const PAKISTAN_CITIES = [
   "Karachi",
@@ -21,12 +21,12 @@ const PAKISTAN_CITIES = [
   "Bhimber",
   "Jhang",
   "Dera Ghazi Khan",
-  "Gujrat"
+  "Gujrat",
 ];
 
 const LocationFilter = ({ selectedLocation, onLocationChange }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState(selectedLocation || '');
+  const [searchTerm, setSearchTerm] = useState(selectedLocation || "");
   const [suggestions, setSuggestions] = useState([]);
   const inputRef = useRef(null);
 
@@ -34,9 +34,9 @@ const LocationFilter = ({ selectedLocation, onLocationChange }) => {
     if (!query) {
       return PAKISTAN_CITIES;
     }
-    
+
     const normalizedQuery = query.toLowerCase();
-    return PAKISTAN_CITIES.filter(city => 
+    return PAKISTAN_CITIES.filter((city) =>
       city.toLowerCase().includes(normalizedQuery)
     );
   };
@@ -62,9 +62,9 @@ const LocationFilter = ({ selectedLocation, onLocationChange }) => {
   };
 
   useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
