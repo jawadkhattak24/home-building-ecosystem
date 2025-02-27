@@ -40,6 +40,7 @@ const listingSchema = new mongoose.Schema(
       value: {
         type: Number,
         required: false,
+        
       },
       unit: {
         type: String,

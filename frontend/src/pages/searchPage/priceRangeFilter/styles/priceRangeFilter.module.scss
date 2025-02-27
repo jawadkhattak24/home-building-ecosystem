@@ -1,0 +1,125 @@
+.priceRangeFilter {
+    width: 100%;
+    padding: 16px 0;
+  
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+  
+      h3 {
+        font-size: 16px;
+        font-weight: 500;
+        margin: 0;
+      }
+  
+      .priceInputs {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        color: #666;
+  
+        span {
+          &:nth-child(2) {
+            color: #999;
+          }
+        }
+      }
+    }
+  
+    .sliderContainer {
+      width: 100%;
+      padding: 0 12px;
+    }
+  
+    .slider {
+      position: relative;
+      width: 100%;
+      height: 40px;
+    }
+  
+    .track {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 4px;
+      width: 100%;
+      background-color: #e0e0e0;
+      border-radius: 2px;
+    }
+  
+    .range {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 4px;
+      background-color: #1976d2;
+      border-radius: 2px;
+    }
+  
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 100%;
+      height: 4px;
+      background: none;
+      pointer-events: none;
+  
+      &::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #ffffff;
+        border: 2px solid #1976d2;
+        cursor: pointer;
+        pointer-events: auto;
+        transition: transform 0.1s ease;
+  
+        &:hover {
+          transform: scale(1.1);
+        }
+  
+        &:active {
+          transform: scale(0.9);
+        }
+      }
+  
+      &::-moz-range-thumb {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #ffffff;
+        border: 2px solid #1976d2;
+        cursor: pointer;
+        pointer-events: auto;
+        transition: transform 0.1s ease;
+  
+        &:hover {
+          transform: scale(1.1);
+        }
+  
+        &:active {
+          transform: scale(0.9);
+        }
+      }
+  
+      &:focus {
+        outline: none;
+      }
+    }
+  
+    .thumbLeft {
+      z-index: 3;
+    }
+  
+    .thumbRight {
+      z-index: 4;
+    }
+  }

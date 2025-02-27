@@ -39,6 +39,7 @@ const supplierSchema = new mongoose.Schema(
         },
         contact: {
             phone: {type: String},
+            email: {type: String},
             website: {type: String},
             socialMedia: {
                 facebook: String,

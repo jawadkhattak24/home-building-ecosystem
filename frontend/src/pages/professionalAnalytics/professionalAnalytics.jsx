@@ -1,29 +1,28 @@
-import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import styles from "./styles/professionalAnalytics.module.scss";
 import { useAuth } from "../../contexts/authContext";
 
 const ProfessionalAnalytics = () => {
   const { currentUser } = useAuth();
-  const [analytics, setAnalytics] = useState(null);
 
-  useEffect(() => {
-    fetchAnalytics();
-  }, []);
-
-  const fetchAnalytics = async () => {
-    try {
+  const { data: analytics, isError, isLoading } = useQuery({
+    queryKey: ['professionalAnalytics', currentUser.id],
+    queryFn: async () => {
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/user/professional-analytics/${
-          currentUser.id
-        }`
+        `${import.meta.env.VITE_API_URL}/api/user/professional-analytics/${currentUser.id}`
       );
-      console.log("Analytics:", response.data);
-      setAnalytics(response.data);
-    } catch (error) {
-      console.error("An error occured fetching professional analytics:", error);
-    }
-  };
+      return response.data;
+    },
+  });
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (isError) {
+    return <div>Error loading analytics</div>;
+  }
 
   return (
     <div className={styles.analyticsParentContainer}>

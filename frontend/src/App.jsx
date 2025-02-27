@@ -29,6 +29,8 @@ import ListingCard from "./components/listingCard/listingCard";
 import {CSSTransition, TransitionGroup} from "react-transition-group";
 import SupplierListings from "./pages/supplierListings/supplierListings";
 import ListingDetailsPage from "./pages/listingDetailsPage/listingDetailsPage";
+import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
+
 
 function AppContent() {
     const location = useLocation();
@@ -49,6 +51,7 @@ function AppContent() {
 
     return (
         <>
+
             {!showNavigation && <Navigation/>}
             <TransitionGroup>
                 <CSSTransition
@@ -138,7 +141,8 @@ function AppContent() {
                             path="/profile/:userId"
                             element={<ProtectedRoute element={Profile}/>}
                         />
-                        <Route path="/supplier-profile/:supplierId" element={<ProtectedRoute element={SupplierHome}/>}/>
+                        <Route path="/supplier-profile/:supplierId"
+                               element={<ProtectedRoute element={SupplierHome}/>}/>
                         <Route
                             path="/homeowner-profile/:userId"
                             element={<ProtectedRoute element={HomeownerProfile}/>}
@@ -186,14 +190,19 @@ function AppContent() {
     );
 }
 
+const queryClient = new QueryClient();
+
+
 function App() {
     return (
         <>
             <Router>
                 <AuthProvider>
-                    <LoadingProvider>
-                        <AppContent/>
-                    </LoadingProvider>
+                    <QueryClientProvider client={queryClient}>
+                        <LoadingProvider>
+                            <AppContent/>
+                        </LoadingProvider>
+                    </QueryClientProvider>
                 </AuthProvider>
             </Router>
         </>

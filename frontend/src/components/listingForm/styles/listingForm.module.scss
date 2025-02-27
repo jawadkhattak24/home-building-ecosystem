@@ -1,5 +1,11 @@
 @use "../../../globalStyles/base" as base;
 
+
+.loading {
+  background-color: deeppink;
+  cursor: not-allowed;
+}
+
 .modalOverlay {
   position: fixed;
   top: 0;
@@ -62,9 +68,10 @@
     cursor: pointer;
     border: 1px solid #ddd;
     border-radius: 4px;
+
     &:focus {
       outline: none;
-      
+
       border-color: base.$primary;
     }
   }
@@ -120,12 +127,12 @@
   justify-content: center;
   font-weight: bold;
   color: #666;
-  
+
   &.active {
     background: base.$primary;
     color: white;
   }
-  
+
   &.completed {
     background: #4CAF50;
     color: white;
@@ -141,7 +148,7 @@
 
 .previewItem {
   position: relative;
-  
+
   img {
     width: 100%;
     height: 100px;
@@ -155,7 +162,7 @@
   top: -8px;
   right: -8px;
   width: 20px;
-  height: 20px;
+  //height: 20px;
   border-radius: 50%;
   background: red;
   color: white;
@@ -165,12 +172,11 @@
   align-items: center;
   justify-content: center;
   font-size: 14px;
-  
+
   &:hover {
     background: darkred;
   }
 }
-
 
 
 .fileInput {
@@ -178,7 +184,7 @@
   padding: 2rem;
   text-align: center;
   cursor: pointer;
-  
+
   &:hover {
     border-color: base.$primary;
   }

@@ -1,7 +1,14 @@
 .searchPage {
   display: flex;
-  min-height: 100vh;
-  // background-color: #f5f5f5;
+  gap: 24px;
+  padding: 24px;
+  max-width: 1440px;
+  margin: 0 auto;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    padding: 16px;
+  }
 }
 
 .sidebar {
@@ -60,83 +67,156 @@
 
 .mainContent {
   flex: 1;
-  padding: 20px;
+  min-width: 0; 
+}
 
-  .searchBar {
-    display: flex;
-    gap: 16px;
-    margin-bottom: 24px;
+.searchBar {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
 
-    .searchInput {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      background-color: #f9f9f9;
-      border-radius: 50px;
-      border: 1px solid #e0e0e0;
-      padding: 0 30px;
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
 
-      .searchIcon {
-        color: #000000;
-        margin-right: 15px;
-        font-size: 18px;
-        width: 18px;
-        height: 18px;
-      }
+.searchInput {
+  flex: 1;
+  display: flex;
+  gap: 8px;
 
-      input {
-        flex: 1;
-        border: none;
-        padding: 15px 0 10px 0;
-        background-color: #f9f9f9;
+  input {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    font-size: 16px;
 
-        font-size: 18px;
-        font-weight: 700;
-        font-family: "AcuminPro";
-        color: #000000;
-        line-height: 1;
-        height: 100%;
-
-        &::placeholder {
-          font-size: 18px;
-          line-height: 0.8;
-          font-weight: 700;
-          font-family: "AcuminPro";
-          color: #191919;
-        }
-
-        &:focus {
-          outline: none;
-        }
-      }
-
-      .searchType {
-        padding: 8px;
-        border: none;
-        background: #f5f5f5;
-        border-radius: 4px;
-        margin-left: 12px;
-      }
+    &:focus {
+      outline: none;
+      border-color: #1976d2;
+      box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.1);
     }
+  }
 
-    .sortButton {
-      padding: 0 20px;
-      background-color: white;
+  .searchType {
+    width: 150px;
+    padding: 0 20px 0 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    background: white;
+    cursor: pointer;
+
+    &:focus {
+      outline: none;
+      border-color: #1976d2;
+    }
+  }
+}
+
+.searchControls {
+  display: flex;
+  gap: 8px;
+
+  @media (max-width: 768px) {
+    justify-content: space-between;
+  }
+}
+
+.filterButton {
+  display: none;
+  padding: 8px 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+
+  @media (max-width: 768px) {
+    display: block;
+  }
+
+  &:hover {
+    background: #f5f5f5;
+  }
+}
+
+.sortDropdown {
+  position: relative;
+
+  .sortButton {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    height: 45px;
+
+    padding: 8px 16px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    background: white;
+    color: #000000;
+    cursor: pointer;
+
+    &:hover {
+      background: #f5f5f5;
+    }
+  }
+
+  .sortOptions {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 4px;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+
+    button {
+      display: block;
+      width: 100%;
+      color: #000000;
+      padding: 8px 16px;
+      text-align: left;
       border: none;
-      border-radius: 4px;
+      background: none;
       cursor: pointer;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      white-space: nowrap;
 
       &:hover {
-        background-color: #f5f5f5;
+        background: #e0e0e0;
+      }
+
+      &.active {
+        background: #e3f2fd;
+        color: #1976d2;
       }
     }
   }
+}
 
-  .resultsGrid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 24px;
-    padding: 20px 0;
+.resultsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
   }
+}
+
+.noResults {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 48px;
+  color: #666;
+}
+
+.error {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 48px;
+  color: #d32f2f;
 }

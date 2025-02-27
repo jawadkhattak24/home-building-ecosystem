@@ -4,7 +4,7 @@ import axios from "axios";
 import {MapContainer, Marker, Popup, TileLayer} from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import styles from "./styles/viewProfessionalProfile.module.scss";
-import {useLoading} from "../../../contexts/loadingContext";
+import LoadingSkeleton from "../viewProfessionalProfile/loadingSkeleton/loadingSkeleton.jsx";
 import {useAuth} from "../../../contexts/authContext";
 import {ChatContext} from "../../../contexts/chatContext";
 import {
@@ -26,7 +26,7 @@ import {
     FaUser,
 } from "react-icons/fa";
 import {LucideChevronLeft, LucideChevronRight} from "lucide-react";
-import LoadingSkeleton from "./loadingSkeleton/loadingSkeleton";
+
 
 const ViewProfessionalProfile = () => {
     const {
@@ -38,7 +38,7 @@ const ViewProfessionalProfile = () => {
     const navigate = useNavigate();
     const {userId} = useParams();
     const {currentUser} = useAuth();
-    const {isLoading, setIsLoading, LoadingUI} = useLoading();
+    const [isLoading, setIsLoading] = useState(false);
     const [professionalData, setProfessionalData] = useState(null);
     const [userData, setUserData] = useState(null);
     const [isEditMode, setIsEditMode] = useState(false);
@@ -84,18 +84,20 @@ const ViewProfessionalProfile = () => {
     const [isGeocoding, setIsGeocoding] = useState(false);
     const [geocodingError, setGeocodingError] = useState(null);
 
+
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);
 
-    useEffect(() => {
-        axios.post(
-            `${import.meta.env.VITE_API_URL}/api/user/professional/${
-                professionalData?._id
-            }/click`
-        );
-        // console.log("Clicked: ", professionalData?._id);
-    }, [professionalData?._id]);
+    // useEffect(() => {
+    //     axios.post(
+    //         `${import.meta.env.VITE_API_URL}/api/user/professional/${
+    //             professionalData?._id
+    //         }/click`
+    //     );
+    //     // console.log("Clicked: ", professionalData?._id);
+    // }, [professionalData?._id]);
+
 
     useEffect(() => {
         if (bioRef.current) {
@@ -108,73 +110,60 @@ const ViewProfessionalProfile = () => {
         }
     }, [professionalData?.bio]);
 
-    useEffect(() => {
-        const fetchProfessionalData = async () => {
-            try {
-                setIsLoading(true);
-                const token = localStorage.getItem("token");
-                console.log("fetching professional data for: ", userId);
 
-                const professionalResponse = await axios.get(
-                    `${import.meta.env.VITE_API_URL}/api/user/professional/${userId}`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    }
-                );
+    const fetchProfessionalData = async () => {
+        try {
+            setIsLoading(true);
+            const token = localStorage.getItem("token");
+            console.log("fetching professional data for: ", userId);
 
-                if (professionalResponse.data.portfolio) {
-                    setPortfolio(professionalResponse.data.portfolio);
+            const professionalResponse = await axios.get(
+                `${import.meta.env.VITE_API_URL}/api/user/professional/${userId}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
                 }
+            );
 
-                setIsOwner(professionalResponse.data.userId._id === currentUser.id);
-
-                // console.log("Professional Response old: ", professionalResponse.data);
-
-                setProfessionalData(professionalResponse.data);
-
-                const userResponse = await axios.get(
-                    `${import.meta.env.VITE_API_URL}/api/user/user/${
-                        professionalResponse.data.userId._id
-                    }`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    }
-                );
-                setUserData(userResponse.data);
-                setProfilePicture(userResponse.data.profilePictureUrl);
-
-                // console.log("Professional Response new: ", professionalResponse.data);
-                // console.log("User Response: ", userResponse.data);
-            } catch (error) {
-                console.error("Error fetching professional data:", error);
-            } finally {
-                setTimeout(() => {
-                    setIsLoading(false);
-                }, 10);
+            if (professionalResponse.data.portfolio) {
+                setPortfolio(professionalResponse.data.portfolio);
             }
-        };
 
+            setIsOwner(professionalResponse.data.userId._id === currentUser.id);
+
+            // console.log("Professional Response old: ", professionalResponse.data);
+
+            setProfessionalData(professionalResponse.data);
+
+            const userResponse = await axios.get(
+                `${import.meta.env.VITE_API_URL}/api/user/user/${professionalResponse.data.userId._id}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            setUserData(userResponse.data);
+            setProfilePicture(userResponse.data.profilePictureUrl);
+
+            // console.log("Professional Response new: ", professionalResponse.data);
+            // console.log("User Response: ", userResponse.data);
+        } catch (error) {
+            console.error("Error fetching professional data:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    useEffect(() => {
         fetchProfessionalData();
-    }, [
-        userId,
-        setIsLoading,
-        currentUser,
-        profilePicture,
-        isSaved,
-        coverPicture,
-        editMode,
-    ]);
+    }, []);
 
     const handleSaveProfile = async () => {
         try {
             const response = await axios.post(
-                `${import.meta.env.VITE_API_URL}/api/user/professional/save/${
-                    professionalData.userId._id
-                }`,
+                `${import.meta.env.VITE_API_URL}/api/user/professional/save/${professionalData.userId._id}`,
                 {userId: currentUser.id},
                 {
                     headers: {
@@ -194,9 +183,7 @@ const ViewProfessionalProfile = () => {
     const handleUnsaveProfile = async () => {
         try {
             const response = await axios.delete(
-                `${import.meta.env.VITE_API_URL}/api/user/professional/unsave/${
-                    professionalData?.userId._id
-                }`,
+                `${import.meta.env.VITE_API_URL}/api/user/professional/unsave/${professionalData?.userId._id}`,
                 {
                     data: {userId: currentUser.id},
                     headers: {
@@ -324,38 +311,30 @@ const ViewProfessionalProfile = () => {
         switch (field) {
             case "name":
                 dataToSend = editedData.name;
-                // console.log(field);
                 break;
             case "serviceType":
                 dataToSend = editedData.serviceType;
-                // console.log(field);
                 break;
             case "bio":
                 dataToSend = editedData.bio;
-                // console.log(field);
                 break;
             case "certifications":
                 dataToSend = editedData.certifications;
-                // console.log(field);
                 break;
             case "qualifications":
                 dataToSend = editedData.qualifications;
-                // console.log(field);
                 break;
             case "address":
                 dataToSend = editedData.address;
-                // console.log(field);
                 break;
             case "ratePerHour":
                 dataToSend = editedData.ratePerHour;
-                // console.log(field);
                 break;
             default:
                 dataToSend = "";
         }
 
         try {
-            // console.log("Field being updated: ", dataToSend);
             const response = await axios.put(
                 `${
                     import.meta.env.VITE_API_URL
@@ -363,7 +342,8 @@ const ViewProfessionalProfile = () => {
                 {dataToSend}
             );
             if (response.status == 201) {
-                setIsLoading(false);
+                await fetchProfessionalData();
+                // setIsLoading(false);
             }
         } catch (err) {
             console.error("An error occurred while updating profile:", err);
@@ -409,8 +389,7 @@ const ViewProfessionalProfile = () => {
         openImageViewer(index);
     };
 
-    const handleUpload = useCallback(
-        async (formData) => {
+    const handleUpload = useCallback(async (formData) => {
             try {
                 setIsLoading(true);
                 const response = await axios.post(
@@ -439,8 +418,7 @@ const ViewProfessionalProfile = () => {
         [userId, setIsLoading]
     );
 
-    const handleFileUpload = useCallback(
-        async (event) => {
+    const handleFileUpload = useCallback(async (event) => {
             const files = event.target.files;
             if (files.length > 0) {
                 setIsUploading(true);

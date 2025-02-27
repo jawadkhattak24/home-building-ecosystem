@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import ServiceCard from "../service-card/service-card";
 import styles from "./styles/featured-services-section.module.scss";
 import ListingCard from "../listingCard/listingCard";
@@ -14,68 +15,37 @@ function FeaturedServicesSection({
   listingType,
   featuredSectionType,
 }) {
-  const [services, setServices] = useState([]);
-  const [listings, setListings] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const token = localStorage.getItem("token");
 
-  useEffect(() => {
-    if (featuredSectionType === "service") {
-      async function fetchServicesByCategory(category) {
-        setLoading(true);
-        const token = localStorage.getItem("token");
-        try {
-          setLoading(true);
-          const response = await axios.get(
-            `${import.meta.env.VITE_API_URL}/api/service/category/${category}`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-          console.log("Professional Services:", response.data);
-
-          const filteredServices = response.data.filter(
-            (service) => service.userId !== null
-          );
-          setServices(filteredServices);
-        } catch (error) {
-          console.error("Error fetching featured services:", error);
-        } finally {
-          setLoading(false);
+  const { data: services = [], isLoading: isServicesLoading } = useQuery({
+    queryKey: ['services', serviceType],
+    queryFn: async () => {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/service/category/${serviceType}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
         }
-      }
+      );
+      return response.data.filter((service) => service.userId !== null);
+    },
+    enabled: featuredSectionType === "service",
+  });
 
-      fetchServicesByCategory(serviceType);
-      
-    } else {
-      async function fetchListings(category) {
-        setLoading(true);
-        const token = localStorage.getItem("token");
-        try {
-          setLoading(true);
-          const response = await axios.get(
-            `${
-              import.meta.env.VITE_API_URL
-            }/api/supplier/listings/category/${category}`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-          console.log("Listings:", response.data);
-
-          setListings(response.data);
-        } catch (error) {
-          console.error("Error fetching listings:", error);
-        } finally {
-          setLoading(false);
+  const { data: listings = [], isLoading: isListingsLoading } = useQuery({
+    queryKey: ['listings', listingType],
+    queryFn: async () => {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/supplier/listings/category/${listingType}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
         }
-      }
-      fetchListings(listingType);
-    }
-  }, [serviceType, listingType, featuredSectionType]);
+      );
+      return response.data;
+    },
+    enabled: featuredSectionType !== "service",
+  });
+
+  const loading = isServicesLoading || isListingsLoading;
 
   const listingRendered = listings[0]?.name;
   console.log("Rendered: ", listingRendered);

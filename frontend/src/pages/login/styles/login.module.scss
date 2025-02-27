@@ -112,6 +112,7 @@
         text-align: center;
         padding: 0;
         transition: background-color 0.3s ease;
+
         &:hover {
           background-color: base.$primary-dark;
         }
@@ -147,6 +148,7 @@
           font: base.$p_small;
           color: base.$primary;
         }
+
         .forgetPassLink {
           color: base.$black;
           opacity: 0.8;
@@ -174,6 +176,7 @@
         align-self: center;
         margin-top: 20px;
       }
+
       .register_link {
         font: base.$p_large;
         color: base.$black;
@@ -201,6 +204,7 @@
   border: 0.5px solid black;
   height: 60px;
   width: 450px;
+  color: #000000;
   background-color: base.$white;
   text-align: center;
 }

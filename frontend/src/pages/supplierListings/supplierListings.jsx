@@ -27,6 +27,7 @@ export default function SupplierListings() {
 
     useEffect(() => {
         document.title = "Supplier Listings";
+        window.scrollTo(0, 0);
     }, []);
 
     useEffect(() => {
@@ -40,16 +41,25 @@ export default function SupplierListings() {
     }, [currentUserId]);
     const handleListingSubmit = async (formData) => {
         console.log(formData);
-        setIsFormOpen(false);
 
         try {
+
+            console.log("API called");
             const response = await axios.post(
                 `${import.meta.env.VITE_API_URL}/api/supplier/listing`,
                 {...formData, userId: currentUserId}
-            );
+            )
+
+            if (response.status === 200) {
+                setIsFormOpen(false);
+                setIsLoading(false);
+            }
+
             console.log(response);
+
         } catch (error) {
             console.error("Error submitting listing:", error);
+
         }
     };
 
@@ -70,6 +80,7 @@ export default function SupplierListings() {
             selectedFilters.availability.includes(listing.availability);
         return categoryMatch && availabilityMatch;
     });
+
 
     return (
         <div className={styles.supplierListingsContainer}>
@@ -139,6 +150,7 @@ export default function SupplierListings() {
                     </div>
                 </div>
                 <div className={styles.listingsContainer}>
+                    {!listings.length > 0 && <PlaceholderUI/>}
                     {filteredListings.length > 0 &&
                         filteredListings.map((listing) => (
                             <ListingCard key={listing._id} listing={listing}/>
@@ -154,4 +166,14 @@ export default function SupplierListings() {
             )}
         </div>
     );
+}
+
+
+const PlaceholderUI = () => {
+    return (
+        <div className={styles.placeholderUIContainer}>
+            <h2>You don't have any listing yet. <br/> Create one by clicking the "Add Listing" button.</h2>
+
+        </div>
+    )
 }

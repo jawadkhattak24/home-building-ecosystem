@@ -27,9 +27,9 @@ const ListingCard = ({listing}) => {
                                 <span className={styles.brandName}>{listing.brand}</span>
                             )}
                         </div>
-                        <span className={styles.categoryTag}>
-              {toCapitalize(listing.category)}
-            </span>
+                        {/*            <span className={styles.categoryTag}>*/}
+                        {/*  {toCapitalize(listing.category)}*/}
+                        {/*</span>*/}
                     </div>
 
                     {/* {listing.description && (
@@ -51,13 +51,13 @@ const ListingCard = ({listing}) => {
                     </div>
 
                     <div className={styles.statusSection}>
-            <span
-                className={`${styles.availabilityTag} ${
-                    styles[listing.availability]
-                }`}
-            >
-              {toCapitalize(listing.availability.replace(/_/g, " "))}
-            </span>
+                        {/*<span*/}
+                        {/*    className={`${styles.availabilityTag} ${*/}
+                        {/*        styles[listing.availability]*/}
+                        {/*    }`}*/}
+                        {/*>*/}
+                        {/*  {toCapitalize(listing.availability.replace(/_/g, " "))}*/}
+                        {/*</span>*/}
                         {listing.certifications?.length > 0 && (
                             <div className={styles.certifications}>
                                 🏅 {listing.certifications.join(", ")}

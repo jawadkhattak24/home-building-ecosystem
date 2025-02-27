@@ -10,40 +10,22 @@ const SupplierHome = () => {
 
     const {currentUser} = useAuth();
     const currentUserId = currentUser.id || currentUser._id;
+
     const [listings, setListings] = useState([]);
+    
     const {supplierId} = useParams();
     const [supplierData, setSupplierData] = useState();
 
+    const [logo, setLogo] = useState("");
     useEffect(() => {
         const fetchSupplierData = async () => {
             const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/supplier/getSupplier/${supplierId}`)
             setSupplierData(res.data);
+            setLogo(res.data.logo);
             console.log("Supplier Data: ", supplierData);
         }
         fetchSupplierData();
     }, [])
-
-
-    // const supplierId = currentUser.supplierProfileId;
-
-    // const supplierData = {
-    //     businessName: "Light Palace",
-    //     rating: 4.5,
-    //     coverImage: "https://images.unsplash.com/photo-1507089947368-19c1da9775ae?q=80&w=1476&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    //     logo: "https://images.unsplash.com/photo-1507089947368-19c1da9775ae?q=80&w=1476&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    //     businessType: "Retailer",
-    //     businessDescription: "BuildMaster Materials is a leading supplier of building materials, offering a wide range of products to meet the needs of the construction industry. We are a family-owned business that has been serving the community for over 50 years. We provide high quality products and services to our customers. We are committed to providing the best possible experience for our customers. ",
-    //     totalListings: 12,
-    //     availableStock: 4580,
-    //     contact: {
-    //         socialMedia: {
-    //             facebook: "https://www.facebook.com/buildmaster",
-    //             linkedin: "https://www.linkedin.com/company/buildmaster",
-    //             instagram: "https://www.instagram.com/buildmaster",
-    //         },
-    //     },
-    //     address: "123 Main St, Karachi, Sindh, Pakistan"
-    // };
 
     useEffect(() => {
         document.title = "Supplier Home";
@@ -67,16 +49,40 @@ const SupplierHome = () => {
     const handleImageUpload = async (event) => {
         console.log("Well");
         const file = event.target.files[0];
+
+        const formData = new FormData();
+        formData.append("logo", file)
+        try {
+            const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/supplier/logo/${supplierId}`,
+                formData);
+            console.log("Logo uploading res: ", res.data);
+            setLogo(res.data);
+
+        } catch (err) {
+            console.error("An error occurred uploading the logo: ", err);
+
+        }
     }
 
     const [formData, setFormData] = useState({
-        businessName: supplierData?.businessName,
-        businessDescription: supplierData?.businessDescription,
-        phone: supplierData?.contact?.phone,
-        address: supplierData?.address,
-        businessType: supplierData?.businessName,
-        // email: supplierData.contact?.email,
+        businessName: "",
+        businessDescription: "",
+        phone: "",
+        address: "",
+        businessType: "",
     });
+
+    useEffect(() => {
+        if (supplierData) {
+            setFormData({
+                businessName: supplierData?.businessName,
+                businessDescription: supplierData?.businessDescription,
+                phone: supplierData?.contact?.phone,
+                address: supplierData?.address,
+                businessType: supplierData?.businessName,
+            })
+        }
+    }, [supplierData, logo]);
 
     console.log("Form Data: ", formData);
 
@@ -130,12 +136,15 @@ const SupplierHome = () => {
                     <div className={styles.brandingWrapper}>
 
                         <div className={styles.logoContainer}>
-                            {editMode && <label htmlFor="logo">
-                                <FaPencilAlt/>
-                                <input hidden className={styles.logoInputIcon} type="file" accept="image/*"
-                                       onChange={handleImageUpload}/>
-                            </label>}
-                            <img src={supplierData?.logo} alt="Supplier Logo"/>
+                            {editMode && (
+                                <label className={styles.logoInputLabel} htmlFor="logo">
+                                    <FaPencilAlt/>
+                                    <input hidden id="logo" className={styles.logoInputIcon} type="file"
+                                           accept="image/*"
+                                           onChange={handleImageUpload}/>
+                                </label>
+                            )}
+                            <img src={logo} alt="Supplier Logo"/>
                         </div>
                         <div className={styles.branding}>
                             {!editMode ? <h1>{supplierData?.businessName}</h1> : (
@@ -179,7 +188,7 @@ const SupplierHome = () => {
                             <p>{supplierData?.businessDescription}</p> : editMode ?
                                 (
                                     <textarea name="businessDescription" className={styles.businessDescriptionTextarea}
-                                              value={formData?.businessDescription}
+                                              value={formData.businessDescription}
                                               onChange={handleChange}/>) : ""
                         }
                     </div>
@@ -194,7 +203,7 @@ const SupplierHome = () => {
                                                 <p>Phone:</p>
                                                 <input className={styles.contactInput} name="phone"
                                                        onChange={handleChange} placeholder="+92312-3456789"
-                                                       type="tel" value={supplierData?.phone}/>
+                                                       type="tel" value={formData.phone}/>
                                             </div>
                                         ) : ""
                                     )}
@@ -203,7 +212,7 @@ const SupplierHome = () => {
                                         <div className={styles.contactItemWrapper}>
                                             <p>Email: </p>
                                             <input className={styles.emailInput} name="email" onChange={handleChange}
-                                                   placeholder="Enter your email"
+                                                   placeholder="Enter your email" value={formData.email}
                                             />
                                         </div>
                                         : "")}
@@ -221,7 +230,7 @@ const SupplierHome = () => {
                             {(supplierData?.address && !isOwner) || (isOwner && !editMode) ? <p>
                                 {supplierData?.address}
                             </p> : editMode ? (
-                                <input className={styles.addressInput} name="address" value={supplierData?.address}
+                                <input className={styles.addressInput} name="address" value={formData?.address}
                                        onChange={handleChange}/>) : ""}
                         < /div>
                     </div>

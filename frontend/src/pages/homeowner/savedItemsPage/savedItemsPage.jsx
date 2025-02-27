@@ -1,19 +1,18 @@
-import { useState, useEffect, useContext } from "react";
+import { useContext } from "react";
 import axios from "axios";
 import styles from "./styles/savedItems.module.scss";
 import { useAuth } from "../../../contexts/authContext";
 import ServiceCard from "../../../components/service-card/service-card";
-import { useLoading } from "../../../contexts/loadingContext";
+// import { LoadingContext } from "../../../contexts/loadingContext";
+import { useQuery } from "@tanstack/react-query";
 
 const SavedItemsPage = () => {
   const { currentUser } = useAuth();
+  // const { LoadingUI } = useContext(LoadingContext);
 
-  const { isLoading, setIsLoading, LoadingUI } = useLoading();
-  const [savedItems, setSavedItems] = useState([]);
-
-  const fetchSavedItems = async () => {
-    setIsLoading(true);
-    try {
+  const { data: userData, isLoading: isUserLoading } = useQuery({
+    queryKey: ['userData', currentUser?.id],
+    queryFn: async () => {
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/user/me`,
         {
@@ -22,40 +21,36 @@ const SavedItemsPage = () => {
           },
         }
       );
+      return response.data.user;
+    },
+    enabled: !!currentUser?.id,
+  });
 
-      const savedProfiles = response.data.user.savedProfiles;
-
-      try {
-        const professionalData = await Promise.all(
-          savedProfiles.map((savedProfile) =>
-            axios.get(
-              `${
-                import.meta.env.VITE_API_URL
-              }/api/user/saved-professionals/${savedProfile}`
-            )
+  const { data: savedItems = [], isLoading: isProfessionalsLoading } = useQuery({
+    queryKey: ['savedProfessionals', userData?.savedProfiles],
+    queryFn: async () => {
+      if (!userData?.savedProfiles?.length) return [];
+      
+      const professionalData = await Promise.all(
+        userData.savedProfiles.map((savedProfileId) =>
+          axios.get(
+            `${import.meta.env.VITE_API_URL}/api/user/saved-professionals/${savedProfileId}`
           )
-        );
+        )
+      );
+      
+      return professionalData.map((response) => response.data);
+    },
+    enabled: !!userData?.savedProfiles?.length,
+  });
 
-        setSavedItems(professionalData.map((response) => response.data));
-      } catch (error) {
-        console.error("Error fetching saved items:", error);
-      }
-    } catch (error) {
-      console.error("Error fetching saved items:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const isLoading = isUserLoading || isProfessionalsLoading;
 
-  useEffect(() => {
-    fetchSavedItems();
-  }, [currentUser]);
+  // if (isLoading) {
+  //   return <LoadingUI />;
+  // }
 
-  console.log("Saved items: ", savedItems);
-
-  if (isLoading) {
-    return <LoadingUI />;
-  }
+  console.log(savedItems);
 
   return (
     <>
