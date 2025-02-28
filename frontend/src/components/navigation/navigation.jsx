@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import styles from "./styles/navigation.module.scss";
 import { useAuth } from "../../contexts/authContext";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { ChevronDownIcon } from "lucide-react";
 import axios from "axios";
 import { useLoading } from "../../contexts/loadingContext";
@@ -13,6 +13,10 @@ const Navigation = () => {
   const [showAvatarMenu, setShowAvatarMenu] = useState(false);
   const [isSwitching, setIsSwitching] = useState(false);
   const avatarMenuRef = useRef(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchType, setSearchType] = useState("professionals");
+
+  console.log("Search type in navigation:", searchType);
   const navigate = useNavigate();
   const { setIsLoading, isLoading, LoadingUI } = useLoading();
 
@@ -91,7 +95,7 @@ const Navigation = () => {
       if (response.status === 200) {
         setTimeout(() => {
           if (response.data.user.userType === "supplier") {
-            navigate(`/supplier-homepage/${currentUser.supplierProfileId}`);
+            navigate(`/supplier-homepage/${currentUser.supplierId}`);
           } else if (response.data.user.userType === "professional") {
             navigate(`/professional-profile/${currentUser.id}`);
           } else {
@@ -105,9 +109,31 @@ const Navigation = () => {
       setTimeout(() => {
         setIsLoading(false);
         setIsSwitching(false);
-      }, 600); // Delay the removal of loading state until after transition
+      }, 600);
     }
   };
+
+  const handleSearchInput = useCallback(
+    (query, searchType) => {
+      console.log("Search type:", searchType);
+      navigate(`/search?query=${query}&type=${searchType}`);
+    },
+    [navigate]
+  );
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (
+        e.key === "Enter" &&
+        e.target.matches('[data-testid="navigation-search-input"]')
+      ) {
+        handleSearchInput(e.target.value, searchType);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [searchType, handleSearchInput]);
 
   const loginRegisterNav = () => {
     return (
@@ -131,8 +157,8 @@ const Navigation = () => {
               currentUser.userType === "homeowner"
                 ? `/homeowner-profile/${currentUser.id}`
                 : currentUser.userType === "professional"
-                ? `/professional-profile/${currentUser.id}`
-                : `/supplier-homepage/${currentUser.supplierProfileId}`
+                ? `/professional-profile/${currentUser.professionalId}`
+                : `/supplier-homepage/${currentUser.supplierId}`
             }
             className={styles.avatar_menu_item}
             onClick={() => setShowAvatarMenu(false)}
@@ -223,9 +249,9 @@ const Navigation = () => {
                 <input
                   type="text"
                   placeholder="Search the building world"
-                  // value={searchQuery}
-                  // onChange={(e) => setSearchQuery(e.target.value)}
-                  // onKeyDown={fetchProfessionals}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  data-testid="navigation-search-input"
                 />
               </div>
             </div>
@@ -414,6 +440,24 @@ const Navigation = () => {
 
               <div className={styles.searchBar}>
                 <div className={styles.searchInput}>
+                  <select
+                    className={styles.searchTypeSelect}
+                    value={searchType}
+                    onChange={(e) => {
+                      setSearchType(e.target.value);
+                      console.log("Changing search type: ", searchType);
+                    }}
+                  >
+                    <option value="professionals">Professionals</option>
+                    <option value="materials">Materials</option>
+                  </select>
+
+                  <input
+                    type="text"
+                    placeholder="Search the building world"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 12 12"
@@ -423,6 +467,7 @@ const Navigation = () => {
                     height="100%"
                     className={styles.searchIcon}
                     aria-hidden="true"
+                    onClick={() => handleSearchInput(searchQuery, searchType)}
                   >
                     <title id="IconBase-title-8f46da7f-207f-4224-95cb-e741d5d98fbf">
                       search
@@ -434,14 +479,6 @@ const Navigation = () => {
                       <path d="M11.407,10.421,8.818,7.832a4.276,4.276,0,1,0-.985.985l2.589,2.589a.7.7,0,0,0,.985-.985ZM2.355,5.352a3,3,0,1,1,3,3,3,3,0,0,1-3-3Z"></path>
                     </g>
                   </svg>
-
-                  <input
-                    type="text"
-                    placeholder="Search the building world"
-                    // value={searchQuery}
-                    // onChange={(e) => setSearchQuery(e.target.value)}
-                    // onKeyDown={fetchProfessionals}
-                  />
                 </div>
               </div>
 
@@ -542,7 +579,7 @@ const Navigation = () => {
             </Link>
             <nav className={styles.nav}>
               <Link
-                to={`/supplier-homepage/${currentUser.supplierProfileId}`}
+                to={`/supplier-homepage/${currentUser.supplierId}`}
                 className={styles.navLink}
               >
                 Profile

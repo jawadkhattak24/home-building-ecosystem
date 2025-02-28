@@ -717,12 +717,17 @@ router.post("/login", async (req, res) => {
             return res.status(400).json({msg: "Incorrect password"});
         }
 
+        const supplier = await Supplier.findOne({ userId: user._id });
+        const professional = await Professional.findOne({ userId: user._id });
+
         const payload = {
             id: user._id,
             userType: user.userType,
             name: user.name,
             email: user.email,
             profilePictureUrl: user.profilePictureUrl,
+            supplierId: supplier ? supplier._id : null,
+            professionalId: professional ? professional._id : null
         };
 
         jwt.sign(

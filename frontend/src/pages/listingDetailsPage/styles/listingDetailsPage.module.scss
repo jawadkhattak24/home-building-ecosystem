@@ -1,8 +1,8 @@
-@use "../../../globalStyles/base.scss" as base;
+@use "../../../globalStyles/base.scss"as base;
 
 .listingContainer {
   display: grid;
-  grid-template-columns: 600px 1fr;
+  grid-template-columns: 700px 1fr;
   gap: 30px;
   margin: 30px;
   background-color: base.$background;
@@ -12,10 +12,27 @@
   // max-width: 1200px;
   // margin: 0 auto;
 
+
+
+
+
+
+
+
+
   @media (max-width: 1024px) {
     grid-template-columns: 1fr;
   }
 }
+
+
+.productName {
+  font-size: 2em;
+  font-weight: 500;
+}
+
+
+
 
 .productInfo {
   // background: #fff;
@@ -69,18 +86,20 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  align-self: flex-end;
 }
 
 .price {
-  font-size: 24px;
+  font-size: 28px;
   font-weight: bold;
-  color: #333;
+  color: #000000;
 }
 
 .availability {
-  padding: 10px 20px;
+  padding: 5px 10px;
   border-radius: 30px;
-  font-weight: bold;
+  font-weight: 500;
+  font-size: 12px;
   text-transform: capitalize;
 }
 
@@ -91,17 +110,47 @@
 }
 
 .ctaButton {
-  background: #2196f3;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  align-items: center;
+  // background: #2196f3;
   color: white;
-  padding: 10px 20px;
+  // padding: 10px 20px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+
+
+  .chatButton {
+    background: base.$primary;
+
+    &:hover {
+      background: base.$primary-dark;
+      color: white;
+      outline: none;
+      border: 1px solid transparent;
+    }
+  }
+
+  .saveButton {
+    background: white;
+    color: base.$primary;
+    border: 1px solid base.$primary;
+
+    &:hover {
+      background: base.$primary;
+      color: white;
+    }
+  }
+
+
 }
 
 .specifications {
   .KEY {
     margin-bottom: 10px;
+
     strong {
       margin-right: 10px;
     }
@@ -131,7 +180,8 @@
   border-radius: 5px;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
+  gap: 30px;
 }
 
 .primaryImage {
