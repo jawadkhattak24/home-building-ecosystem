@@ -95,7 +95,9 @@ const Navigation = () => {
       if (response.status === 200) {
         setTimeout(() => {
           if (response.data.user.userType === "supplier") {
-            navigate(`/supplier-homepage/${currentUser.supplierId}`);
+            navigate(
+              `/supplier-homepage/${response.data.user.supplierProfileId}`
+            );
           } else if (response.data.user.userType === "professional") {
             navigate(`/professional-profile/${currentUser.id}`);
           } else {
@@ -158,7 +160,7 @@ const Navigation = () => {
                 ? `/homeowner-profile/${currentUser.id}`
                 : currentUser.userType === "professional"
                 ? `/professional-profile/${currentUser.professionalId}`
-                : `/supplier-homepage/${currentUser.supplierId}`
+                : `/supplier-homepage/${currentUser.supplierProfileId}`
             }
             className={styles.avatar_menu_item}
             onClick={() => setShowAvatarMenu(false)}
@@ -579,7 +581,7 @@ const Navigation = () => {
             </Link>
             <nav className={styles.nav}>
               <Link
-                to={`/supplier-homepage/${currentUser.supplierId}`}
+                to={`/supplier-homepage/${currentUser.supplierProfileId}`}
                 className={styles.navLink}
               >
                 Profile
@@ -588,10 +590,10 @@ const Navigation = () => {
               <Link to="/supplier-listings" className={styles.navLink}>
                 Listings
               </Link>
-              <Link to="/supplier-analytics" className={styles.navLink}>
+              {/* <Link to="/supplier-analytics" className={styles.navLink}>
                 Analytics
-              </Link>
-              <Link to="/supplier-inbox" className={styles.navLink}>
+              </Link> */}
+              <Link to="/inbox" className={styles.navLink}>
                 Messages
               </Link>
 

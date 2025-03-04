@@ -106,6 +106,70 @@ router.post("/listing", async (req, res) => {
   }
 });
 
+router.delete("/listing/:listingId", async (req, res) => {
+  const { listingId } = req.params;
+  try {
+    await Listing.findByIdAndDelete(listingId);
+    res.status(200).json({ message: "Listing deleted" });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+});
+
+router.put("/listing/:listingId", async (req, res) => {
+  const { listingId } = req.params;
+  const { ...listingData } = req.body;
+  try {
+    const listing = await Listing.findByIdAndUpdate(listingId, listingData, {
+      new: true,
+    });
+    res.status(200).json({ message: "Listing updated", listing });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+});
+
+router.post("/listing/analytics/record-impression", async (req, res) => {
+  const { listingId } = req.body;
+  try {
+    const listing = await Listing.findById(listingId);
+    listing.analytics.impressions++;
+    await listing.save();
+    res.status(200).json({ message: "Listing analytics updated", listing });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+});
+
+router.post("/listing/analytics/record-click", async (req, res) => {
+  const { listingId } = req.body;
+  try {
+    const listing = await Listing.findById(listingId);
+    listing.analytics.clicks++;
+    await listing.save();
+    res.status(200).json({ message: "Listing analytics updated", listing });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+});
+
+router.post("/listing/analytics/record-favorite", async (req, res) => {
+  const { listingId } = req.body;
+  try {
+    const listing = await Listing.findById(listingId);
+    listing.analytics.favorites++;
+    await listing.save();
+    res.status(200).json({ message: "Listing analytics updated", listing });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+});
+
 router.get("/listing/:listingId", async (req, res) => {
   try {
     const listing = await Listing.findById(req.params.listingId).populate(

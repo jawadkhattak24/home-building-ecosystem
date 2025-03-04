@@ -5,73 +5,16 @@ import { useAuth } from "../../contexts/authContext";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { FaPencilAlt } from "react-icons/fa";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 const SupplierHome = () => {
   const { currentUser } = useAuth();
   const currentUserId = currentUser.id || currentUser._id;
-
-  const [listings, setListings] = useState([]);
-
   const { supplierId } = useParams();
-
-  const isOwner = currentUser.supplierId === supplierId;
-
-  console.log("Is Owner: ", isOwner);
-
-  const [supplierData, setSupplierData] = useState();
-
-  const [logo, setLogo] = useState("");
-
-  useEffect(() => {
-    const fetchSupplierData = async () => {
-      const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/supplier/getSupplier/${
-          isOwner ? currentUser.supplierId : supplierId
-        }`
-      );
-      setSupplierData(res.data);
-      setLogo(res.data.logo);
-      console.log("Supplier Data: ", supplierData);
-    };
-    fetchSupplierData();
-  }, []);
-
-  useEffect(() => {
-    document.title = "Supplier Home";
-  }, []);
-
-  useEffect(() => {
-    const fetchListings = async () => {
-      const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/supplier/listings/${currentUserId}`
-      );
-      setListings(response.data);
-    };
-    fetchListings();
-  }, [currentUserId]);
-
+  const queryClient = useQueryClient();
+  const isOwner = currentUser.supplierProfileId === supplierId;
   const [editMode, setEditMode] = useState(false);
-
-  const handleEditToggle = () => {
-    setEditMode(!editMode);
-  };
-  const handleImageUpload = async (event) => {
-    console.log("Well");
-    const file = event.target.files[0];
-
-    const formData = new FormData();
-    formData.append("logo", file);
-    try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/supplier/logo/${supplierId}`,
-        formData
-      );
-      console.log("Logo uploading res: ", res.data);
-      setLogo(res.data);
-    } catch (err) {
-      console.error("An error occurred uploading the logo: ", err);
-    }
-  };
+  const [showProfileDialog, setShowProfileDialog] = useState(false);
 
   const [formData, setFormData] = useState({
     businessName: "",
@@ -79,21 +22,111 @@ const SupplierHome = () => {
     phone: "",
     address: "",
     businessType: "",
+    email: "",
+  });
+
+  const {
+    data: supplierData,
+    isLoading: isLoadingSupplier,
+    isError: isSupplierError,
+  } = useQuery({
+    queryKey: [
+      "supplier",
+      isOwner ? currentUser.supplierProfileId : supplierId,
+    ],
+    queryFn: async () => {
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/supplier/getSupplier/${
+          isOwner ? currentUser.supplierProfileId : supplierId
+        }`
+      );
+      return res.data;
+    },
+    onSuccess: (data) => {
+      setFormData({
+        businessName: data?.businessName || "",
+        businessDescription: data?.businessDescription || "",
+        phone: data?.contact?.phone || "",
+        address: data?.address || "",
+        businessType: data?.businessType || "",
+        email: data?.contact?.email || "",
+      });
+
+      if (isOwner && !data?.businessName) {
+        setShowProfileDialog(true);
+        console.log("Business Name: ", data?.businessName);
+        setEditMode(true);
+      }
+    },
+  });
+
+  const { data: listings = [], isLoading: isLoadingListings } = useQuery({
+    queryKey: ["listings", currentUserId],
+    queryFn: async () => {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/supplier/listings/${currentUserId}`
+      );
+      return response.data;
+    },
+  });
+
+  const updateProfileMutation = useMutation({
+    mutationFn: async (formData) => {
+      const response = await axios.put(
+        `${
+          import.meta.env.VITE_API_URL
+        }/api/supplier/update-profile/${supplierId}`,
+        { formData }
+      );
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["supplier"]);
+      setEditMode(false);
+      setShowProfileDialog(false);
+    },
+  });
+
+  const uploadLogoMutation = useMutation({
+    mutationFn: async (file) => {
+      const formData = new FormData();
+      formData.append("logo", file);
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/supplier/logo/${supplierId}`,
+        formData
+      );
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["supplier"]);
+    },
   });
 
   useEffect(() => {
-    if (supplierData) {
+    window.scrollTo(0, 0);
+    document.title = "Supplier Home";
+  }, []);
+
+  const handleEditToggle = () => {
+    if (!editMode) {
       setFormData({
-        businessName: supplierData?.businessName,
-        businessDescription: supplierData?.businessDescription,
-        phone: supplierData?.contact?.phone,
-        address: supplierData?.address,
-        businessType: supplierData?.businessName,
+        businessName: supplierData?.businessName || "",
+        businessDescription: supplierData?.businessDescription || "",
+        phone: supplierData?.contact?.phone || "",
+        address: supplierData?.address || "",
+        businessType: supplierData?.businessType || "",
+        email: supplierData?.contact?.email || "",
       });
     }
-  }, [supplierData, logo]);
+    setEditMode(!editMode);
+  };
 
-  console.log("Form Data: ", formData);
+  const handleImageUpload = async (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      uploadLogoMutation.mutate(file);
+    }
+  };
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -103,45 +136,119 @@ const SupplierHome = () => {
     }));
   };
 
-  const [notification, setNotification] = useState("");
-
-  const handleSave = async () => {
-    console.log("Form Data: ", formData);
-    try {
-      const response = await axios.put(
-        `${
-          import.meta.env.VITE_API_URL
-        }/api/supplier/update-profile/${supplierId}`,
-        { formData: formData }
-      );
-
-      if (response.status === 201) {
-        setNotification("Profile updated successfully");
-      }
-    } catch (error) {
-      console.error("An error occurred:", error);
-    }
+  const handleSave = () => {
+    updateProfileMutation.mutate(formData);
   };
+
+  if (isLoadingSupplier) {
+    return <div className={styles.loading}>Loading supplier profile...</div>;
+  }
+
+  if (isSupplierError) {
+    return <div className={styles.error}>Error loading supplier profile</div>;
+  }
 
   return (
     <div className={styles.supplierHomepage}>
+      {showProfileDialog && (
+        <div className={styles.dialogOverlay}>
+          <div className={styles.dialogContainer}>
+            <div className={styles.dialogHeader}>
+              <h2>Complete Your Supplier Profile</h2>
+              <button
+                className={styles.closeButton}
+                onClick={() => setShowProfileDialog(false)}
+              >
+                &times;
+              </button>
+            </div>
+            <div className={styles.dialogContent}>
+              <div className={styles.dialogForm}>
+                <div className={styles.formGroup}>
+                  <label>Business Name</label>
+                  <input
+                    name="businessName"
+                    value={formData.businessName}
+                    onChange={handleChange}
+                    type="text"
+                    placeholder="Enter your business name"
+                  />
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label>Business Type</label>
+                  <select
+                    value={formData.businessType}
+                    name="businessType"
+                    onChange={handleChange}
+                  >
+                    <option value="">Select business type</option>
+                    <option value="Manufacturer">Manufacturer</option>
+                    <option value="Distributor">Distributor</option>
+                    <option value="Retailer">Retailer</option>
+                  </select>
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label>Business Description</label>
+                  <textarea
+                    name="businessDescription"
+                    value={formData.businessDescription}
+                    onChange={handleChange}
+                    placeholder="Describe your business"
+                  />
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label>Phone</label>
+                  <input
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    type="tel"
+                    placeholder="+92312-3456789"
+                  />
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label>Email</label>
+                  <input
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    type="email"
+                    placeholder="Enter your email"
+                  />
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label>Address</label>
+                  <input
+                    name="address"
+                    value={formData.address}
+                    onChange={handleChange}
+                    type="text"
+                    placeholder="Enter your business address"
+                  />
+                </div>
+              </div>
+            </div>
+            <div className={styles.dialogActions}>
+              <button
+                className={styles.cancelButton}
+                onClick={() => setShowProfileDialog(false)}
+              >
+                Cancel
+              </button>
+              <button className={styles.saveButton} onClick={handleSave}>
+                Save Profile
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <header className={styles.header}>
-        {/*<div className={styles.coverImageContainer}>*/}
-        {/*    <img*/}
-        {/*        className={styles.coverImage}*/}
-        {/*        src={supplierData.coverImage}*/}
-        {/*        alt="Supplier Cover"*/}
-        {/*    />*/}
-
-        {/*    {editMode && (*/}
-        {/*        <label htmlFor="coverImage" className={styles.editCoverImageIcon}>*/}
-        {/*            <FaPencilAlt/>*/}
-
-        {/*            <input hidden type="file" accept="image/*" className={styles.coverImageInput}*/}
-        {/*                   onChange={handleImageUpload}/>*/}
-        {/*        </label>*/}
-        {/*    )}*/}
-        {/*</div>*/}
         <div className={styles.logoAndBrandingContainer}>
           <div className={styles.brandingWrapper}>
             <div className={styles.logoContainer}>
@@ -158,7 +265,7 @@ const SupplierHome = () => {
                   />
                 </label>
               )}
-              <img src={logo} alt="Supplier Logo" />
+              <img src={supplierData?.logo} alt="Supplier Logo" />
             </div>
             <div className={styles.branding}>
               {!editMode ? (
@@ -168,8 +275,8 @@ const SupplierHome = () => {
                   name="businessName"
                   className={styles.businessNameInput}
                   onChange={handleChange}
-                  value={formData?.businessName}
-                  type=" text"
+                  value={formData.businessName}
+                  type="text"
                 />
               )}
               <div className={styles.businessTypeAndRating}>
@@ -210,17 +317,17 @@ const SupplierHome = () => {
         <div className={styles.businessInfoGrid}>
           <div className={styles.businessDescriptionContainer}>
             <h3>About</h3>
-            {(editMode && !isOwner) || (isOwner && !editMode) ? (
-              <p>{supplierData?.businessDescription}</p>
-            ) : editMode ? (
+            {!editMode ? (
+              <p>
+                {supplierData?.businessDescription || "No description added"}
+              </p>
+            ) : (
               <textarea
                 name="businessDescription"
                 className={styles.businessDescriptionTextarea}
                 value={formData.businessDescription}
                 onChange={handleChange}
               />
-            ) : (
-              ""
             )}
           </div>
 
@@ -228,10 +335,12 @@ const SupplierHome = () => {
             <div className={styles.contactContainer}>
               <div className={styles.contactInfo}>
                 <h3>Contact</h3>
-                {(supplierData?.contact?.phone && !isOwner) ||
-                (isOwner && !editMode) ? (
-                  <p>Phone: {supplierData?.contact?.phone} </p>
-                ) : editMode ? (
+                {!editMode ? (
+                  <p>
+                    Phone:{" "}
+                    {supplierData?.contact?.phone || "No phone number added"}{" "}
+                  </p>
+                ) : (
                   <div className={styles.contactItemWrapper}>
                     <p>Phone:</p>
                     <input
@@ -243,13 +352,12 @@ const SupplierHome = () => {
                       value={formData.phone}
                     />
                   </div>
-                ) : (
-                  ""
                 )}
-                {(supplierData?.contact?.email && !isOwner) ||
-                (isOwner && !editMode) ? (
-                  <p>Email: {supplierData?.contact?.email}</p>
-                ) : editMode ? (
+                {!editMode ? (
+                  <p>
+                    Email: {supplierData?.contact?.email || "No email added"}
+                  </p>
+                ) : (
                   <div className={styles.contactItemWrapper}>
                     <p>Email: </p>
                     <input
@@ -260,35 +368,20 @@ const SupplierHome = () => {
                       value={formData.email}
                     />
                   </div>
-                ) : (
-                  ""
                 )}
-                <div className={styles.socialMedia}>
-                  <a href={supplierData?.contact?.socialMedia?.facebook}>
-                    Facebook
-                  </a>
-                  <a href={supplierData?.contact?.socialMedia?.linkedin}>
-                    LinkedIn
-                  </a>
-                  <a href={supplierData?.contact?.socialMedia?.instagram}>
-                    Instagram
-                  </a>
-                </div>
               </div>
             </div>
             <div className={styles.addressContainer}>
               <h3>Address</h3>
-              {(supplierData?.address && !isOwner) || (isOwner && !editMode) ? (
-                <p>{supplierData?.address}</p>
-              ) : editMode ? (
+              {!editMode ? (
+                <p>{supplierData?.address || "No address added"}</p>
+              ) : (
                 <input
                   className={styles.addressInput}
                   name="address"
-                  value={formData?.address}
+                  value={formData.address}
                   onChange={handleChange}
                 />
-              ) : (
-                ""
               )}
             </div>
           </div>
@@ -297,7 +390,9 @@ const SupplierHome = () => {
         <div className={styles.listingsContainer}>
           <h3>Listings</h3>
           <div className={styles.mainListingsContainer}>
-            {listings.length > 0 ? (
+            {isLoadingListings ? (
+              <p>Loading listings...</p>
+            ) : listings.length > 0 ? (
               listings.map((listing) => (
                 <ListingCard key={listing._id} listing={listing} />
               ))

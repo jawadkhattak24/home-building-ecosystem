@@ -20,18 +20,15 @@ const supplierSchema = new mongoose.Schema(
             type: String,
             required: false,
             index: true,
-            default: "Business name"
         },
         businessDescription: {
             type: String,
-            default: "Business description",
 
         },
         businessType: {
             type: String,
             enum: ["manufacturer", "distributor", "retailer", "wholesaler"],
             required: false,
-            default: "retailer"
         },
         businessRegistration: {
             number: String,

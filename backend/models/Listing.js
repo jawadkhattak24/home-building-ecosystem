@@ -40,7 +40,6 @@ const listingSchema = new mongoose.Schema(
       value: {
         type: Number,
         required: false,
-        
       },
       unit: {
         type: String,
@@ -70,7 +69,7 @@ const listingSchema = new mongoose.Schema(
       },
     ],
     keywords: [String],
-  
+
     availability: {
       type: String,
       enum: ["in_stock", "out_of_stock", "pre_order"],
@@ -81,6 +80,20 @@ const listingSchema = new mongoose.Schema(
       default: 0,
       min: 0,
       max: 5,
+    },
+    analytics: {
+      impressions: {
+        type: Number,
+        default: 0,
+      },
+      clicks: {
+        type: Number,
+        default: 0,
+      },
+      favorites: {
+        type: Number,
+        default: 0,
+      },
     },
     reviews: [
       {

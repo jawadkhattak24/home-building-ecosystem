@@ -7,18 +7,26 @@ const UserInfoSidebar = ({ otherUser }) => {
     return <UserInfoSidebarSkeleton />;
   }
 
+  console.log("otherUser in userInfoSidebar", otherUser);
+
   const {
     name,
+    businessName,
+    businessDescription,
     serviceType,
     profilePictureUrl,
+    logo,
     rating,
     ratePerHour,
     yearsExperience = 7,
     bio,
-    reviews = []
+    reviews = [],
   } = otherUser;
 
-  const truncatedBio = bio?.slice(0, 120) + (bio?.length > 120 ? '...' : '');
+  const truncatedBusinessDescription =
+    businessDescription?.slice(0, 120) +
+    (businessDescription?.length > 120 ? "..." : "");
+  const truncatedBio = bio?.slice(0, 120) + (bio?.length > 120 ? "..." : "");
   const reviewCount = reviews?.length;
 
   return (
@@ -26,30 +34,52 @@ const UserInfoSidebar = ({ otherUser }) => {
       <div className={styles.header}>
         <div className={styles.profilePhoto}>
           <img
-            src={profilePictureUrl}
+            src={otherUser.userType === "supplier" ? logo : profilePictureUrl}
             alt={name}
             className={styles.profilePicture}
           />
         </div>
         <div className={styles.userInfo}>
-          <h3 className={styles.name}>{name}</h3>
-          <p className={styles.serviceType}>{serviceType}</p>
+          <h3 className={styles.name}>
+            {otherUser.userType === "supplier"
+              ? otherUser.businessName
+              : otherUser.name || "Unknown User"}
+          </h3>
+          <p className={styles.serviceType}>
+            {otherUser.userType === "supplier"
+              ? otherUser.businessType
+              : serviceType}
+          </p>
           <div className={styles.details}>
             <div className={styles.rating}>
               <span>⭐ {rating}</span>
-              <span className={styles.reviewsCount}>({reviewCount} reviews)</span>
+              <span className={styles.reviewsCount}>
+                ({reviewCount} reviews)
+              </span>
             </div>
             <div className={styles.rate}>
               <span>${ratePerHour}/h</span>
-              <span className={styles.experience}>• {yearsExperience} yrs exp</span>
+              <span className={styles.experience}>
+                • {yearsExperience} yrs exp
+              </span>
             </div>
           </div>
-          <p className={styles.bio}>{truncatedBio || 'No bio provided'}</p>
-
+          <p className={styles.bio}>
+            {otherUser.userType === "supplier"
+              ? truncatedBusinessDescription
+              : truncatedBio || "No bio provided"}
+          </p>
         </div>
       </div>
       <div className={styles.cta}>
-        <Link to={`/professional-profile/${otherUser.userId}`} className={styles.button}>
+        <Link
+          to={
+            otherUser.userType === "supplier"
+              ? `/supplier-profile/${otherUser._id}`
+              : `/professional-profile/${otherUser.userId}`
+          }
+          className={styles.button}
+        >
           View Full Profile
         </Link>
       </div>

@@ -105,8 +105,9 @@ function Sidebar({
                   <img
                     className={styles.avatarImg}
                     src={
-                      otherUser.profilePictureUrl ||
-                      "https://servicesthumbnailbucket.s3.ap-south-1.amazonaws.com/profile_avatar.jpg"
+                      otherUser.userType === "supplier"
+                        ? otherUser.logo
+                        : otherUser.profilePictureUrl
                     }
                     alt={`${otherUser.name || "User"}'s avatar`}
                     onError={(e) => {
@@ -123,7 +124,9 @@ function Sidebar({
                         : styles.inActiveReceipt
                     }`}
                   >
-                    {otherUser.name || "Unknown User"}
+                    {otherUser.userType === "supplier"
+                      ? otherUser.businessName
+                      : otherUser.name || "Unknown User"}
                   </h3>
                   <p
                     className={`${styles.conversationDate} ${

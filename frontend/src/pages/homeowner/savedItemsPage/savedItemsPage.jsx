@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useEffect } from "react";
 import axios from "axios";
 import styles from "./styles/savedItems.module.scss";
 import { useAuth } from "../../../contexts/authContext";
@@ -10,8 +10,12 @@ const SavedItemsPage = () => {
   const { currentUser } = useAuth();
   // const { LoadingUI } = useContext(LoadingContext);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const { data: userData, isLoading: isUserLoading } = useQuery({
-    queryKey: ['userData', currentUser?.id],
+    queryKey: ["userData", currentUser?.id],
     queryFn: async () => {
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/user/me`,
@@ -26,23 +30,27 @@ const SavedItemsPage = () => {
     enabled: !!currentUser?.id,
   });
 
-  const { data: savedItems = [], isLoading: isProfessionalsLoading } = useQuery({
-    queryKey: ['savedProfessionals', userData?.savedProfiles],
-    queryFn: async () => {
-      if (!userData?.savedProfiles?.length) return [];
-      
-      const professionalData = await Promise.all(
-        userData.savedProfiles.map((savedProfileId) =>
-          axios.get(
-            `${import.meta.env.VITE_API_URL}/api/user/saved-professionals/${savedProfileId}`
+  const { data: savedItems = [], isLoading: isProfessionalsLoading } = useQuery(
+    {
+      queryKey: ["savedProfessionals", userData?.savedProfiles],
+      queryFn: async () => {
+        if (!userData?.savedProfiles?.length) return [];
+
+        const professionalData = await Promise.all(
+          userData.savedProfiles.map((savedProfileId) =>
+            axios.get(
+              `${
+                import.meta.env.VITE_API_URL
+              }/api/user/saved-professionals/${savedProfileId}`
+            )
           )
-        )
-      );
-      
-      return professionalData.map((response) => response.data);
-    },
-    enabled: !!userData?.savedProfiles?.length,
-  });
+        );
+
+        return professionalData.map((response) => response.data);
+      },
+      enabled: !!userData?.savedProfiles?.length,
+    }
+  );
 
   const isLoading = isUserLoading || isProfessionalsLoading;
 
@@ -66,7 +74,7 @@ const SavedItemsPage = () => {
           )}
           {savedItems.map((savedItem) => (
             <ServiceCard
-              key={savedItem?.userId?._id}  
+              key={savedItem?.userId?._id}
               professional={savedItem}
               isSaved={true}
               showCoverImage={false}

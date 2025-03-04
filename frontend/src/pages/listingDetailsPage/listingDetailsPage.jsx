@@ -1,35 +1,120 @@
-import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useEffect, useState, useContext } from "react";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import styles from "./styles/listingDetailsPage.module.scss";
 import StarRatings from "../../components/starRating/starRating";
 import { FaHeart, FaCommentDots } from "react-icons/fa";
+import { ChatContext } from "../../contexts/chatContext";
+import { useAuth } from "../../contexts/authContext";
+import ListingDetailsPageLoadingSkeleton from "./loadingSkeleton/listingDetailsPageLoadingSkeleton";
 
 const ListingProduct = () => {
-  const [listing, setListing] = useState(null);
-  const { listingId } = useParams();
+  const { setActiveConversation, checkConversationExists } =
+    useContext(ChatContext);
+
   const [currentImage, setCurrentImage] = useState(null);
+  const { listingId } = useParams();
+  const navigate = useNavigate();
+  const { currentUser } = useAuth();
+
+  const { data: listing, isLoading } = useQuery({
+    queryKey: ["listing", listingId],
+    queryFn: async () => {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/supplier/listing/${listingId}`
+      );
+      return response.data;
+    },
+    onSuccess: (data) => {
+      setCurrentImage(data.images[0]);
+    },
+  });
+
+  const recordClickMutation = useMutation({
+    mutationFn: () =>
+      axios.post(
+        `${
+          import.meta.env.VITE_API_URL
+        }/api/supplier/listing/analytics/record-click`,
+        { listingId }
+      ),
+    onError: (error) => {
+      console.error("Error recording click:", error);
+    },
+  });
+
+  const recordFavoriteMutation = useMutation({
+    mutationFn: () =>
+      axios.post(
+        `${
+          import.meta.env.VITE_API_URL
+        }/api/supplier/listing/analytics/record-favorite`,
+        { listingId }
+      ),
+    onError: (error) => {
+      console.error("Error recording favorite:", error);
+    },
+  });
+
+  useEffect(() => {
+    recordClickMutation.mutate();
+  }, [listingId]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  useEffect(() => {
-    const fetchListingDetails = async () => {
-      const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/supplier/listing/${listingId}`
-      );
-      setListing(response.data);
-      setCurrentImage(response.data.images[0]);
-    };
-    fetchListingDetails();
-  }, [listingId]);
-
-  console.log("Listing: ", listing);
-
   const handleImageClick = (image) => {
     setCurrentImage(image);
   };
+
+  const handleFavorite = () => {
+    recordFavoriteMutation.mutate();
+  };
+
+  const handleContact = async () => {
+    if (!listing?.supplier?._id) return;
+
+    let conversationId;
+    const conversationExists = await checkConversationExists(
+      listing.supplier._id,
+      currentUser.id
+    );
+
+    if (conversationExists) {
+      conversationId = conversationExists;
+      localStorage.setItem("activeConversation", conversationId);
+      navigate("/inbox");
+    } else {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/conversations`,
+        {
+          participant: listing.supplier._id,
+          userType: "supplier",
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      const data = response.data;
+      await new Promise((resolve) => {
+        setActiveConversation(data._id);
+        resolve();
+      });
+
+      conversationId = data._id;
+      localStorage.setItem("activeConversation", conversationId);
+      navigate("/inbox");
+    }
+  };
+
+  if (isLoading) {
+    return <ListingDetailsPageLoadingSkeleton />;
+  }
 
   return (
     <div className={styles.listingContainer}>
@@ -73,10 +158,10 @@ const ListingProduct = () => {
           </div>
 
           <div className={styles.ctaButton}>
-            <button className={styles.saveButton}>
+            <button className={styles.saveButton} onClick={handleFavorite}>
               <FaHeart /> Save Item
             </button>
-            <button className={styles.chatButton}>
+            <button className={styles.chatButton} onClick={handleContact}>
               <FaCommentDots /> Chat with Supplier
             </button>
           </div>
@@ -88,19 +173,6 @@ const ListingProduct = () => {
             {listing?.description || "No description provided"}
           </div>
         </div>
-
-        {/* <div className={styles.specsSection}>
-          <h3 className={styles.sectionTitle}>Specifications</h3>
-          {Object.keys(listing?.specifications).length > 0 ? (
-            Object.entries(listing?.specifications).map(([key, value]) => (
-              <div key={key} className={styles.specItem}>
-                <strong>{key}:</strong> {value}
-              </div>
-            ))
-          ) : (
-            <div>No specifications available</div>
-          )}
-        </div> */}
 
         <div className={styles.documentsSection}>
           <h3 className={styles.sectionTitle}>Documents</h3>
@@ -155,7 +227,7 @@ const ListingProduct = () => {
         {listing?.images?.length ? (
           <div className={styles.imageContainer}>
             <img
-              src={currentImage}
+              src={currentImage || listing?.images[0]}
               alt={listing?.name}
               className={styles.primaryImage}
             />
@@ -189,7 +261,6 @@ const ListingProduct = () => {
             </div>
             <div className={styles.content}>
               <h3>{listing?.supplier?.businessName}</h3>
-              {/*<p>{listing?.supplier?.contact}</p>*/}
             </div>
           </div>
         </Link>

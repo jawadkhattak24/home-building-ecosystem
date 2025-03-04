@@ -9,7 +9,6 @@ import { ChatContext } from "../../../contexts/chatContext";
 // import { NegotiationButton } from "../Negotiation/negotiationButton/negotiationButton";
 // import { NegotiationMessage } from "../Negotiation/negotiationMessage/negotiationMessage";
 
-
 function MessageList({
   currentUser,
   conversations,
@@ -82,7 +81,7 @@ function MessageList({
     if (activeConversation && currentUserId) {
       // Find the other user in the conversation
       const other = activeConversation?.participants?.find(
-        participant => participant._id !== currentUserId
+        (participant) => participant._id !== currentUserId
       );
       setOtherUser(other || null);
     }
@@ -108,14 +107,19 @@ function MessageList({
         <div className={styles.messagesWrapper}>
           <div className={styles.receiptNameBar}>
             <Link
-              to={`/${otherUser.userType === "homeowner"
-                ? `homeowner-profile/${otherUser._id}`
-                : otherUser.userType === "professional"
+              to={`/${
+                otherUser.userType === "homeowner"
+                  ? `homeowner-profile/${otherUser._id}`
+                  : otherUser.userType === "professional"
                   ? `professional-profile/${otherUser.userId}`
                   : `supplier-profile/${otherUser._id}`
-                }`}
+              }`}
             >
-              <h2 className={styles.receiptName}>{otherUser.name}</h2>
+              <h2 className={styles.receiptName}>
+                {otherUser.userType === "supplier"
+                  ? otherUser.businessName
+                  : otherUser.name || "Unknown User"}
+              </h2>
             </Link>
           </div>
           <div className={styles.message_list} ref={messageListRef}>
@@ -165,17 +169,19 @@ function MessageList({
                 return (
                   <div className={styles.main_cont_msg} key={message._id}>
                     <div
-                      className={` ${styles.chatBubble} ${message.sender === currentUserId
-                        ? styles.sent
-                        : styles.received
-                        }`}
+                      className={` ${styles.chatBubble} ${
+                        message.sender === currentUserId
+                          ? styles.sent
+                          : styles.received
+                      }`}
                     >
                       {message.content}
                       <p
-                        className={`${message.sender === currentUserId
-                          ? styles.sentTimestamp
-                          : styles.receivedTimestamp
-                          }`}
+                        className={`${
+                          message.sender === currentUserId
+                            ? styles.sentTimestamp
+                            : styles.receivedTimestamp
+                        }`}
                       >
                         {displayDateTime}
                       </p>

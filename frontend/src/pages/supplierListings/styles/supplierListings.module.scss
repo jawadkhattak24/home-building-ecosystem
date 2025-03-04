@@ -1,11 +1,11 @@
-@use "../../../globalStyles/base.scss" as base;
+@use "../../../globalStyles/base.scss"as base;
 
 .supplierListingsContainer {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
-  gap: 1rem;
+  gap: 2rem;
   margin: 30px;
   min-height: 100vh;
   padding: 20px;
@@ -127,6 +127,230 @@ label {
   width: 80%;
   flex-direction: column;
   align-items: center;
+  justify-content: flex-start;
+  // gap: 1rem;
+}
+
+.listingCardContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  border: 1px solid base.$border-color;
+  border-radius: 5px;
+  padding: 1rem;
+}
+
+.listingCardTitle {
+  font-size: 1rem;
+  font-weight: 500;
+  max-width: 300px;
+  color: base.$black;
+  font-family: "AcuminPro";
+}
+
+.listingCardHeader {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1rem;
+
+  .listingCardImageContainer {
+    width: 100px;
+    height: 80px;
+    border-radius: 5px;
+    overflow: hidden;
+
+    img {
+      object-fit: cover;
+      width: 100px;
+      height: 80px;
+    }
+  }
+}
+
+.listingCardStats {
+  justify-self: flex-end;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 60px;
+  padding-right: 4rem;
+  width: 50%;
+
+  p {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: base.$black;
+  }
+}
+
+.actionsButtonsContainer {
+  position: relative;
+}
+
+.actionMenuButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  // background: base.$black;
+  background: transparent;
+  color: black;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: base.$background;
+  }
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.actionDot {
+  width: 4px;
+  height: 4px;
+  background-color: base.$black;
+  border-radius: 50%;
+}
+
+.actionMenuDropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 120px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  overflow: hidden;
+  animation: fadeIn 0.2s ease;
+}
+
+.actionMenuItem {
+  width: 100%;
+  padding: 10px 16px;
+  text-align: left;
+  background: none;
+  border: none;
+  color: base.$black;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: base.$background;
+  }
+
+  &:not(:last-child) {
+    border-bottom: 1px solid base.$border-color;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.deleteConfirmationContainer {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 100vw;
+  height: 100vh;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
   gap: 1rem;
+  background-color: rgba(214, 214, 214, 0.5);
+}
+
+.deleteConfirmation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 2rem;
+  border-radius: 5px;
+  z-index: 1000;
+  border: 1px solid base.$border-color;
+
+  .deleteConfirmationButton {
+    background-color: base.$primary;
+    color: white;
+    margin-right: 1rem;
+    border: none;
+    outline: none;
+
+    &:hover {
+      outline: none;
+      border: none;
+      background-color: base.$primary-dark;
+    }
+  }
+
+  .cancelDeleteButton {
+    background-color: base.$background;
+    color: base.$black;
+  }
+}
+
+.listingCardStatsContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+  width: 500px;
+}
+
+.listingCardStatsItem {
+  font-size: 1rem;
+  font-weight: 500;
+  font-family: monospace;
+  color: base.$black;
+}
+
+.analyticsLabelContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+  width: 100%;
+  padding-right: 5rem;
+
+  .analyticsLabel {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+  }
 }

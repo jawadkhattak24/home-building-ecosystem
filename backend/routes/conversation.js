@@ -5,6 +5,7 @@ const Message = require("../models/Message");
 const authMiddleware = require("../middlewares/auth");
 const User = require("../models/User");
 const Professional = require("../models/Professional");
+const Supplier = require("../models/Supplier");
 
 router.use(authMiddleware);
 
@@ -40,6 +41,12 @@ router.post("/", async (req, res) => {
   try {
     const { participant, userType } = req.body;
     // console.log("User ID coming from conversations api route: ", req.user);
+
+    console.log(
+      "Participant and userType in conversations api route: ",
+      participant,
+      userType
+    );
 
     const conversation = new Conversation({
       participants: [
@@ -116,7 +123,6 @@ router.get("/:conversationId/messages", async (req, res) => {
 router.get("/:userType", authMiddleware, async (req, res) => {
   try {
     const userType = req.params.userType;
-    // console.log("Request user: ", req.user);
 
     let userId;
 
@@ -125,6 +131,9 @@ router.get("/:userType", authMiddleware, async (req, res) => {
     } else if (userType === "professional") {
       const professional = await Professional.findOne({ userId: req.user._id });
       userId = professional._id;
+    } else if (userType === "supplier") {
+      const supplier = await Supplier.findOne({ userId: req.user._id });
+      userId = supplier._id;
     }
 
     const conversations = await Conversation.aggregate([
@@ -198,6 +207,52 @@ router.get("/:userType", authMiddleware, async (req, res) => {
       },
       {
         $lookup: {
+          from: "suppliers",
+          let: { participants: "$participants" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $in: [
+                    "$_id",
+                    {
+                      $map: {
+                        input: {
+                          $filter: {
+                            input: "$$participants",
+                            as: "participant",
+                            cond: {
+                              $eq: ["$$participant.userType", "supplier"],
+                            },
+                          },
+                        },
+                        as: "participant",
+                        in: "$$participant.user",
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+            {
+              $lookup: {
+                from: "users",
+                localField: "userId",
+                foreignField: "_id",
+                as: "userData",
+              },
+            },
+            {
+              $addFields: {
+                userData: { $arrayElemAt: ["$userData", 0] },
+              },
+            },
+          ],
+          as: "supplierData",
+        },
+      },
+      {
+        $lookup: {
           from: "users",
           let: { participants: "$participants" },
           pipeline: [
@@ -267,6 +322,33 @@ router.get("/:userType", authMiddleware, async (req, res) => {
                         rating: "$$professional.rating",
                         ratePerHour: "$$professional.ratePerHour",
                         bio: "$$professional.bio",
+                      },
+                    ],
+                  },
+                },
+              },
+              {
+                $map: {
+                  input: "$supplierData",
+                  as: "supplier",
+                  in: {
+                    $mergeObjects: [
+                      {
+                        _id: "$$supplier._id",
+                        userId: "$$supplier.userId",
+                        name: "$$supplier.userData.name",
+                        email: "$$supplier.userData.email",
+                        userType: "supplier",
+                        profilePictureUrl:
+                          "$$supplier.userData.profilePictureUrl",
+                      },
+                      {
+                        businessName: "$$supplier.businessName",
+                        businessType: "$$supplier.businessType",
+                        businessDescription: "$$supplier.businessDescription",
+                        logo: "$$supplier.logo",
+                        rating: "$$supplier.rating",
+                        isVerified: "$$supplier.isVerified",
                       },
                     ],
                   },
