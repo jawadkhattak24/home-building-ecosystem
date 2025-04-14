@@ -1,61 +1,34 @@
-const nodemailer = require("nodemailer");
-const { google } = require("googleapis");
-require("dotenv").config();
+const { Resend } = require('resend');
+const resend = new Resend(process.env.Resend_API_KEY);
 
-const OAuth2 = google.auth.OAuth2;
-
-const oauth2Client = new OAuth2(
-  process.env.GMAIL_CLIENT_ID,
-  process.env.GMAIL_CLIENT_SECRET,
-  "https://developers.google.com/oauthplayground"
-);
-
-oauth2Client.setCredentials({
-  refresh_token: process.env.GMAIL_REFRESH_TOKEN,
-});
-
-const createTransporter = async () => {
+const sendVerificationEmail = async (to, verificationCode) => {
   try {
-    const accessTokenResponse = await oauth2Client.getAccessToken();
-    const accessToken = accessTokenResponse.token;
-
-    if (!accessToken) {
-      throw new Error("Failed to retrieve access token :(");
-    }
-
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        type: "OAuth2",
-        user: process.env.GMAIL_USER,
-        accessToken: accessToken,
-        clientId: process.env.GMAIL_CLIENT_ID,
-        clientSecret: process.env.GMAIL_CLIENT_SECRET,
-        refreshToken: process.env.GMAIL_REFRESH_TOKEN,
-      },
+    const { data, error } = await resend.emails.send({
+      from: 'GoMarkets <onboarding@resend.dev>',
+      to: to,
+      subject: 'Email Verification - GoMarkets',
+      html: `
+        <h1>Welcome to GoMarkets!</h1>
+        <p>Please verify your email address by entering the following verification code:</p>
+        <h2 style="color: #4a90e2;">${verificationCode}</h2>
+        <p>This code will expire in 15 minutes.</p>
+        <p>If you didn't request this verification, please ignore this email.</p>
+      `
     });
 
-    return transporter;
+    if (error) {
+      console.error('Error sending verification email:', error);
+      return false;
+    }
+
+    console.log('Verification email sent:', data);
+    return true;
   } catch (error) {
-    console.error("Error creating transporter:", error);
-    throw error;
+    console.error('Error sending verification email:', error);
+    return false;
   }
 };
 
-console.log("Email Add New, well well well:", process.env.GMAIL_USER);
-
-exports.sendVerificationEmail = async (email, code) => {
-  const mailOptions = {
-    from: process.env.GMAIL_USER,
-    to: email,
-    subject: "Verify Your Email",
-    html: `
-      <h1>Email Verification</h1>
-      <p>Your verification code is: <strong>${code}</strong></p>
-      <p>Please enter this code to complete your registration.</p>
-    `,
-  };
-
-  let transporter = await createTransporter();
-  await transporter.sendMail(mailOptions);
-};
+module.exports = {
+  sendVerificationEmail
+}; 

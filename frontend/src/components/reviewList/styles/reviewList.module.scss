@@ -1,0 +1,171 @@
+.reviewList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.noReviews {
+  color: #666;
+  font-size: 0.95rem;
+  text-align: center;
+  padding: 2rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.reviewCard {
+  background: white;
+  border-radius: 5px;
+  padding: 1.5rem;
+  border: 1px solid #eee;
+}
+
+.reviewHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.userAvatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.userInitial {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: #3498db;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.userMeta {
+  h4 {
+    margin: 0;
+    font-size: 1rem;
+    color: #333;
+  }
+}
+
+.reviewDate {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.rating {
+  display: flex;
+  gap: 0.25rem;
+  font-size: 1.1rem;
+}
+
+.starFilled {
+  color: #ffb800;
+}
+
+.starEmpty {
+  color: #ddd;
+}
+
+.reviewContent {
+  margin-top: 0.5rem;
+}
+
+.description {
+  margin: 0;
+  color: #444;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  
+  &:not(.expanded) {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+.expandButton {
+  background: none;
+  border: none;
+  color: #3498db;
+  padding: 0.5rem 0;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  
+  &:hover {
+    color: #2980b9;
+  }
+}
+
+.reviewImage {
+  margin-top: 1rem;
+  border-radius: 8px;
+  overflow: hidden;
+  max-width: 300px;
+  
+  img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+}
+
+.loadMoreButton {
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 0.75rem;
+  width: 100%;
+  color: #666;
+  font-size: 0.95rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.2s;
+  
+  &:hover {
+    background-color: #f8f9fa;
+    border-color: #ccc;
+  }
+}
+
+@media (max-width: 768px) {
+  .reviewCard {
+    padding: 1rem;
+  }
+  
+  .reviewHeader {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .rating {
+    align-self: flex-start;
+  }
+  
+  .userAvatar,
+  .userInitial {
+    width: 40px;
+    height: 40px;
+  }
+} 

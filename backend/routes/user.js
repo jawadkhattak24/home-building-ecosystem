@@ -841,17 +841,17 @@ router.post("/send-verification", async (req, res) => {
     if (!user) {
       user = new EmailVerification({
         email,
-        verificationCode: 96925,
+        verificationCode: verificationCode,
         verificationCodeExpires,
       });
       await user.save();
     } else {
-      user.verificationCode = 96925;
+      user.verificationCode = verificationCode;
       user.verificationCodeExpires = verificationCodeExpires;
       await user.save();
     }
 
-    // await sendVerificationEmail(email, 96925);
+    await sendVerificationEmail(email, verificationCode);
 
     res.status(200).json({ message: "Verification code sent to your email" });
   } catch (err) {
