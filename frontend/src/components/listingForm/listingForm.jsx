@@ -41,7 +41,17 @@ const materialConfig = {
     },
     lighting: {
       units: ["piece", "meter", "set"],
-      brands: ["KE", "Pak Cable", "Siemens", "ABB", "Hager", "BrightGlow"],
+      brands: [
+        "KE",
+        "Pak Cable",
+        "Siemens",
+        "ABB",
+        "Hager",
+        "BrightGlow",
+        "Lumière Royale",
+        "Aurora Elegance",
+        "HaloGlow"
+      ],
       specifications: ["voltage", "currentRating", "certification"],
     },
   },
