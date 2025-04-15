@@ -19,13 +19,28 @@
   border-radius: 5px;
   padding: 1.5rem;
   border: 1px solid #eee;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.reviewCardContent {
+  display: flex;
+  flex-direction: column;
+  gap: 5vh;
+  width: 70%;
 }
 
 .reviewHeader {
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 1rem;
+  // margin-bottom: 1rem;
+  width: fit-content;
+  gap: 3vw;
 }
 
 .userInfo {
@@ -71,6 +86,7 @@
   display: flex;
   gap: 0.25rem;
   font-size: 1.1rem;
+  margin-bottom: 2vh;
 }
 
 .starFilled {
@@ -82,7 +98,7 @@
 }
 
 .reviewContent {
-  margin-top: 0.5rem;
+  // margin-top: 0.5rem;
 }
 
 .description {
@@ -90,7 +106,7 @@
   color: #444;
   line-height: 1.6;
   white-space: pre-wrap;
-  
+
   &:not(.expanded) {
     display: -webkit-box;
     -webkit-line-clamp: 3;
@@ -109,18 +125,20 @@
   display: flex;
   align-items: center;
   gap: 0.25rem;
-  
+
   &:hover {
     color: #2980b9;
   }
 }
 
 .reviewImage {
-  margin-top: 1rem;
-  border-radius: 8px;
+  // margin-top: 1rem;
+  border-radius: 5px;
   overflow: hidden;
-  max-width: 300px;
-  
+  max-height: 150px;
+  max-width: 250px;
+  object-fit: cover;
+
   img {
     width: 100%;
     height: auto;
@@ -142,7 +160,7 @@
   justify-content: center;
   gap: 0.5rem;
   transition: all 0.2s;
-  
+
   &:hover {
     background-color: #f8f9fa;
     border-color: #ccc;
@@ -153,19 +171,19 @@
   .reviewCard {
     padding: 1rem;
   }
-  
+
   .reviewHeader {
     flex-direction: column;
     gap: 1rem;
   }
-  
+
   .rating {
     align-self: flex-start;
   }
-  
+
   .userAvatar,
   .userInitial {
     width: 40px;
     height: 40px;
   }
-} 
+}

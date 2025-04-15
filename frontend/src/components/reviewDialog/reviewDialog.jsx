@@ -16,6 +16,7 @@ const ReviewDialog = ({ isOpen, onClose, onSubmit, professionalId }) => {
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef(null);
 
   const handleStarClick = (starValue) => {
@@ -57,7 +58,7 @@ const ReviewDialog = ({ isOpen, onClose, onSubmit, professionalId }) => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (rating === 0) {
@@ -78,14 +79,8 @@ const ReviewDialog = ({ isOpen, onClose, onSubmit, professionalId }) => {
       formData.append("image", image);
     }
 
-    // Log each key-value pair in the FormData
-    console.log("FormData contents:");
-    for (let [key, value] of formData.entries()) {
-      console.log(`${key}: ${value}`);
-    }
-
-    onSubmit(formData);
-    resetForm();
+    setIsSubmitting(true);
+    await onSubmit(formData);
   };
 
   const resetForm = () => {
@@ -94,6 +89,7 @@ const ReviewDialog = ({ isOpen, onClose, onSubmit, professionalId }) => {
     setImage(null);
     setImagePreview(null);
     setError("");
+    setIsSubmitting(false);
   };
 
   if (!isOpen) return null;
@@ -191,11 +187,16 @@ const ReviewDialog = ({ isOpen, onClose, onSubmit, professionalId }) => {
               type="button"
               className={styles.cancelButton}
               onClick={onClose}
+              disabled={isSubmitting}
             >
               Cancel
             </button>
-            <button type="submit" className={styles.submitButton}>
-              Submit Review
+            <button 
+              type="submit" 
+              className={styles.submitButton}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Submitting..." : "Submit Review"}
             </button>
           </div>
         </form>

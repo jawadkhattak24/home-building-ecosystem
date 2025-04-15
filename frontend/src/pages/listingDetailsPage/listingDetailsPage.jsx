@@ -3,11 +3,25 @@ import { Link, useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import styles from "./styles/listingDetailsPage.module.scss";
-import StarRatings from "../../components/starRating/starRating";
-import { FaHeart, FaCommentDots } from "react-icons/fa";
+// import StarRatings from "../../components/starRating/starRating";
+import { FaHeart, FaCommentDots, FaStar, FaStarHalf } from "react-icons/fa";
 import { ChatContext } from "../../contexts/chatContext";
 import { useAuth } from "../../contexts/authContext";
 import ListingDetailsPageLoadingSkeleton from "./loadingSkeleton/listingDetailsPageLoadingSkeleton";
+
+const StarRatings = ({ rating }) => {
+  return (
+    <div className={styles.starRatings}>
+      {[...Array(5)].map((_, i) => (
+        <FaStar key={i} color="#fb5012" className={styles.star} />
+        // <i
+        //   key={i}
+        //   className={`fas fa-star${i < Math.floor(rating) ? "" : "-o"}`}
+        // />
+      ))}
+    </div>
+  );
+};
 
 const ListingProduct = () => {
   const { setActiveConversation, checkConversationExists } =
@@ -125,13 +139,15 @@ const ListingProduct = () => {
 
         <div className={styles.materialInfo}>
           <div className={styles.rating}>
-            <StarRatings rating={listing?.rating} />
+            <StarRatings rating={4.5} />
             <span>({listing?.reviews?.length} reviews)</span>
           </div>
 
           <div className={styles.specifications}>
             <div className={styles.KEY}>
-              <strong>Category:</strong> {listing?.category}
+              <strong>Category:</strong>{" "}
+              {listing?.category.charAt(0).toUpperCase() +
+                listing?.category.slice(1)}
             </div>
             <div className={styles.KEY}>
               <strong>Brand:</strong> {listing?.brand || "—"}
@@ -174,7 +190,7 @@ const ListingProduct = () => {
           </div>
         </div>
 
-        <div className={styles.documentsSection}>
+        {/* <div className={styles.documentsSection}>
           <h3 className={styles.sectionTitle}>Documents</h3>
           {listing?.safetyDataSheet ? (
             <a
@@ -196,7 +212,7 @@ const ListingProduct = () => {
               <i className="fas fa-file-pdf"></i> Installation Guide
             </a>
           ) : null}
-        </div>
+        </div> */}
 
         <div className={styles.reviewsSection}>
           <h3 className={styles.sectionTitle}>Customer Reviews</h3>
@@ -250,20 +266,30 @@ const ListingProduct = () => {
           </div>
         )}
 
-        <Link to={`/supplier-profile/${listing?.supplier?._id}`}>
-          <div className={styles.supplierCard}>
-            <div className={styles.image}>
-              {listing?.supplier?.logo ? (
-                <img src={listing?.supplier?.logo} alt="Supplier Logo" />
-              ) : (
-                <div className={styles.placeholder} />
-              )}
+        <div className={styles.supplierSection}>
+          <p className={styles.supplierSectionTitle}>Supplier</p>
+
+          <Link to={`/supplier-profile/${listing?.supplier?._id}`}>
+            <div className={styles.supplierCard}>
+              <div className={styles.image}>
+                {listing?.supplier?.logo ? (
+                  <img src={listing?.supplier?.logo} alt="Supplier Logo" />
+                ) : (
+                  <div className={styles.placeholder} />
+                )}
+              </div>
+              <div className={styles.content}>
+                <h3>{listing?.supplier?.businessName}</h3>
+                <p className={styles.supplierLocation}>
+                  {listing?.supplier?.address}
+                </p>
+                {/* <p className={styles.businessType}>
+                  {listing?.supplier?.businessType}
+                </p> */}
+              </div>
             </div>
-            <div className={styles.content}>
-              <h3>{listing?.supplier?.businessName}</h3>
-            </div>
-          </div>
-        </Link>
+          </Link>
+        </div>
       </div>
     </div>
   );

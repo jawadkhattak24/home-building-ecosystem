@@ -219,6 +219,7 @@ const ListingForm = ({
               <input
                 type="text"
                 name="name"
+                maxLength={30}
                 value={formData.name}
                 onChange={handleChange}
                 placeholder="Enter material name (e.g., Portland Cement Type-1)"

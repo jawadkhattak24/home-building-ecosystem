@@ -342,6 +342,9 @@ const ViewProfessionalProfile = () => {
       case "serviceType":
         dataToSend = editedData.serviceType;
         break;
+      case "yearsExperience":
+        dataToSend = editedData.yearsExperience;
+        break;
       case "bio":
         dataToSend = editedData.bio;
         break;
@@ -361,6 +364,8 @@ const ViewProfessionalProfile = () => {
         dataToSend = "";
     }
 
+    console.log("Data to send: ", dataToSend);
+
     try {
       const response = await axios.put(
         `${
@@ -370,11 +375,24 @@ const ViewProfessionalProfile = () => {
       );
       if (response.status == 201) {
         await fetchProfessionalData();
-        // setIsLoading(false);
+        toast.success(
+          `${
+            field.charAt(0).toUpperCase() + field.slice(1)
+          } updated successfully!`,
+          {
+            position: "bottom-right",
+            duration: 3000,
+          }
+        );
       }
     } catch (err) {
       console.error("An error occurred while updating profile:", err);
+      toast.error(`Failed to update ${field}. Please try again.`, {
+        position: "bottom-right",
+        duration: 3000,
+      });
     } finally {
+      setIsLoading(false);
       setEditMode({
         name: "",
         serviceType: "",
@@ -598,10 +616,10 @@ const ViewProfessionalProfile = () => {
     }
   }, [professionalData?._id]);
 
+  console.log("Professional Data: ", professionalData);
+
   const handleReviewSubmit = async (formData) => {
     try {
-      setIsLoading(true);
-
       const professionalId = professionalData?._id;
 
       if (!professionalId) {
@@ -633,11 +651,16 @@ const ViewProfessionalProfile = () => {
       );
 
       if (response.status === 201 || response.status === 200) {
-        setShowReviewDialog(false);
         toast.success("Review submitted successfully!", {
           position: "bottom-right",
           duration: 3000,
         });
+
+        // Fetch updated data before closing dialog
+        await Promise.all([fetchProfessionalData(), fetchReviews()]);
+
+        // Only close dialog after data is refreshed
+        setShowReviewDialog(false);
       }
     } catch (error) {
       console.error("Error submitting review:", error);
@@ -658,11 +681,11 @@ const ViewProfessionalProfile = () => {
           duration: 3000,
         });
       }
-    } finally {
-      await fetchProfessionalData();
-      await fetchReviews();
-      setIsLoading(false);
+      // Return false to indicate submission failed
+      return false;
     }
+    // Return true to indicate submission succeeded
+    return true;
   };
 
   if (isLoading) {
@@ -746,14 +769,17 @@ const ViewProfessionalProfile = () => {
 
           <div className={styles.rating}>
             {[...Array(5)].map((_, index) =>
-              index < Math.floor(userData?.rating) ? (
+              index < Math.floor(professionalData?.rating) ? (
                 <FaStar key={index} className={styles.starFilled} />
               ) : (
                 <FaRegStar key={index} className={styles.starEmpty} />
               )
             )}
-            <span>{userData?.rating}</span> <br />
-            <span>({userData?.projectsCompleted || 0} projects)</span>
+            <span className={styles.ratingText}>
+              {parseFloat(professionalData?.rating).toFixed(1)}
+            </span>{" "}
+            <br />
+            <span>({reviews?.length || 0} Reviews)</span>
           </div>
           <div className={styles.rateContainer}>
             <p className={styles.rateText}>Starting at</p>
@@ -1094,24 +1120,26 @@ const ViewProfessionalProfile = () => {
             <h2 className={styles.experience}>
               <FaBriefcase /> Experience
             </h2>
-            {editMode.experience ? (
+            {editMode.yearsExperience ? (
               <div className={styles.editField}>
                 <input
                   type="number"
-                  value={editedData.experience}
+                  value={editedData.yearsExperience}
                   className={styles.experienceEditInput}
-                  onChange={(e) => handleChange("experience", e.target.value)}
+                  onChange={(e) =>
+                    handleChange("yearsExperience", e.target.value)
+                  }
                 />
 
                 <div
-                  onClick={() => handleSave("experience")}
+                  onClick={() => handleSave("yearsExperience")}
                   className={styles.saveButton}
                 >
                   <FaCheck />
                 </div>
                 <div
                   onClick={() =>
-                    setEditMode({ ...editMode, experience: false })
+                    setEditMode({ ...editMode, yearsExperience: false })
                   }
                   className={styles.cancelButton}
                 >
@@ -1120,11 +1148,12 @@ const ViewProfessionalProfile = () => {
               </div>
             ) : (
               <h2 className={styles.experienceDescription}>
-                {Math.floor(Math.random() * 10)} years
+                {professionalData?.yearsExperience + " years"}
+                {/* {Math.floor(Math.random() * 10)} years */}
                 {isOwner && isEditMode && (
                   <FaPencilAlt
                     className={styles.editIcon}
-                    onClick={() => handleEditClick("experience")}
+                    onClick={() => handleEditClick("yearsExperience")}
                   />
                 )}
               </h2>
@@ -1310,7 +1339,7 @@ const ViewProfessionalProfile = () => {
         </div>
       </div>
       <div className={styles.reviewsContainer}>
-        <h2>Reviews</h2>
+        <h2>Reviews ({reviews.length})</h2>
         {isLoadingReviews ? (
           <div className={styles.loadingReviews}>Loading reviews...</div>
         ) : (

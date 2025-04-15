@@ -174,7 +174,7 @@ router.get("/listing/:listingId", async (req, res) => {
   try {
     const listing = await Listing.findById(req.params.listingId).populate(
       "supplier",
-      "businessName logo"
+      "businessName logo businessType address"
     );
     if (!listing) {
       return res.status(404).json({ message: "Listing not found" });

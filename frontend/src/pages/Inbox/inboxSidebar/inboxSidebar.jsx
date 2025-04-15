@@ -69,89 +69,89 @@ function Sidebar({
 
   return (
     <div className={styles.sidebar}>
-      {isLoading ? (
+      {/* {isLoading ? (
         <InboxSidebarSkeleton />
-      ) : (
-        sortedConversations
-          .map((convo) => {
-            console.log("Convo in Sidebar Component: ", convo);
-            const lastMessageText = convo.lastMessage
-              ? convo.lastMessage.content
-              : "No messages yet";
+      ) : ( */}
 
-            const otherUser = convo.participants?.find(
-              (participant) =>
-                participant._id !== (currentUser?._id || currentUser?.id)
-            );
+      {sortedConversations
+        .map((convo) => {
+          console.log("Convo in Sidebar Component: ", convo);
+          const lastMessageText = convo.lastMessage
+            ? convo.lastMessage.content
+            : "No messages yet";
 
-            if (!otherUser) {
-              console.error("Other user not found in conversation:", convo);
-              return null;
-            }
+          const otherUser = convo.participants?.find(
+            (participant) =>
+              participant._id !== (currentUser?._id || currentUser?.id)
+          );
 
-            console.log("Other User in Sidebar Component: ", otherUser);
+          if (!otherUser) {
+            console.error("Other user not found in conversation:", convo);
+            return null;
+          }
 
-            return (
-              <div
-                className={`${styles.message_list} ${
-                  activeConversation === convo._id
-                    ? styles.active
-                    : styles.inActive
-                }`}
-                key={convo._id}
-                onClick={() => onSelectConversation(convo._id)}
-              >
-                <div className={styles.avatarContainer}>
-                  <img
-                    className={styles.avatarImg}
-                    src={
-                      otherUser.userType === "supplier"
-                        ? otherUser.logo
-                        : otherUser.profilePictureUrl
-                    }
-                    alt={`${otherUser.name || "User"}'s avatar`}
-                    onError={(e) => {
-                      e.target.src =
-                        "https://servicesthumbnailbucket.s3.ap-south-1.amazonaws.com/profile_avatar.jpg";
-                    }}
-                  />
-                </div>
-                <div className={styles.converationsDetailsContainer}>
-                  <h3
-                    className={`${styles.receipt} ${
-                      activeConversation === convo._id
-                        ? styles.activeReceipt
-                        : styles.inActiveReceipt
-                    }`}
-                  >
-                    {otherUser.userType === "supplier"
-                      ? otherUser.businessName
-                      : otherUser.name || "Unknown User"}
-                  </h3>
-                  <p
-                    className={`${styles.conversationDate} ${
-                      activeConversation === convo._id
-                        ? styles.activeDate
-                        : styles.inActiveDate
-                    }`}
-                  >
-                    {getLastMessageTime(convo)}
-                  </p>
-                  <p
-                    className={`${styles.lastMessage} ${
-                      activeConversation === convo._id
-                        ? styles.activeMessage
-                        : styles.inActiveMessage
-                    }`}
-                  >
-                    {lastMessageText}
-                  </p>
-                </div>
+          console.log("Other User in Sidebar Component: ", otherUser);
+
+          return (
+            <div
+              className={`${styles.message_list} ${
+                activeConversation === convo._id
+                  ? styles.active
+                  : styles.inActive
+              }`}
+              key={convo._id}
+              onClick={() => onSelectConversation(convo._id)}
+            >
+              <div className={styles.avatarContainer}>
+                <img
+                  className={styles.avatarImg}
+                  src={
+                    otherUser.userType === "supplier"
+                      ? otherUser.logo
+                      : otherUser.profilePictureUrl
+                  }
+                  alt={`${otherUser.name || "User"}'s avatar`}
+                  onError={(e) => {
+                    e.target.src =
+                      "https://servicesthumbnailbucket.s3.ap-south-1.amazonaws.com/profile_avatar.jpg";
+                  }}
+                />
               </div>
-            );
-          })
-          .filter(Boolean)
-      )}
+              <div className={styles.converationsDetailsContainer}>
+                <h3
+                  className={`${styles.receipt} ${
+                    activeConversation === convo._id
+                      ? styles.activeReceipt
+                      : styles.inActiveReceipt
+                  }`}
+                >
+                  {otherUser.userType === "supplier"
+                    ? otherUser.businessName
+                    : otherUser.name || "Unknown User"}
+                </h3>
+                <p
+                  className={`${styles.conversationDate} ${
+                    activeConversation === convo._id
+                      ? styles.activeDate
+                      : styles.inActiveDate
+                  }`}
+                >
+                  {getLastMessageTime(convo)}
+                </p>
+                <p
+                  className={`${styles.lastMessage} ${
+                    activeConversation === convo._id
+                      ? styles.activeMessage
+                      : styles.inActiveMessage
+                  }`}
+                >
+                  {lastMessageText}
+                </p>
+              </div>
+            </div>
+          );
+        })
+        .filter(Boolean)}
     </div>
   );
 }

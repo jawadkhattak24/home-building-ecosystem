@@ -6,11 +6,26 @@ import { ChevronDownIcon } from "lucide-react";
 import axios from "axios";
 import { useLoading } from "../../contexts/loadingContext";
 import { FaEnvelope, FaHeart } from "react-icons/fa";
+import {
+  FaHardHat,
+  FaPaintBrush,
+  FaTools,
+  FaHome,
+  FaStore,
+  FaLightbulb,
+  FaTree,
+  FaWrench,
+  FaTint,
+  FaBath,
+  FaCouch,
+} from "react-icons/fa";
+import { MdDesignServices, MdOutlineArchitecture } from "react-icons/md";
 
 const Navigation = () => {
   const { currentUser, logout, globalUserType, setGlobalUserType } = useAuth();
   console.log("Current user in navigation:", currentUser);
   const [showAvatarMenu, setShowAvatarMenu] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState(null);
   const [isSwitching, setIsSwitching] = useState(false);
   const avatarMenuRef = useRef(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -18,7 +33,152 @@ const Navigation = () => {
 
   console.log("Search type in navigation:", searchType);
   const navigate = useNavigate();
-  const { setIsLoading, isLoading, LoadingUI } = useLoading();
+  const { setIsLoading } = useLoading();
+
+  const megaMenuData = {
+    professionals: [
+      {
+        title: "Design & Planning",
+        items: [
+          {
+            icon: <MdOutlineArchitecture />,
+            title: "Architects",
+            description: "Expert architectural design and planning",
+            link: "/search?query=architect&type=professionals",
+          },
+          {
+            icon: <MdDesignServices />,
+            title: "Interior Designers",
+            description: "Transform your interior spaces",
+            link: "/search?query=interior+designer&type=professionals",
+          },
+          {
+            icon: <FaTree />,
+            title: "Landscape Architects",
+            description: "Create beautiful outdoor spaces",
+            link: "/search?query=landscaper&type=professionals",
+          },
+        ],
+      },
+      {
+        title: "Construction",
+        items: [
+          {
+            icon: <FaHardHat />,
+            title: "General Contractors",
+            description: "Manage your entire project",
+            link: "/search?query=contractor&type=professionals",
+          },
+          {
+            icon: <FaTools />,
+            title: "Carpenters",
+            description: "Custom woodwork and installations",
+            link: "/search?query=carpenter&type=professionals",
+          },
+          {
+            icon: <FaWrench />,
+            title: "HVAC Specialists",
+            description: "Heating and cooling solutions",
+            link: "/search?query=hvac&type=professionals",
+          },
+        ],
+      },
+      {
+        title: "Specialized Services",
+        items: [
+          {
+            icon: <FaTint />,
+            title: "Plumbers",
+            description: "Professional plumbing services",
+            link: "/search?query=plumber&type=professionals",
+          },
+          {
+            icon: <FaLightbulb />,
+            title: "Electricians",
+            description: "Electrical installation and repair",
+            link: "/search?query=electrician&type=professionals",
+          },
+          {
+            icon: <FaPaintBrush />,
+            title: "Painters",
+            description: "Professional painting services",
+            link: "/search?query=painter&type=professionals",
+          },
+        ],
+      },
+    ],
+    materials: [
+      {
+        title: "Building Materials",
+        items: [
+          {
+            icon: <FaHome />,
+            title: "Construction Materials",
+            description: "Foundation to finishing materials",
+            link: "/search?query=construction&type=materials",
+          },
+          {
+            icon: <FaStore />,
+            title: "Hardware & Tools",
+            description: "Quality tools and hardware supplies",
+            link: "/search?query=hardware&type=materials",
+          },
+          {
+            icon: <FaPaintBrush />,
+            title: "Paint & Finishes",
+            description: "Wide range of colors and finishes",
+            link: "/search?query=paint&type=materials",
+          },
+        ],
+      },
+      {
+        title: "Interior Finishes",
+        items: [
+          {
+            icon: <FaCouch />,
+            title: "Furniture & Decor",
+            description: "Stylish home furnishings",
+            link: "/search?query=furniture&type=materials",
+          },
+          {
+            icon: <FaLightbulb />,
+            title: "Lighting",
+            description: "Modern lighting solutions",
+            link: "/search?query=lighting&type=materials",
+          },
+          {
+            icon: <FaBath />,
+            title: "Bathroom & Kitchen",
+            description: "Fixtures and fittings",
+            link: "/search?query=fixtures&type=materials",
+          },
+        ],
+      },
+      {
+        title: "Outdoor & Landscaping",
+        items: [
+          {
+            icon: <FaTree />,
+            title: "Garden & Landscaping",
+            description: "Outdoor and garden supplies",
+            link: "/search?query=garden&type=materials",
+          },
+          {
+            icon: <FaHome />,
+            title: "Outdoor Living",
+            description: "Patios and outdoor spaces",
+            link: "/search?query=outdoor&type=materials",
+          },
+          {
+            icon: <FaLightbulb />,
+            title: "Outdoor Lighting",
+            description: "Landscape lighting solutions",
+            link: "/search?query=outdoor+lighting&type=materials",
+          },
+        ],
+      },
+    ],
+  };
 
   const toggleAvatarMenu = () => {
     setShowAvatarMenu(!showAvatarMenu);
@@ -216,16 +376,122 @@ const Navigation = () => {
     navigate(`/search?query=${query}&type=professionals`);
   };
 
+  const renderMegaDropdown = (type) => {
+    const data = megaMenuData[type];
+    if (!data) return null;
+
+    return (
+      <div
+        className={`${styles.megaDropdown} ${
+          activeDropdown === type ? styles.megaDropdownVisible : ""
+        }`}
+      >
+        <div className={styles.megaDropdownContent}>
+          {data.map((section, index) => (
+            <div key={index} className={styles.megaDropdownSection}>
+              <h2>{section.title}</h2>
+              {section.items.map((item, itemIndex) => (
+                <Link
+                  key={itemIndex}
+                  to={item.link}
+                  className={styles.megaDropdownItem}
+                  onClick={() => setActiveDropdown(null)}
+                >
+                  <div className={styles.categoryIcon}>{item.icon}</div>
+                  <div className={styles.categoryContent}>
+                    <h3>{item.title}</h3>
+                    <p>{item.description}</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  const handleNavTrigger = (type) => {
+    if (activeDropdown === type) {
+      setActiveDropdown(null);
+    } else {
+      setActiveDropdown(type);
+    }
+  };
+
+  const navigationLinks = () => (
+    <div className={styles.navTriggerContainer}>
+      <button
+        className={`${styles.navTrigger} ${
+          activeDropdown === "professionals" ? styles.active : ""
+        }`}
+        onClick={() => handleNavTrigger("professionals")}
+      >
+        Hire Professionals <ChevronDownIcon size={16} />
+      </button>
+      <button
+        className={`${styles.navTrigger} ${
+          activeDropdown === "materials" ? styles.active : ""
+        }`}
+        onClick={() => handleNavTrigger("materials")}
+      >
+        Find Materials <ChevronDownIcon size={16} />
+      </button>
+      {renderMegaDropdown("professionals")}
+      {renderMegaDropdown("materials")}
+    </div>
+  );
+
   const publicNav = () => {
     return (
-      <>
-        <header className={styles.header}>
-          <div className={styles.container}>
-            <Link to="/" className={styles.logo}>
-              Home Building Ecosystem
-            </Link>
+      <header className={styles.header}>
+        <div className={styles.container}>
+          <Link to="/" className={styles.logo}>
+            Home Building Ecosystem
+          </Link>
+          <nav className={styles.nav}>
+            {navigationLinks()}
+            {loginRegisterNav()}
+          </nav>
+        </div>
+      </header>
+    );
+  };
+
+  const homeownerNav = () => {
+    return (
+      <header className={styles.header}>
+        <div className={styles.container}>
+          <Link to="/" className={styles.logo}>
+            Home Building Ecosystem
+          </Link>
+          <nav className={styles.nav}>
+            {navigationLinks()}
             <div className={styles.searchBar}>
               <div className={styles.searchInput}>
+                <div className={styles.customSelect}>
+                  <select
+                    value={searchType}
+                    onChange={(e) => {
+                      setSearchType(e.target.value);
+                    }}
+                  >
+                    <option value="professionals">Professionals</option>
+                    <option value="materials">Materials</option>
+                  </select>
+                </div>
+
+                <input
+                  type="text"
+                  placeholder="Search the building world"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleSearchInput(searchQuery, searchType);
+                    }
+                  }}
+                />
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 12 12"
@@ -235,11 +501,11 @@ const Navigation = () => {
                   height="100%"
                   className={styles.searchIcon}
                   aria-hidden="true"
+                  onClick={() => handleSearchInput(searchQuery, searchType)}
                 >
                   <title id="IconBase-title-8f46da7f-207f-4224-95cb-e741d5d98fbf">
                     search
                   </title>
-
                   <desc id="IconBase-description-8f46da7f-207f-4224-95cb-e741d5d98fbf">
                     magnifying glass
                   </desc>
@@ -247,275 +513,37 @@ const Navigation = () => {
                     <path d="M11.407,10.421,8.818,7.832a4.276,4.276,0,1,0-.985.985l2.589,2.589a.7.7,0,0,0,.985-.985ZM2.355,5.352a3,3,0,1,1,3,3,3,3,0,0,1-3-3Z"></path>
                   </g>
                 </svg>
-
-                <input
-                  type="text"
-                  placeholder="Search the building world"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  data-testid="navigation-search-input"
-                />
               </div>
             </div>
-
-            <nav className={styles.nav}>
-              <div className={styles.dropdown}>
-                <button className={styles.dropbtn}>
-                  Hire Professionals{" "}
-                  <ChevronDownIcon
-                    className={styles.chevronDownIcon}
-                    color="#191919"
-                    size={16}
-                  />
-                </button>
-                <div className={styles.dropdownContent}>
-                  <button
-                    className={styles.dropdownItem}
-                    onClick={() => handleSearchClick("architect")}
-                  >
-                    Architects
-                  </button>
-                  <button
-                    className={styles.dropdownItem}
-                    onClick={() => handleSearchClick("interior designer")}
-                  >
-                    Interior Designers
-                  </button>
-
-                  <button
-                    className={styles.dropdownItem}
-                    onClick={() => handleSearchClick("landscaper")}
-                  >
-                    Landscapers
-                  </button>
-
-                  <button
-                    className={styles.dropdownItem}
-                    onClick={() => handleSearchClick("carpenter")}
-                  >
-                    Carpenters
-                  </button>
-
-                  <button
-                    className={styles.dropdownItem}
-                    onClick={() => handleSearchClick("plumber")}
-                  >
-                    Plumbers
-                  </button>
-
-                  <button
-                    className={styles.dropdownItem}
-                    onClick={() => handleSearchClick("electrician")}
-                  >
-                    Electricians
-                  </button>
-                  <button
-                    className={styles.dropdownItem}
-                    onClick={() => handleSearchClick("painter")}
-                  >
-                    Painters
-                  </button>
-                </div>
-              </div>
-
-              <div className={styles.dropdown}>
-                <button className={styles.dropbtn}>
-                  Find Material{" "}
-                  <ChevronDownIcon
-                    className={styles.chevronDownIcon}
-                    color="#191919"
-                    size={16}
-                  />
-                </button>
-                <div className={styles.dropdownContent}>
-                  <Link to="/search?query=tiles">Tiles</Link>
-                  <Link to="/search?query=flooring">Flooring</Link>
-                  <Link to="/search?query=paint">Paint</Link>
-                  <Link to="/search?query=lighting">Lighting</Link>
-                  <Link to="/search?query=furniture">Furniture</Link>
-                </div>
-              </div>
-
-              {loginRegisterNav()}
-            </nav>
-          </div>
-        </header>
-      </>
-    );
-  };
-
-  const homeownerNav = () => {
-    return (
-      <>
-        <header className={styles.header}>
-          <div className={styles.container}>
-            <Link to="/" className={styles.logo}>
-              Home Building Ecosystem
-            </Link>
-
-            <nav className={styles.nav}>
-              <div className={styles.dropdown}>
-                <button className={styles.dropbtn}>
-                  Hire Professionals{" "}
-                  <ChevronDownIcon
-                    className={styles.chevronDownIcon}
-                    color="#191919"
-                    size={16}
-                  />
-                </button>
-                <div className={styles.dropdownContent}>
-                  <button
-                    className={styles.dropdownItem}
-                    onClick={() => handleSearchClick("architect")}
-                  >
-                    Architects
-                  </button>
-                  <button
-                    className={styles.dropdownItem}
-                    onClick={() => handleSearchClick("interior designer")}
-                  >
-                    Interior Designers
-                  </button>
-
-                  <button
-                    className={styles.dropdownItem}
-                    onClick={() => handleSearchClick("landscaper")}
-                  >
-                    Landscapers
-                  </button>
-
-                  <button
-                    className={styles.dropdownItem}
-                    onClick={() => handleSearchClick("carpenter")}
-                  >
-                    Carpenters
-                  </button>
-
-                  <button
-                    className={styles.dropdownItem}
-                    onClick={() => handleSearchClick("plumber")}
-                  >
-                    Plumbers
-                  </button>
-
-                  <button
-                    className={styles.dropdownItem}
-                    onClick={() => handleSearchClick("electrician")}
-                  >
-                    Electricians
-                  </button>
-                  <button
-                    className={styles.dropdownItem}
-                    onClick={() => handleSearchClick("painter")}
-                  >
-                    Painters
-                  </button>
-                </div>
-              </div>
-
-              <div className={styles.dropdown}>
+            {currentUser && (
+              <>
+                <Link to="/inbox" className={styles.navEnvelope}>
+                  <FaEnvelope size={20} />
+                </Link>
+                <Link to="/saved-items" className={styles.navHeart}>
+                  <FaHeart size={20} />
+                </Link>
+              </>
+            )}
+            {!currentUser && loginRegisterNav()}
+            {currentUser && (
+              <div className={styles.avatar_container} ref={avatarMenuRef}>
                 <button
-                  className={`${styles.dropbtn} ${styles.dropbtnDisabled}`}
+                  className={styles.avatar_button}
+                  onClick={toggleAvatarMenu}
                 >
-                  Find Material{" "}
-                  <ChevronDownIcon
-                    className={styles.chevronDownIcon}
-                    color="#191919"
-                    opacity={0.5}
-                    size={16}
+                  <img
+                    src={currentUser.profilePictureUrl}
+                    alt={currentUser.username}
+                    className={styles.avatar_image}
                   />
                 </button>
-                <div className={styles.dropdownContent}>
-                  <Link to="/search?query=tiles&type=materials">Tiles</Link>
-                  <Link to="/search?query=flooring&type=materials">
-                    Flooring
-                  </Link>
-                  <Link to="/search?query=paint&type=materials">Paint</Link>
-                  <Link to="/search?query=lighting&type=materials">
-                    Lighting
-                  </Link>
-                  <Link to="/search?query=furniture&type=materials">
-                    Furniture
-                  </Link>
-                </div>
+                {showAvatarMenu && avatarMenu()}
               </div>
-
-              <div className={styles.searchBar}>
-                <div className={styles.searchInput}>
-                  <select
-                    className={styles.searchTypeSelect}
-                    value={searchType}
-                    onChange={(e) => {
-                      setSearchType(e.target.value);
-                      console.log("Changing search type: ", searchType);
-                    }}
-                  >
-                    <option value="professionals">Professionals</option>
-                    <option value="materials">Materials</option>
-                  </select>
-
-                  <input
-                    type="text"
-                    placeholder="Search the building world"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 12 12"
-                    aria-labelledby="IconBase-title-8f46da7f-207f-4224-95cb-e741d5d98fbf IconBase-description-8f46da7f-207f-4224-95cb-e741d5d98fbf"
-                    role="graphics-symbol img"
-                    width="100%"
-                    height="100%"
-                    className={styles.searchIcon}
-                    aria-hidden="true"
-                    onClick={() => handleSearchInput(searchQuery, searchType)}
-                  >
-                    <title id="IconBase-title-8f46da7f-207f-4224-95cb-e741d5d98fbf">
-                      search
-                    </title>
-                    <desc id="IconBase-description-8f46da7f-207f-4224-95cb-e741d5d98fbf">
-                      magnifying glass
-                    </desc>
-                    <g>
-                      <path d="M11.407,10.421,8.818,7.832a4.276,4.276,0,1,0-.985.985l2.589,2.589a.7.7,0,0,0,.985-.985ZM2.355,5.352a3,3,0,1,1,3,3,3,3,0,0,1-3-3Z"></path>
-                    </g>
-                  </svg>
-                </div>
-              </div>
-
-              {currentUser && (
-                <>
-                  <Link to="/inbox" className={styles.navEnvelope}>
-                    <FaEnvelope size={20} />
-                  </Link>
-                  <Link to="/saved-items" className={styles.navHeart}>
-                    <FaHeart size={20} />
-                  </Link>
-                </>
-              )}
-
-              {!currentUser && loginRegisterNav()}
-
-              {currentUser && (
-                <div className={styles.avatar_container} ref={avatarMenuRef}>
-                  <button
-                    className={styles.avatar_button}
-                    onClick={toggleAvatarMenu}
-                  >
-                    <img
-                      src={currentUser.profilePictureUrl}
-                      alt={currentUser.username}
-                      className={styles.avatar_image}
-                    />
-                  </button>
-                  {showAvatarMenu && avatarMenu()}
-                </div>
-              )}
-            </nav>
-          </div>
-        </header>
-      </>
+            )}
+          </nav>
+        </div>
+      </header>
     );
   };
 
@@ -533,9 +561,9 @@ const Navigation = () => {
                 <Link to="/inbox" className={styles.navLink}>
                   Messages
                 </Link>
-                <Link to="/professional/jobs" className={styles.navLink}>
+                {/* <Link to="/professional/jobs" className={styles.navLink}>
                   Jobs
-                </Link>
+                </Link> */}
                 <Link to="/analytics" className={styles.navLink}>
                   Analytics
                 </Link>

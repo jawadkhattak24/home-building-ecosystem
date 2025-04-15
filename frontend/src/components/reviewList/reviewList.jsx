@@ -26,63 +26,72 @@ const ReviewList = ({ reviews }) => {
     <div className={styles.reviewList}>
       {displayedReviews.map((review) => {
         const isExpanded = expandedReviews.has(review._id);
-        const formattedDate = new Date(review.createdAt).toLocaleDateString("en-US", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        });
+        const formattedDate = new Date(review.createdAt).toLocaleDateString(
+          "en-US",
+          {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          }
+        );
 
         return (
           <div key={review._id} className={styles.reviewCard}>
-            <div className={styles.reviewHeader}>
-              <div className={styles.userInfo}>
-                {review.userId.profilePictureUrl ? (
-                  <img
-                    src={review.userId.profilePictureUrl}
-                    alt={review.userId.name}
-                    className={styles.userAvatar}
-                  />
-                ) : (
-                  <div className={styles.userInitial}>
-                    {review.userId.name[0].toUpperCase()}
+            <div className={styles.reviewCardContent}>
+              <div className={styles.reviewHeader}>
+                <div className={styles.userInfo}>
+                  {review.userId.profilePictureUrl ? (
+                    <img
+                      src={review.userId.profilePictureUrl}
+                      alt={review.userId.name}
+                      className={styles.userAvatar}
+                    />
+                  ) : (
+                    <div className={styles.userInitial}>
+                      {review.userId.name[0].toUpperCase()}
+                    </div>
+                  )}
+                  <div className={styles.userMeta}>
+                    <h4>{review.userId.name}</h4>
+                    <span className={styles.reviewDate}>{formattedDate}</span>
                   </div>
-                )}
-                <div className={styles.userMeta}>
-                  <h4>{review.userId.name}</h4>
-                  <span className={styles.reviewDate}>{formattedDate}</span>
                 </div>
               </div>
-              <div className={styles.rating}>
-                {[...Array(5)].map((_, index) => (
-                  index < review.rating ? (
-                    <FaStar key={index} className={styles.starFilled} />
-                  ) : (
-                    <FaRegStar key={index} className={styles.starEmpty} />
-                  )
-                ))}
-              </div>
-            </div>
 
-            <div className={styles.reviewContent}>
-              <p className={`${styles.description} ${isExpanded ? styles.expanded : ''}`}>
-                {review.description}
-              </p>
-              {review.description.length > 200 && (
-                <button
-                  className={styles.expandButton}
-                  onClick={() => toggleReview(review._id)}
-                >
-                  {isExpanded ? (
-                    <>
-                      Show Less <FaChevronUp />
-                    </>
-                  ) : (
-                    <>
-                      Show More <FaChevronDown />
-                    </>
+              <div className={styles.reviewContent}>
+                <div className={styles.rating}>
+                  {[...Array(5)].map((_, index) =>
+                    index < review.rating ? (
+                      <FaStar key={index} className={styles.starFilled} />
+                    ) : (
+                      <FaRegStar key={index} className={styles.starEmpty} />
+                    )
                   )}
-                </button>
-              )}
+                </div>
+                <p
+                  className={`${styles.description} ${
+                    isExpanded ? styles.expanded : ""
+                  }`}
+                >
+                  {review.description}
+                </p>
+                {review.description.length > 200 && (
+                  <button
+                    className={styles.expandButton}
+                    onClick={() => toggleReview(review._id)}
+                  >
+                    {isExpanded ? (
+                      <>
+                        Show Less <FaChevronUp />
+                      </>
+                    ) : (
+                      <>
+                        Show More <FaChevronDown />
+                      </>
+                    )}
+                  </button>
+                )}
+              </div>
             </div>
 
             {review.image && (
@@ -114,4 +123,4 @@ const ReviewList = ({ reviews }) => {
   );
 };
 
-export default ReviewList; 
+export default ReviewList;

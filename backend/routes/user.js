@@ -178,7 +178,7 @@ router.put("/professional-profile/update/:field/:userId", async (req, res) => {
           { qualifications: dataToSend },
           { new: true, runValidators: true }
         );
-      } else if (field == "experience") {
+      } else if (field == "yearsExperience") {
         await Professional.findByIdAndUpdate(
           pro._id,
           { yearsExperience: dataToSend },

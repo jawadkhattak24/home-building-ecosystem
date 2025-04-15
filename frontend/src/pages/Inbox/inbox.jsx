@@ -33,8 +33,6 @@ function Inbox() {
   const [otherUser, setOtherUser] = useState(null);
   const [activeConvo, setActiveConvo] = useState(null);
 
-
-
   console.log("Currently active conversation: ", activeConversation);
 
   useEffect(() => {
@@ -81,11 +79,12 @@ function Inbox() {
                 placeholderUI={PlaceholderUI}
                 setActiveConvo={setActiveConvo}
                 activeConvo={activeConvo}
-
                 otherUser={otherUser}
                 setOtherUser={setOtherUser}
+                isLoading={isLoading}
               />
-              <MessageInput onSendMessage={handleSendMessage} />
+
+              {otherUser && <MessageInput onSendMessage={handleSendMessage} />}
             </div>
           </>
         )}

@@ -6,6 +6,7 @@ const dotenv = require("dotenv");
 const multerS3 = require("multer-s3");
 const { S3Client } = require("@aws-sdk/client-s3");
 const authMiddleware = require("../middlewares/auth");
+const Professional = require("../models/Professional");
 
 const env = process.env.NODE_ENV || "development";
 dotenv.config({ path: `.env.${env}` });
@@ -26,13 +27,12 @@ const upload = multer({
   }),
 });
 
-// Get reviews for a professional
 router.get("/professional/:professionalId", async (req, res) => {
   try {
     const { professionalId } = req.params;
     const reviews = await Review.find({ professionalId })
-      .populate('userId', 'name profilePictureUrl')
-      .sort({ createdAt: -1 }); // Sort by newest first
+      .populate("userId", "name profilePictureUrl")
+      .sort({ createdAt: -1 });
 
     res.status(200).json(reviews);
   } catch (error) {
@@ -56,6 +56,15 @@ router.post(
           error: "Rating and description are required",
         });
       }
+
+      const professional = await Professional.findById(professionalId);
+
+      professional.rating = (
+        (professional.rating * professional.reviews.length + rating) /
+        (professional.reviews.length + 1)
+      ).toFixed(1);
+
+      await professional.save();
 
       const review = new Review({
         rating: Number(rating),

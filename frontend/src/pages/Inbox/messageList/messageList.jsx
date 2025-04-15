@@ -3,11 +3,7 @@ import { useEffect, useState, useRef, useContext, useCallback } from "react";
 import { Link } from "react-router-dom";
 import styles from "./styles/messageList.module.scss";
 import PropTypes from "prop-types";
-// import { ProposalSection } from "../../pages/Inbox/ProposalSection/proposalSection";
 import { ChatContext } from "../../../contexts/chatContext";
-// import { NegotiationModal } from "../Negotiation/negotiationModal/negotiationModal";
-// import { NegotiationButton } from "../Negotiation/negotiationButton/negotiationButton";
-// import { NegotiationMessage } from "../Negotiation/negotiationMessage/negotiationMessage";
 
 function MessageList({
   currentUser,
@@ -26,33 +22,7 @@ function MessageList({
   const messageListRef = useRef(null);
   const [error, setError] = useState(null);
 
-  //   const [isNegotiationModalOpen, setIsNegotiationModalOpen] = useState(false);
-  //   const [currentProposal, setCurrentProposal] = useState(null);
-
   const currentUserId = currentUser?._id || currentUser?.id;
-
-  //   const fetchProposalDetails = useCallback(async () => {
-  //     try {
-  //       const token = localStorage.getItem("token");
-  //       const response = await axios.get(
-  //         `${
-  //           import.meta.env.VITE_API_URL
-  //         }/api/negotiations/${negotiationId}/latest`,
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${token}`,
-  //           },
-  //         }
-  //       );
-  //       setCurrentProposal(response.data);
-  //     } catch (err) {
-  //       setError("Failed to load proposal details");
-  //     }
-  //   }, [conversationId]);
-
-  //   useEffect(() => {
-  //     fetchProposalDetails();
-  //   }, [fetchProposalDetails]);
 
   useEffect(() => {
     if (conversations && conversations.length > 0 && currentUserId) {
@@ -79,7 +49,6 @@ function MessageList({
 
   useEffect(() => {
     if (activeConversation && currentUserId) {
-      // Find the other user in the conversation
       const other = activeConversation?.participants?.find(
         (participant) => participant._id !== currentUserId
       );
@@ -123,11 +92,6 @@ function MessageList({
             </Link>
           </div>
           <div className={styles.message_list} ref={messageListRef}>
-            {/* <ProposalSection
-              handleProposalChanges={handleProposalChanges}
-              conversationId={activeConversation}
-            /> */}
-
             <div className={styles.main_message_content_container}>
               {messages.map((message) => {
                 const messageDate = new Date(message.timestamp);
@@ -190,15 +154,6 @@ function MessageList({
                 );
               })}
             </div>
-            {/* <NegotiationButton
-              onOpenNegotiation={() => setIsNegotiationModalOpen(true)}
-            />
-            <NegotiationModal
-              isOpen={isNegotiationModalOpen}
-              onClose={() => setIsNegotiationModalOpen(false)}
-              currentProposal={currentProposal}
-              onSubmit={handleNegotiation}
-            /> */}
           </div>
         </div>
       </div>

@@ -298,6 +298,7 @@ router.get("/:userType", authMiddleware, async (req, res) => {
                     email: "$$homeowner.email",
                     userType: "homeowner",
                     profilePictureUrl: "$$homeowner.profilePictureUrl",
+                    createdAt: "$$homeowner.createdAt",
                   },
                 },
               },
@@ -315,6 +316,7 @@ router.get("/:userType", authMiddleware, async (req, res) => {
                         userType: "professional",
                         profilePictureUrl:
                           "$$professional.userData.profilePictureUrl",
+                        createdAt: "$$professional.createdAt",
                       },
                       {
                         serviceType: "$$professional.serviceType",
@@ -341,6 +343,7 @@ router.get("/:userType", authMiddleware, async (req, res) => {
                         userType: "supplier",
                         profilePictureUrl:
                           "$$supplier.userData.profilePictureUrl",
+                        createdAt: "$$supplier.createdAt",
                       },
                       {
                         businessName: "$$supplier.businessName",
@@ -359,7 +362,6 @@ router.get("/:userType", authMiddleware, async (req, res) => {
         },
       },
     ]);
-    // console.log("Conversations in Conversation API: ", conversations);
     res.json(conversations);
   } catch (error) {
     console.error("Error fetching conversations:", error);

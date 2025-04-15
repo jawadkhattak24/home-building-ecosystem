@@ -692,13 +692,13 @@
     background-color: #f9f9f9;
     width: 100%;
     padding: 20px;
+    border-radius: 5px;
   }
   .portfolioContainer {
     width: 100%;
     height: 500px;
     background-color: #f9f9f9;
     // padding: 20px;
-    border-radius: 5px;
     // border: 1px solid #e0e0e0;
   }
 
@@ -726,7 +726,7 @@
     font-size: 0.95rem;
     background: #f8f9fa;
     border-radius: 8px;
-    
+
     &::after {
       content: "";
       width: 20px;
@@ -1017,7 +1017,7 @@
   .navButton {
     position: absolute;
     top: 40%;
-    left: 5%;
+    // left: 5%;
     transform: translateY(-50%);
     background: white;
     border: none;
@@ -1144,4 +1144,10 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.ratingText {
+  // font-size: 24px;
+  // font-weight: 700;
+  margin-left: 5px;
 }

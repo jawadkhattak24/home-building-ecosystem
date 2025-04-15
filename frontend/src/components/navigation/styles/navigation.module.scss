@@ -1,4 +1,4 @@
-@use "../../../globalStyles/base"as base;
+@use "../../../globalStyles/base" as base;
 
 .header {
   background-color: #fff;
@@ -267,17 +267,15 @@
   display: flex;
   gap: 16px;
   height: 40px;
-  margin-right: 100px;
-  // margin-bottom: 24px;
+  margin-right: 4vw;
 
   .searchInput {
     flex: 1;
     display: flex;
     align-items: center;
     background-color: #f9f9f9;
-    border-radius: 50px;
+    border-radius: 5px;
     border: 1px solid #e0e0e0;
-    // padding: 0 15px;
     height: 40px;
 
     .searchIcon {
@@ -293,26 +291,52 @@
       }
     }
 
-    .searchTypeSelect {
-      border: none;
-      background-color: #f9f9f9;
-      padding: 0 10px;
-      font-family: "AcuminPro";
-      font-weight: 600;
-      font-size: 14px;
-      color: #191919;
-      cursor: pointer;
-      height: 100%;
-      border-right: 1px solid #e0e0e0;
+    .customSelect {
+      position: relative;
       margin-left: 10px;
+      border-right: 1px solid #e0e0e0;
+      height: 100%;
+      display: flex;
+      align-items: center;
 
-      &:focus {
-        outline: none;
+      select {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-color: #f9f9f9;
+        padding: 0 32px 0 10px;
+        font-family: "AcuminPro";
+        font-weight: 600;
+        font-size: 14px;
+        color: #191919;
+        cursor: pointer;
+        height: 100%;
+        border: none;
+        min-width: 130px;
+
+        &:focus {
+          outline: none;
+        }
+
+        option {
+          font-weight: 600;
+          background-color: white;
+          padding: 10px;
+        }
       }
 
-      option {
-        font-weight: 600;
-        background-color: white;
+      &::after {
+        content: "";
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 0;
+        height: 0;
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+        border-top: 5px solid #191919;
+        pointer-events: none;
       }
     }
 
@@ -322,7 +346,6 @@
       padding: 15px 10px 10px 10px;
       background-color: #f9f9f9;
       width: 250px;
-
       font-size: 16px;
       font-weight: 700;
       font-family: "AcuminPro";
@@ -387,4 +410,134 @@
   opacity: 0;
   transform: translateY(-20px);
   transition: opacity 300ms ease-in-out, transform 300ms ease-in-out;
+}
+
+.megaDropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border-bottom: 1px solid #e0e0e0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  padding: 32px 0;
+  z-index: 1000;
+}
+
+.megaDropdownVisible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.megaDropdownContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+  padding: 0 30px;
+}
+
+.megaDropdownSection {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: base.$primary;
+    margin: 0 0 8px 0;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #f0f0f0;
+  }
+}
+
+.navTriggerContainer {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: center;
+}
+
+.megaDropdownItem {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  text-decoration: none;
+  padding: 16px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+
+  &:hover {
+    background-color: #f8f9ff;
+    border-color: #e0e0e0;
+    transform: translateY(-1px);
+  }
+
+  h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #000000;
+    margin: 0;
+  }
+
+  p {
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+    line-height: 1.4;
+  }
+}
+
+.categoryIcon {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f0f0ff;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  transition: all 0.2s ease;
+
+  svg {
+    width: 24px;
+    height: 24px;
+    color: base.$primary;
+  }
+}
+
+.megaDropdownItem:hover .categoryIcon {
+  background-color: base.$primary;
+
+  svg {
+    color: white;
+  }
+}
+
+.navTrigger {
+  padding: 8px 16px;
+  border: none;
+  background: none;
+  font-size: 16px;
+  font-weight: 600;
+  color: #000000;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: base.$primary;
+  }
+
+  &.active {
+    color: base.$primary;
+  }
 }

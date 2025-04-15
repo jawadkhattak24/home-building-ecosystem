@@ -197,12 +197,12 @@ function SearchPage() {
           </div>
 
           <div className={styles.searchControls}>
-            <button
+            {/* <button
               className={styles.filterButton}
               onClick={() => setIsMobileFiltersOpen(true)}
             >
               Filters
-            </button>
+            </button> */}
 
             <div className={styles.sortDropdown} ref={sortRef}>
               <button
