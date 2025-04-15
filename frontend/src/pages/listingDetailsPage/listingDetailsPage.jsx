@@ -79,6 +79,8 @@ const ListingProduct = () => {
     window.scrollTo(0, 0);
   }, []);
 
+  console.log("Listing: ", listing);
+
   const handleImageClick = (image) => {
     setCurrentImage(image);
   };

@@ -838,6 +838,8 @@ router.post("/send-verification", async (req, res) => {
 
     let user = await EmailVerification.findOne({ email });
 
+    console.log("Verification code: ", verificationCode);
+
     if (!user) {
       user = new EmailVerification({
         email,

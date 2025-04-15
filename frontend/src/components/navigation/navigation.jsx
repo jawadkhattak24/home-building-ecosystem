@@ -150,7 +150,7 @@ const Navigation = () => {
             icon: <FaBath />,
             title: "Bathroom & Kitchen",
             description: "Fixtures and fittings",
-            link: "/search?query=fixtures&type=materials",
+            link: "/search?query=sanitary&type=materials",
           },
         ],
       },

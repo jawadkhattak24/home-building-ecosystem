@@ -295,12 +295,14 @@ export default function SupplierListings() {
                         {listing.analytics.clicks}
                       </p>
                       <p className={styles.listingCardStatsItem}>
-                        {(
-                          (listing.analytics.clicks /
-                            listing.analytics.impressions) *
-                          100
-                        ).toFixed(0)}
-                        %
+                        {listing.analytics.clicks > 0 &&
+                        listing.analytics.impressions > 0
+                          ? (
+                              (listing.analytics.clicks /
+                                listing.analytics.impressions) *
+                              100
+                            ).toFixed(0) + "%"
+                          : "0%"}
                       </p>
                       <p className={styles.listingCardStatsItem}>
                         {listing.analytics.favorites}

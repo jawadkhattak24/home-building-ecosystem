@@ -27,6 +27,7 @@ const listingSchema = new mongoose.Schema(
         "wood",
         "finishes",
         "hardware",
+        "lighting",
       ],
       required: false,
       index: true,

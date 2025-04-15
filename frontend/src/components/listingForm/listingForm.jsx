@@ -39,6 +39,11 @@ const materialConfig = {
       brands: ["KE", "Pak Cable", "Siemens", "ABB", "Hager"],
       specifications: ["voltage", "currentRating", "certification"],
     },
+    lighting: {
+      units: ["piece", "meter", "set"],
+      brands: ["KE", "Pak Cable", "Siemens", "ABB", "Hager", "BrightGlow"],
+      specifications: ["voltage", "currentRating", "certification"],
+    },
   },
 };
 
@@ -165,7 +170,7 @@ const ListingForm = ({
   const getSpecificationPlaceholder = (spec, category) => {
     const placeholders = {
       cement: {
-        type: "e.g., Ordinary Portland Cement, White Cement",
+        type: "e.g., White Cement",
         strength: "e.g., 42.5 MPa, 52.5 MPa",
         settingTime: "e.g., 45 minutes initial set",
       },
@@ -222,7 +227,7 @@ const ListingForm = ({
                 maxLength={30}
                 value={formData.name}
                 onChange={handleChange}
-                placeholder="Enter material name (e.g., Portland Cement Type-1)"
+                placeholder="Enter material name (e.g., BrightGlow LED Bulbs)"
                 required
               />
             </div>

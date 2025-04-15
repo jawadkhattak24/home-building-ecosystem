@@ -18,7 +18,7 @@ function FeaturedServicesSection({
   const token = localStorage.getItem("token");
 
   const { data: services = [], isLoading: isServicesLoading } = useQuery({
-    queryKey: ['services', serviceType],
+    queryKey: ["services", serviceType],
     queryFn: async () => {
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/service/category/${serviceType}`,
@@ -32,10 +32,12 @@ function FeaturedServicesSection({
   });
 
   const { data: listings = [], isLoading: isListingsLoading } = useQuery({
-    queryKey: ['listings', listingType],
+    queryKey: ["listings", listingType],
     queryFn: async () => {
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/supplier/listings/category/${listingType}`,
+        `${
+          import.meta.env.VITE_API_URL
+        }/api/supplier/listings/category/${listingType}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -82,8 +84,12 @@ function FeaturedServicesSection({
   return (
     <div className={styles.featuredServicesContainer}>
       <h2 style={{ marginLeft: 30, marginTop: 10 }}>
-        Featured {serviceType !== undefined ? serviceType : listingType}
-        {"s"}
+        {featuredSectionType === "service"
+          ? "Featured" + " " + serviceType + "s"
+          : "Featured" +
+            " in " +
+            listingType[0].toUpperCase() +
+            listingType.slice(1)}
       </h2>
       <div className={styles.featuredServices_main_container}>
         <Slider {...settings}>
@@ -93,17 +99,19 @@ function FeaturedServicesSection({
                   <SkeletonCard />
                 </div>
               ))
-            : featuredSectionType === "service"
+            : featuredSectionType === "service" && Array.isArray(services)
             ? services.map((service, index) => (
                 <div key={index} className={styles.slide}>
                   <ServiceCard professional={service} />
                 </div>
               ))
-            : listings.map((listing, index) => (
+            : Array.isArray(listings) && listings.length > 0
+            ? listings.map((listing, index) => (
                 <div key={index} className={styles.slide}>
                   <ListingCard listing={listing} />
                 </div>
-              ))}
+              ))
+            : null}
         </Slider>
       </div>
     </div>
