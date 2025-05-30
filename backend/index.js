@@ -26,6 +26,7 @@ const userRoutes = require("./routes/user");
 const authRoutes = require("./routes/auth");
 const serviceRoutes = require("./routes/service");
 const reviewRoutes = require("./routes/review");
+const listingReviewRoutes = require("./routes/listingReview");
 require("./config/passport");
 
 console.log("mongodb url :", process.env.MONGODB_URI);
@@ -114,6 +115,7 @@ app.use("/auth", authRoutes);
 app.use("/api/service", serviceRoutes);
 app.use("/api/supplier", supplierRoutes);
 app.use("/api/reviews", reviewRoutes);
+app.use("/api/listing-reviews", listingReviewRoutes);
 
 const messageRoutes = require("./routes/conversation");
 app.use("/api/conversations", cors(), messageRoutes);

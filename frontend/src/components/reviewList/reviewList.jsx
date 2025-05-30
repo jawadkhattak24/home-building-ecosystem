@@ -40,19 +40,19 @@ const ReviewList = ({ reviews }) => {
             <div className={styles.reviewCardContent}>
               <div className={styles.reviewHeader}>
                 <div className={styles.userInfo}>
-                  {review.userId.profilePictureUrl ? (
+                  {review?.userId?.profilePictureUrl ? (
                     <img
-                      src={review.userId.profilePictureUrl}
-                      alt={review.userId.name}
+                      src={review?.userId?.profilePictureUrl}
+                      alt={review?.userId?.name}
                       className={styles.userAvatar}
                     />
                   ) : (
                     <div className={styles.userInitial}>
-                      {review.userId.name[0].toUpperCase()}
+                      {review?.userId?.name[0].toUpperCase()}
                     </div>
                   )}
                   <div className={styles.userMeta}>
-                    <h4>{review.userId.name}</h4>
+                    <h4>{review?.userId?.name}</h4>
                     <span className={styles.reviewDate}>{formattedDate}</span>
                   </div>
                 </div>
@@ -61,7 +61,7 @@ const ReviewList = ({ reviews }) => {
               <div className={styles.reviewContent}>
                 <div className={styles.rating}>
                   {[...Array(5)].map((_, index) =>
-                    index < review.rating ? (
+                    index < review?.rating ? (
                       <FaStar key={index} className={styles.starFilled} />
                     ) : (
                       <FaRegStar key={index} className={styles.starEmpty} />
@@ -73,12 +73,12 @@ const ReviewList = ({ reviews }) => {
                     isExpanded ? styles.expanded : ""
                   }`}
                 >
-                  {review.description}
+                  {review?.description}
                 </p>
-                {review.description.length > 200 && (
+                {review?.description?.length > 200 && (
                   <button
                     className={styles.expandButton}
-                    onClick={() => toggleReview(review._id)}
+                    onClick={() => toggleReview(review?._id)}
                   >
                     {isExpanded ? (
                       <>
@@ -94,16 +94,16 @@ const ReviewList = ({ reviews }) => {
               </div>
             </div>
 
-            {review.image && (
+            {review?.image && (
               <div className={styles.reviewImage}>
-                <img src={review.image} alt="Review" />
+                <img src={review?.image} alt="Review" />
               </div>
             )}
           </div>
         );
       })}
 
-      {reviews.length > 3 && (
+      {reviews?.length > 3 && (
         <button
           className={styles.loadMoreButton}
           onClick={() => setShowAll(!showAll)}
@@ -114,7 +114,7 @@ const ReviewList = ({ reviews }) => {
             </>
           ) : (
             <>
-              Show More Reviews ({reviews.length - 3} more) <FaChevronDown />
+              Show More Reviews ({reviews?.length - 3} more) <FaChevronDown />
             </>
           )}
         </button>

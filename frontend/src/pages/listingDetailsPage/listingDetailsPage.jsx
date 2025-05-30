@@ -1,26 +1,43 @@
 import { useEffect, useState, useContext } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import styles from "./styles/listingDetailsPage.module.scss";
 // import StarRatings from "../../components/starRating/starRating";
-import { FaHeart, FaCommentDots, FaStar, FaStarHalf } from "react-icons/fa";
+import {
+  FaHeart,
+  FaCommentDots,
+  FaStar,
+  FaStarHalf,
+  FaPen,
+} from "react-icons/fa";
 import { ChatContext } from "../../contexts/chatContext";
 import { useAuth } from "../../contexts/authContext";
 import ListingDetailsPageLoadingSkeleton from "./loadingSkeleton/listingDetailsPageLoadingSkeleton";
+import ListingReviewDialog from "../../components/listingReviewDialog/listingReviewDialog";
+import PropTypes from "prop-types";
 
 const StarRatings = ({ rating }) => {
+  const fullStars = Math.floor(rating);
+  const hasHalfStar = rating % 1 >= 0.5;
+
   return (
     <div className={styles.starRatings}>
-      {[...Array(5)].map((_, i) => (
-        <FaStar key={i} color="#fb5012" className={styles.star} />
-        // <i
-        //   key={i}
-        //   className={`fas fa-star${i < Math.floor(rating) ? "" : "-o"}`}
-        // />
-      ))}
+      {[...Array(5)].map((_, i) => {
+        if (i < fullStars) {
+          return <FaStar key={i} className={styles.star} />;
+        } else if (i === fullStars && hasHalfStar) {
+          return <FaStarHalf key={i} className={styles.star} />;
+        } else {
+          return <FaStar key={i} className={styles.starEmpty} />;
+        }
+      })}
     </div>
   );
+};
+
+StarRatings.propTypes = {
+  rating: PropTypes.number.isRequired,
 };
 
 const ListingProduct = () => {
@@ -28,9 +45,11 @@ const ListingProduct = () => {
     useContext(ChatContext);
 
   const [currentImage, setCurrentImage] = useState(null);
+  const [isReviewDialogOpen, setIsReviewDialogOpen] = useState(false);
   const { listingId } = useParams();
   const navigate = useNavigate();
   const { currentUser } = useAuth();
+  const queryClient = useQueryClient();
 
   const { data: listing, isLoading } = useQuery({
     queryKey: ["listing", listingId],
@@ -42,6 +61,19 @@ const ListingProduct = () => {
     },
     onSuccess: (data) => {
       setCurrentImage(data.images[0]);
+    },
+  });
+
+  // Fetch reviews separately
+  const { data: reviews = [], isLoading: isLoadingReviews } = useQuery({
+    queryKey: ["listing-reviews", listingId],
+    queryFn: async () => {
+      const response = await axios.get(
+        `${
+          import.meta.env.VITE_API_URL
+        }/api/listing-reviews/listing/${listingId}`
+      );
+      return response.data;
     },
   });
 
@@ -71,6 +103,31 @@ const ListingProduct = () => {
     },
   });
 
+  const submitReviewMutation = useMutation({
+    mutationFn: (formData) =>
+      axios.post(
+        `${
+          import.meta.env.VITE_API_URL
+        }/api/listing-reviews/listing/${listingId}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      ),
+    onSuccess: () => {
+      setIsReviewDialogOpen(false);
+      // Invalidate both queries to refresh the data
+      queryClient.invalidateQueries(["listing-reviews", listingId]);
+      queryClient.invalidateQueries(["listing", listingId]);
+    },
+    onError: (error) => {
+      console.error("Error submitting review:", error);
+    },
+  });
+
   useEffect(() => {
     recordClickMutation.mutate();
   }, [listingId]);
@@ -78,8 +135,6 @@ const ListingProduct = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-
-  console.log("Listing: ", listing);
 
   const handleImageClick = (image) => {
     setCurrentImage(image);
@@ -128,6 +183,30 @@ const ListingProduct = () => {
     }
   };
 
+  const handleOpenReviewDialog = () => {
+    if (!currentUser) {
+      navigate("/login", { state: { from: window.location.pathname } });
+      return;
+    }
+    setIsReviewDialogOpen(true);
+  };
+
+  const handleCloseReviewDialog = () => {
+    setIsReviewDialogOpen(false);
+  };
+
+  const handleSubmitReview = async (formData) => {
+    await submitReviewMutation.mutateAsync(formData);
+  };
+
+  // Calculate average rating from reviews
+  const averageRating = reviews.length
+    ? reviews.reduce((total, review) => total + review.rating, 0) /
+      reviews.length
+    : 0;
+
+  console.log("reviews", reviews);
+
   if (isLoading) {
     return <ListingDetailsPageLoadingSkeleton />;
   }
@@ -141,8 +220,8 @@ const ListingProduct = () => {
 
         <div className={styles.materialInfo}>
           <div className={styles.rating}>
-            <StarRatings rating={4.5} />
-            <span>({listing?.reviews?.length} reviews)</span>
+            <StarRatings rating={averageRating} />
+            <span>({reviews.length} reviews)</span>
           </div>
 
           <div className={styles.specifications}>
@@ -192,52 +271,70 @@ const ListingProduct = () => {
           </div>
         </div>
 
-        {/* <div className={styles.documentsSection}>
-          <h3 className={styles.sectionTitle}>Documents</h3>
-          {listing?.safetyDataSheet ? (
-            <a
-              href={listing?.safetyDataSheet}
-              target="_blank"
-              rel="noopener"
-              className={styles.documentLink}
-            >
-              <i className="fas fa-file-pdf"></i> Safety Data Sheet
-            </a>
-          ) : null}
-          {listing?.installationGuide ? (
-            <a
-              href={listing?.installationGuide}
-              target="_blank"
-              rel="noopener"
-              className={styles.documentLink}
-            >
-              <i className="fas fa-file-pdf"></i> Installation Guide
-            </a>
-          ) : null}
-        </div> */}
-
         <div className={styles.reviewsSection}>
-          <h3 className={styles.sectionTitle}>Customer Reviews</h3>
-          {listing?.reviews?.map((review, index) => (
-            <div key={index} className={styles.review}>
-              <div className={styles.reviewHeader}>
-                <div className={styles.userAvatar}>{review?.user?.name[0]}</div>
-                <div className={styles.reviewMeta}>
-                  <StarRatings rating={review?.rating} />
-                  <div className={styles.reviewDate}>
-                    {new Date(review?.createdAt).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "short",
-                      day: "numeric",
-                    })}
+          <div className={styles.reviewsHeader}>
+            <h3 className={styles.sectionTitle}>Customer Reviews</h3>
+            <button
+              className={styles.writeReviewButton}
+              onClick={handleOpenReviewDialog}
+            >
+              <FaPen /> Write a Review
+            </button>
+          </div>
+
+          {isLoadingReviews ? (
+            <div className={styles.loadingReviews}>Loading reviews...</div>
+          ) : reviews.length > 0 ? (
+            reviews.map((review, index) => (
+              <div key={review._id || index} className={styles.review}>
+                <div className={styles.reviewHeader}>
+                  <div className={styles.userAvatar}>
+                    {review?.userId?.profilePictureUrl ? (
+                      <img
+                        className={styles.userAvatarImage}
+                        src={review?.userId?.profilePictureUrl}
+                        alt={review?.userId?.name}
+                      />
+                    ) : (
+                      "U"
+                    )}
+                  </div>
+                  <div className={styles.reviewMeta}>
+                    <div className={styles.reviewUser}>
+                      {typeof review.userId === "object"
+                        ? review.userId?.name
+                        : "User " + review._id.substring(0, 5)}
+                    </div>
+                    <StarRatings rating={review.rating} />
+                    <div className={styles.reviewDate}>
+                      {new Date(review.createdAt).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      })}
+                    </div>
                   </div>
                 </div>
+                <div className={styles.reviewContent}>
+                  &quot;{review.comment}&quot;
+                </div>
+                {review.image && (
+                  <div className={styles.reviewImageContainer}>
+                    <img
+                      src={review.image}
+                      alt="Review"
+                      className={styles.reviewImage}
+                      onClick={() => window.open(review.image, "_blank")}
+                    />
+                  </div>
+                )}
               </div>
-              <div className={styles.reviewContent}>
-                &quot;{review?.comment}&quot;
-              </div>
+            ))
+          ) : (
+            <div className={styles.noReviews}>
+              <p>No reviews yet. Be the first to review this product!</p>
             </div>
-          ))}
+          )}
         </div>
       </div>
 
@@ -285,14 +382,18 @@ const ListingProduct = () => {
                 <p className={styles.supplierLocation}>
                   {listing?.supplier?.address}
                 </p>
-                {/* <p className={styles.businessType}>
-                  {listing?.supplier?.businessType}
-                </p> */}
               </div>
             </div>
           </Link>
         </div>
       </div>
+
+      <ListingReviewDialog
+        isOpen={isReviewDialogOpen}
+        onClose={handleCloseReviewDialog}
+        onSubmit={handleSubmitReview}
+        listingId={listingId}
+      />
     </div>
   );
 };

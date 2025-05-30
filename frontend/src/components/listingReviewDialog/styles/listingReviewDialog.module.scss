@@ -1,0 +1,279 @@
+@use "../../../globalStyles/base.scss" as base;
+
+.dialogOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dialogContent {
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 550px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  animation: slideIn 0.3s ease-out;
+  overflow: hidden;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dialogHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #f0f0f0;
+  background: #fafafa;
+
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+  }
+}
+
+.closeButton {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: #666;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.05);
+    color: #333;
+  }
+}
+
+.dialogForm {
+  padding: 24px;
+}
+
+.ratingContainer {
+  margin-bottom: 24px;
+  text-align: center;
+
+  h3 {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 16px;
+    color: #444;
+  }
+}
+
+.stars {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.starContainer {
+  cursor: pointer;
+  transition: transform 0.2s;
+  font-size: 32px;
+  
+  &:hover {
+    transform: scale(1.2);
+  }
+}
+
+.starFilled {
+  color: base.$primary;
+  filter: drop-shadow(0 0 3px rgba(251, 80, 18, 0.4));
+}
+
+.starEmpty {
+  color: #ddd;
+}
+
+.formGroup {
+  margin-bottom: 24px;
+
+  label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: #444;
+  }
+
+  textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    resize: vertical;
+    transition: border 0.2s;
+    font-family: inherit;
+    
+    &:focus {
+      outline: none;
+      border-color: base.$primary;
+      box-shadow: 0 0 0 2px rgba(251, 80, 18, 0.1);
+    }
+    
+    &::placeholder {
+      color: #aaa;
+    }
+  }
+}
+
+.uploadContainer {
+  border: 2px dashed #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+  transition: all 0.2s;
+  
+  &:hover {
+    border-color: base.$primary;
+    background-color: rgba(251, 80, 18, 0.02);
+  }
+}
+
+.uploadZone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 120px;
+}
+
+.fileInput {
+  display: none;
+}
+
+.uploadLabel {
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #777;
+  transition: color 0.2s;
+  
+  &:hover {
+    color: base.$primary;
+  }
+}
+
+.uploadIcon {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.previewContainer {
+  position: relative;
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.imagePreview {
+  width: 100%;
+  border-radius: 6px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  object-fit: contain;
+  max-height: 200px;
+}
+
+.removeButton {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #ddd;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ff4f4f;
+  transition: all 0.2s;
+  
+  &:hover {
+    background: #ff4f4f;
+    color: white;
+    border-color: #ff4f4f;
+  }
+}
+
+.uploadNote {
+  margin-top: 10px;
+  font-size: 0.8rem;
+  color: #999;
+  text-align: center;
+}
+
+.errorMessage {
+  color: #ff4f4f;
+  font-size: 0.9rem;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.dialogButtons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.cancelButton,
+.submitButton {
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.cancelButton {
+  background: #f5f5f5;
+  color: #666;
+  
+  &:hover:not(:disabled) {
+    background: #eaeaea;
+  }
+}
+
+.submitButton {
+  background: base.$primary;
+  color: white;
+  
+  &:hover:not(:disabled) {
+    background: base.$primary-dark;
+  }
+} 
