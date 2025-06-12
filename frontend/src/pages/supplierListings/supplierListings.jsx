@@ -1,6 +1,5 @@
 import { useEffect, useState, useRef } from "react";
 import { useAuth } from "../../contexts/authContext";
-import ListingCard from "../../components/listingCard/listingCard";
 import ListingForm from "../../components/listingForm/listingForm";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -10,7 +9,8 @@ import { FaEllipsisV } from "react-icons/fa";
 
 export default function SupplierListings() {
   const { currentUser } = useAuth();
-  const currentUserId = currentUser._id || currentUser.id;
+  const supplierId = currentUser?.supplierProfileId;
+  const userId = currentUser?._id || currentUser?.id;
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedFilters, setSelectedFilters] = useState({
     category: [],
@@ -20,6 +20,32 @@ export default function SupplierListings() {
   const [openActionMenuId, setOpenActionMenuId] = useState(null);
   const navigate = useNavigate();
   const [editingListing, setEditingListing] = useState(null);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [listingToDelete, setListingToDelete] = useState(null);
+  const actionMenuRef = useRef(null);
+
+  console.log("Current user:", currentUser);
+  console.log("Supplier ID:", supplierId);
+
+  // Check if user is a supplier
+  const isSupplier = currentUser?.userType === "supplier" || currentUser?.hasSupplierProfile;
+
+  // Fetch supplier profile if not available
+  const { data: supplierProfile } = useQuery({
+    queryKey: ["supplierProfile", userId],
+    queryFn: async () => {
+      if (!userId) return null;
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/user/supplier-profile/${userId}`
+      );
+      return response.data;
+    },
+    enabled: !!userId && !supplierId,
+  });
+
+  const effectiveSupplierId = supplierId || (supplierProfile && supplierProfile._id);
+  
+  console.log("Effective supplier ID:", effectiveSupplierId);
 
   const {
     data: listings = [],
@@ -27,26 +53,33 @@ export default function SupplierListings() {
     isError,
     error,
   } = useQuery({
-    queryKey: ["supplierListings", currentUserId],
+    queryKey: ["supplierListings", effectiveSupplierId],
     queryFn: async () => {
+      if (!effectiveSupplierId) {
+        console.error("No supplier ID available");
+        return [];
+      }
+      console.log("Fetching listings for supplier:", effectiveSupplierId);
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/supplier/listings/${currentUserId}`
+        `${import.meta.env.VITE_API_URL}/api/supplier/listings/${effectiveSupplierId}`
       );
+      console.log("Listings response:", response.data);
       return response.data;
     },
+    enabled: !!effectiveSupplierId,
   });
 
   const addListingMutation = useMutation({
     mutationFn: async (formData) => {
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/supplier/listing`,
-        { ...formData, userId: currentUserId }
+        { ...formData, userId }
       );
       return response.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["supplierListings", currentUserId],
+        queryKey: ["supplierListings", effectiveSupplierId],
       });
       setIsFormOpen(false);
     },
@@ -65,13 +98,32 @@ export default function SupplierListings() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["supplierListings", currentUserId],
+        queryKey: ["supplierListings", effectiveSupplierId],
       });
       setIsFormOpen(false);
       setEditingListing(null);
     },
     onError: (error) => {
       console.error("Error updating listing:", error);
+    },
+  });
+
+  const deleteListingMutation = useMutation({
+    mutationFn: async (listingId) => {
+      const response = await axios.delete(
+        `${import.meta.env.VITE_API_URL}/api/supplier/listing/${listingId}`
+      );
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["supplierListings", effectiveSupplierId],
+      });
+      setShowDeleteConfirmation(false);
+      setListingToDelete(null);
+    },
+    onError: (error) => {
+      console.error("Error deleting listing:", error);
     },
   });
 
@@ -123,28 +175,6 @@ export default function SupplierListings() {
     setOpenActionMenuId(openActionMenuId === listingId ? null : listingId);
   };
 
-  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
-  const [listingToDelete, setListingToDelete] = useState(null);
-
-  const deleteListingMutation = useMutation({
-    mutationFn: async (listingId) => {
-      const response = await axios.delete(
-        `${import.meta.env.VITE_API_URL}/api/supplier/listing/${listingId}`
-      );
-      return response.data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["supplierListings", currentUserId],
-      });
-      setShowDeleteConfirmation(false);
-      setListingToDelete(null);
-    },
-    onError: (error) => {
-      console.error("Error deleting listing:", error);
-    },
-  });
-
   const handleActionSelect = (action, listingId) => {
     console.log(`Action ${action} selected for listing ${listingId}`);
 
@@ -164,8 +194,6 @@ export default function SupplierListings() {
     setOpenActionMenuId(null);
   };
 
-  const actionMenuRef = useRef(null);
-
   const handleClickOutside = (e) => {
     if (actionMenuRef.current && !actionMenuRef.current.contains(e.target)) {
       setOpenActionMenuId(null);
@@ -178,6 +206,19 @@ export default function SupplierListings() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  // If user is not a supplier, show access denied message
+  if (!isSupplier) {
+    return (
+      <div className={styles.supplierListingsContainer}>
+        <div className={styles.errorContainer}>
+          <h2>Access Denied</h2>
+          <p>You must be a supplier to access this page.</p>
+          <button onClick={() => navigate("/")}>Return to Home</button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.supplierListingsContainer}>
@@ -364,7 +405,7 @@ export default function SupplierListings() {
                                   queryClient.invalidateQueries({
                                     queryKey: [
                                       "supplierListings",
-                                      currentUserId,
+                                      effectiveSupplierId,
                                     ],
                                   });
                                   setShowDeleteConfirmation(false);
