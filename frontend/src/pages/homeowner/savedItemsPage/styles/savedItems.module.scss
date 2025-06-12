@@ -1,33 +1,46 @@
 .savedItemsParentContainer {
-  display: flex;
-  padding: 20px;
-  margin: 20px;
-  justify-content: flex-start;
-  align-items: flex-start;
-  flex-direction: column;
-  min-height: 100vh;
-  background-color: #f9f9f9;
-  border: 1px solid #e0e0e0;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
 
-  .savedItemsContainer {
-    display: flex;
-    margin-top: 20px;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: flex-start;
-    align-items: flex-start;
-    height: 70vh;
-    width: 100%;
+  .section {
+    margin-bottom: 3rem;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
 
   .heading {
-    font-family: "AcuminPro";
-    font-size: 18px;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: #333;
   }
+
+  .savedItemsContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
   .noSavedItems {
-    font-family: "AcuminPro";
-    font-size: 18px;
-    color: #808080;
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 2rem;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    color: #666;
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .savedItemsParentContainer {
+    padding: 1rem;
+
+    .savedItemsContainer {
+      grid-template-columns: 1fr;
+    }
   }
 }

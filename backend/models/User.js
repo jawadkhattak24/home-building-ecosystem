@@ -36,6 +36,7 @@ const userSchema = new mongoose.Schema(
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
     savedProfiles: { type: [String], default: [] },
+    savedListings: [{ type: mongoose.Schema.Types.ObjectId, ref: "Listing", default: [] }],
     isVerified: {
       type: Boolean,
       default: false,

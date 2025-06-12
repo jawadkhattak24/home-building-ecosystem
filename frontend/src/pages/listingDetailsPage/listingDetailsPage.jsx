@@ -46,6 +46,7 @@ const ListingProduct = () => {
 
   const [currentImage, setCurrentImage] = useState(null);
   const [isReviewDialogOpen, setIsReviewDialogOpen] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
   const { listingId } = useParams();
   const navigate = useNavigate();
   const { currentUser } = useAuth();
@@ -62,6 +63,22 @@ const ListingProduct = () => {
     onSuccess: (data) => {
       setCurrentImage(data.images[0]);
     },
+  });
+
+  // Check if listing is saved
+  useQuery({
+    queryKey: ["saved-listing", listingId, currentUser?.id],
+    queryFn: async () => {
+      if (!currentUser?.id) return false;
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/supplier/listing/saved/${currentUser.id}`
+      );
+      const savedListings = response.data;
+      const isListingSaved = savedListings.some(item => item._id === listingId);
+      setIsSaved(isListingSaved);
+      return isListingSaved;
+    },
+    enabled: !!currentUser?.id && !!listingId,
   });
 
   // Fetch reviews separately
@@ -140,8 +157,27 @@ const ListingProduct = () => {
     setCurrentImage(image);
   };
 
-  const handleFavorite = () => {
-    recordFavoriteMutation.mutate();
+  const handleFavorite = async () => {
+    if (!currentUser) {
+      navigate("/login", { state: { from: window.location.pathname } });
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/supplier/listing/save/${listingId}`,
+        { userId: currentUser.id }
+      );
+      
+      setIsSaved(response.data.isSaved);
+      recordFavoriteMutation.mutate();
+      
+      // Invalidate saved listings query
+      queryClient.invalidateQueries(["saved-listing", listingId, currentUser.id]);
+      queryClient.invalidateQueries(["saved-listings", currentUser.id]);
+    } catch (error) {
+      console.error("Error saving listing:", error);
+    }
   };
 
   const handleContact = async () => {
@@ -255,8 +291,11 @@ const ListingProduct = () => {
           </div>
 
           <div className={styles.ctaButton}>
-            <button className={styles.saveButton} onClick={handleFavorite}>
-              <FaHeart /> Save Item
+            <button 
+              className={`${styles.saveButton} ${isSaved ? styles.saved : ''}`} 
+              onClick={handleFavorite}
+            >
+              <FaHeart /> {isSaved ? 'Saved' : 'Save Item'}
             </button>
             <button className={styles.chatButton} onClick={handleContact}>
               <FaCommentDots /> Chat with Supplier

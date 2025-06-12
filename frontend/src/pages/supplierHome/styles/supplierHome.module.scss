@@ -318,10 +318,112 @@
   }
 
   .reviewsContainer {
-    padding: 20px;
-    width: 100%;
-    height: 300px;
-    border-top: 1px solid #e0e0e0;
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #333;
+    }
+
+    .reviewsList {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .reviewItem {
+      padding: 1rem;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      background-color: #fafafa;
+
+      .reviewHeader {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+
+        .reviewerInfo {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+
+          .reviewerImage {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+          }
+
+          .reviewerInitial {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #666;
+          }
+
+          .reviewerName {
+            font-weight: 500;
+            color: #333;
+          }
+        }
+
+        .reviewRating {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-end;
+          gap: 0.25rem;
+
+          .reviewDate {
+            font-size: 0.875rem;
+            color: #666;
+          }
+        }
+      }
+
+      .reviewComment {
+        color: #444;
+        line-height: 1.5;
+        margin-bottom: 1rem;
+      }
+
+      .reviewImage {
+        width: 100%;
+        max-height: 200px;
+        object-fit: cover;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: opacity 0.2s;
+
+        &:hover {
+          opacity: 0.9;
+        }
+      }
+    }
+  }
+
+  .starRating {
+    display: flex;
+    gap: 0.25rem;
+
+    .starFilled {
+      color: #ffc107;
+    }
+
+    .starEmpty {
+      color: #e0e0e0;
+    }
   }
 
   .listingsContainer {

@@ -4,12 +4,29 @@ import ListingCard from "../../components/listingCard/listingCard";
 import { useAuth } from "../../contexts/authContext";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import { FaPencilAlt } from "react-icons/fa";
+import { FaPencilAlt, FaStar } from "react-icons/fa";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import PropTypes from "prop-types";
+
+const StarRating = ({ rating }) => {
+  return (
+    <div className={styles.starRating}>
+      {[...Array(5)].map((_, index) => (
+        <FaStar
+          key={index}
+          className={index < rating ? styles.starFilled : styles.starEmpty}
+        />
+      ))}
+    </div>
+  );
+};
+
+StarRating.propTypes = {
+  rating: PropTypes.number.isRequired,
+};
 
 const SupplierHome = () => {
   const { currentUser } = useAuth();
-  const currentUserId = currentUser.id || currentUser._id;
   const { supplierId } = useParams();
   const queryClient = useQueryClient();
   const isOwner = currentUser.supplierProfileId === supplierId;
@@ -61,10 +78,20 @@ const SupplierHome = () => {
   });
 
   const { data: listings = [], isLoading: isLoadingListings } = useQuery({
-    queryKey: ["listings", currentUserId],
+    queryKey: ["listings", supplierId],
     queryFn: async () => {
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/supplier/listings/${currentUserId}`
+        `${import.meta.env.VITE_API_URL}/api/supplier/listings/${supplierId}`
+      );
+      return response.data;
+    },
+  });
+
+  const { data: reviews = [], isLoading: isLoadingReviews } = useQuery({
+    queryKey: ["supplier-reviews", supplierId],
+    queryFn: async () => {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/supplier/reviews/${supplierId}`
       );
       return response.data;
     },
@@ -404,7 +431,51 @@ const SupplierHome = () => {
 
         <div className={styles.reviewsContainer}>
           <h3>Reviews</h3>
-          <p>No reviews yet</p>
+          {isLoadingReviews ? (
+            <p>Loading reviews...</p>
+          ) : reviews.length > 0 ? (
+            <div className={styles.reviewsList}>
+              {reviews.map((review, index) => (
+                <div key={index} className={styles.reviewItem}>
+                  <div className={styles.reviewHeader}>
+                    <div className={styles.reviewerInfo}>
+                      {review.user?.profilePictureUrl ? (
+                        <img
+                          src={review.user.profilePictureUrl}
+                          alt={review.user.name}
+                          className={styles.reviewerImage}
+                        />
+                      ) : (
+                        <div className={styles.reviewerInitial}>
+                          {review.user?.name?.charAt(0) || "U"}
+                        </div>
+                      )}
+                      <span className={styles.reviewerName}>
+                        {review.user?.name || "Anonymous"}
+                      </span>
+                    </div>
+                    <div className={styles.reviewRating}>
+                      <StarRating rating={review.rating} />
+                      <span className={styles.reviewDate}>
+                        {new Date(review.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                  </div>
+                  <p className={styles.reviewComment}>{review.comment}</p>
+                  {review.image && (
+                    <img
+                      src={review.image}
+                      alt="Review"
+                      className={styles.reviewImage}
+                      onClick={() => window.open(review.image, "_blank")}
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p>No reviews yet</p>
+          )}
         </div>
       </header>
     </div>

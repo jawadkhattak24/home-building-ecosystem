@@ -6,6 +6,7 @@ const { S3Client } = require("@aws-sdk/client-s3");
 const dotenv = require("dotenv");
 const Supplier = require("../models/Supplier");
 const Listing = require("../models/Listing");
+const User = require("../models/User");
 
 const env = process.env.NODE_ENV || "development";
 dotenv.config({ path: `.env.${env}` });
@@ -202,9 +203,9 @@ router.get("/getSupplier/:supplierId", (req, res) => {
     });
 });
 
-router.get("/listings/:userId", async (req, res) => {
+router.get("/listings/:supplierId", async (req, res) => {
   try {
-    const supplier = await Supplier.findOne({ userId: req.params.userId });
+    const supplier = await Supplier.findById(req.params.supplierId);
     if (!supplier) {
       return res.status(404).json({ message: "Supplier not found" });
     }
@@ -319,6 +320,86 @@ router.get("/listings/category/:category", async (req, res) => {
 
 router.get("/test", async (req, res) => {
   res.json({ message: "Hello World" });
+});
+
+router.post("/listing/save/:listingId", async (req, res) => {
+  const { listingId } = req.params;
+  const { userId } = req.body;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const listing = await Listing.findById(listingId);
+    if (!listing) {
+      return res.status(404).json({ message: "Listing not found" });
+    }
+
+    const isListingSaved = user.savedListings.includes(listingId);
+
+    if (isListingSaved) {
+      user.savedListings = user.savedListings.filter(
+        (id) => id.toString() !== listingId
+      );
+      await user.save();
+      return res
+        .status(200)
+        .json({ message: "Listing unsaved successfully", isSaved: false });
+    } else {
+      user.savedListings.push(listingId);
+      await user.save();
+      return res
+        .status(200)
+        .json({ message: "Listing saved successfully", isSaved: true });
+    }
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+});
+
+router.get("/listing/saved/:userId", async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const user = await User.findById(userId).populate({
+      path: "savedListings",
+      populate: {
+        path: "supplier",
+        select: "businessName logo businessType address",
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json(user.savedListings);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+});
+
+router.get("/reviews/:supplierId", async (req, res) => {
+  try {
+    const supplier = await Supplier.findById(req.params.supplierId)
+      .populate({
+        path: 'reviews.user',
+        select: 'name profilePictureUrl'
+      });
+
+    if (!supplier) {
+      return res.status(404).json({ message: "Supplier not found" });
+    }
+
+    res.json(supplier.reviews);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
 });
 
 module.exports = router;

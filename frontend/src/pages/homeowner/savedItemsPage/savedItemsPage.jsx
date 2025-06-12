@@ -3,12 +3,11 @@ import axios from "axios";
 import styles from "./styles/savedItems.module.scss";
 import { useAuth } from "../../../contexts/authContext";
 import ServiceCard from "../../../components/service-card/service-card";
-// import { LoadingContext } from "../../../contexts/loadingContext";
+import ListingCard from "../../../components/listingCard/listingCard";
 import { useQuery } from "@tanstack/react-query";
 
 const SavedItemsPage = () => {
   const { currentUser } = useAuth();
-  // const { LoadingUI } = useContext(LoadingContext);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -30,7 +29,7 @@ const SavedItemsPage = () => {
     enabled: !!currentUser?.id,
   });
 
-  const { data: savedItems = [], isLoading: isProfessionalsLoading } = useQuery(
+  const { data: savedProfessionals = [], isLoading: isProfessionalsLoading } = useQuery(
     {
       queryKey: ["savedProfessionals", userData?.savedProfiles],
       queryFn: async () => {
@@ -52,27 +51,35 @@ const SavedItemsPage = () => {
     }
   );
 
-  const isLoading = isUserLoading || isProfessionalsLoading;
+  const { data: savedListings = [], isLoading: isListingsLoading } = useQuery(
+    {
+      queryKey: ["saved-listings", currentUser?.id],
+      queryFn: async () => {
+        if (!currentUser?.id) return [];
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/supplier/listing/saved/${currentUser.id}`
+        );
+        return response.data;
+      },
+      enabled: !!currentUser?.id,
+    }
+  );
 
-  // if (isLoading) {
-  //   return <LoadingUI />;
-  // }
-
-  console.log(savedItems);
+  const isLoading = isUserLoading || isProfessionalsLoading || isListingsLoading;
 
   return (
-    <>
-      <div className={styles.savedItemsParentContainer}>
+    <div className={styles.savedItemsParentContainer}>
+      <div className={styles.section}>
         <h2 className={styles.heading}>
-          Saved Professionals ({savedItems.length})
+          Saved Professionals ({savedProfessionals.length})
         </h2>
         <div className={styles.savedItemsContainer}>
-          {savedItems.length === 0 && (
+          {savedProfessionals.length === 0 && (
             <h2 className={styles.noSavedItems}>
-              You don&apos;t have any saved items...
+              You don&apos;t have any saved professionals...
             </h2>
           )}
-          {savedItems.map((savedItem) => (
+          {savedProfessionals.map((savedItem) => (
             <ServiceCard
               key={savedItem?.userId?._id}
               professional={savedItem}
@@ -82,7 +89,27 @@ const SavedItemsPage = () => {
           ))}
         </div>
       </div>
-    </>
+
+      <div className={styles.section}>
+        <h2 className={styles.heading}>
+          Saved Listings ({savedListings.length})
+        </h2>
+        <div className={styles.savedItemsContainer}>
+          {savedListings.length === 0 && (
+            <h2 className={styles.noSavedItems}>
+              You don&apos;t have any saved listings...
+            </h2>
+          )}
+          {savedListings.map((listing) => (
+            <ListingCard
+              key={listing._id}
+              listing={listing}
+              isSaved={true}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
   );
 };
 
